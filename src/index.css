@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --primary-blue: #0b44ff;
+  --primary-red: #ef4444;
+  --primary-hover: #dc2626;
   --bg-color: #f3f6fa;
   --card-bg: #ffffff;
   --text-main: #1e293b;
@@ -13,6 +14,7 @@
   --black: #0f172a;
   --white: #ffffff;
   --danger: #ef4444;
+  --section-accent: #f1f5f9;
 }
 
 * {
@@ -56,13 +58,65 @@ body {
 }
 
 .logo-upload-box {
-  border: 1.5px dashed red;
+  border: 1.5px dashed var(--border-light);
   border-radius: 8px;
-  padding: 20px 30px;
+  padding: 16px 24px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   width: max-content;
+  transition: all 0.2s ease;
+  background-color: transparent;
+}
+
+.logo-upload-box:hover {
+  border-color: var(--primary-red);
+  background-color: rgba(239, 68, 68, 0.02);
+}
+
+.logo-preview-wrapper {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: visible;
+  cursor: pointer;
+  background-color: var(--white);
+  border: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.logo-preview-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.remove-logo-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: var(--danger);
+  color: var(--white);
+  border: 2px solid var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  z-index: 10;
+}
+
+.remove-logo-btn:hover {
+  transform: scale(1.1);
+  background-color: #dc2626;
 }
 
 .logo-info {
@@ -83,10 +137,9 @@ body {
 }
 
 .btn-outline {
-  border: 1.5px solid var(--primary-blue);
+  border: 1.5px solid var(--primary-red);
   background-color: transparent;
-  color: red;
-  border-color: red;
+  color: var(--primary-red);
   font-weight: 600;
   font-size: 12px;
   padding: 8px 16px;
@@ -97,7 +150,7 @@ body {
 }
 
 .btn-outline:hover {
-  background-color: slategray;
+  background-color: var(--primary-red);
   color: var(--white);
 }
 
@@ -202,6 +255,39 @@ body {
   text-transform: uppercase;
 }
 
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--section-accent);
+}
+
+.form-section:last-child {
+  border-bottom: none;
+}
+
+.section-header {
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--primary-red);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
 .input-field {
   padding: 10px 12px;
   border: 1px solid var(--border-light);
@@ -214,13 +300,27 @@ body {
 }
 
 .input-field:focus {
-  border-color: var(--primary-blue);
-  box-shadow: 0 0 0 2px rgba(11, 68, 255, 0.1);
+  border-color: var(--primary-red);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
+}
+
+.input-field:invalid:not(:placeholder-shown) {
+  border-color: var(--danger);
+  background-color: #fff5f5;
 }
 
 .input-field::placeholder {
   color: #94a3b8;
   opacity: 0.7;
+}
+
+select.input-field {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 40px;
+  cursor: pointer;
 }
 
 .more-options-bar {
@@ -242,7 +342,7 @@ body {
   border-collapse: collapse;
 }
 
-.items-header {
+.items-header-row {
   display: grid;
   grid-template-columns: 3fr 1fr 1fr 1.5fr 1fr 1.5fr 40px;
   gap: 12px;
@@ -316,7 +416,7 @@ body {
 .add-item-btn {
   background: none;
   border: none;
-  color: var(--primary-blue);
+  color: var(--primary-red);
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
@@ -328,7 +428,7 @@ body {
 }
 
 @media (max-width: 900px) {
-  .items-header {
+  .items-header-row {
     display: none;
   }
 
@@ -446,7 +546,7 @@ body {
 .discount-input-wrapper {
   display: flex;
   align-items: center;
-  border: 1.5px solid var(--primary-blue);
+  border: 1.5px solid var(--primary-red);
   border-radius: 6px;
   overflow: hidden;
   width: 120px;
@@ -462,9 +562,9 @@ body {
 }
 
 .discount-symbol {
-  background-color: #e0e7ff;
-  /* light blue */
-  color: var(--primary-blue);
+  background-color: #fee2e2;
+  /* light red */
+  color: var(--primary-red);
   padding: 8px 12px;
   font-size: 14px;
   font-weight: 600;
@@ -485,11 +585,11 @@ body {
 .subtotal-row {
   display: flex;
   justify-content: space-between;
-  padding: 16px;
+  padding: 12px 16px;
   background-color: var(--section-bg);
   border-radius: 6px;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .total-row {
@@ -499,8 +599,8 @@ body {
   background-color: var(--total-bg);
   color: var(--white);
   border-radius: 6px;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 800;
 }
 
 @media (max-width: 768px) {
@@ -536,7 +636,7 @@ body {
 }
 
 .btn-generate {
-  background-color: var(--primary-blue);
+  background-color: var(--primary-red);
   color: var(--white);
   border: none;
   padding: 14px 40px;
@@ -546,11 +646,11 @@ body {
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s, transform 0.1s;
-  box-shadow: 0 4px 12px rgba(11, 68, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 .btn-generate:hover {
-  background-color: #0036e6;
+  background-color: var(--primary-hover);
   transform: translateY(-1px);
 }
 
@@ -597,7 +697,7 @@ body {
 }
 
 input:checked+.slider {
-  background-color: var(--primary-blue);
+  background-color: var(--primary-red);
 }
 
 input:checked+.slider:before {
@@ -639,7 +739,7 @@ input:checked+.slider:before {
   flex-wrap: wrap;
   padding: 40px 40px;
   margin-bottom: 30px;
-  background-color: var(--primary-blue);
+  background-color: var(--primary-red);
   color: var(--white);
   border-bottom: none;
 }
@@ -794,7 +894,7 @@ input:checked+.slider:before {
   padding: 20px;
   border-radius: 8px;
   background-color: #f8fafc;
-  border-left: 4px solid var(--primary-blue);
+  border-left: 4px solid var(--primary-red);
 }
 
 .preview-notes-title {

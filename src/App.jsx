@@ -4,7 +4,7 @@ import './index.css';
 
 function App() {
     const [items, setItems] = useState([
-        { id: 1, name: '', quantity: 1, unit: '', price: '', vat: '', description: '' }
+        { id: 1, name: '', quantity: 1, unit: '', price: '', gst: '', description: '' }
     ]);
     const [discountEnabled, setDiscountEnabled] = useState(false);
     const [discount, setDiscount] = useState('');
@@ -47,10 +47,10 @@ function App() {
     const calculateItemTotal = (item) => {
         const quantity = parseFloat(item.quantity) || 0;
         const price = parseFloat(item.price) || 0;
-        const vat = parseFloat(item.vat) || 0;
+        const gst = parseFloat(item.gst || item.vat) || 0;
         const subtotal = quantity * price;
-        const vatAmount = subtotal * (vat / 100);
-        return (subtotal + vatAmount).toFixed(2);
+        const gstAmount = subtotal * (gst / 100);
+        return (subtotal + gstAmount).toFixed(2);
     };
 
     const calculateSubtotal = () => {
@@ -74,7 +74,7 @@ function App() {
     };
 
     const handleAddItem = () => {
-        setItems([...items, { id: Date.now(), name: '', quantity: 1, unit: '', price: '', vat: '', description: '' }]);
+        setItems([...items, { id: Date.now(), name: '', quantity: 1, unit: '', price: '', gst: '', description: '' }]);
     };
 
     const handleRemoveItem = (id) => {
@@ -109,7 +109,8 @@ function App() {
         });
     };
 
-    const handleGenerate = () => {
+    const handleGenerate = (e) => {
+        if (e) e.preventDefault();
         const newInvoice = {
             id: Date.now(),
             savedAt: new Date().toISOString(),
@@ -128,23 +129,23 @@ function App() {
             currencySymbol,
             logoUrl
         };
-        
+
         let updatedInvoices;
         const existingIndex = savedInvoices.findIndex(inv => inv.invoiceNumber === invoiceNumber);
-        
+
         if (existingIndex >= 0) {
             updatedInvoices = [...savedInvoices];
             updatedInvoices[existingIndex] = newInvoice;
         } else {
             updatedInvoices = [newInvoice, ...savedInvoices];
         }
-        
+
         saveToLocalStorage(updatedInvoices);
         setShowPreview(true);
     };
 
     const loadInvoice = (invoice) => {
-        setItems(invoice.items);
+        setItems(invoice.items.map(item => ({ ...item, gst: item.gst || item.vat || '' })));
         setDiscountEnabled(invoice.discountEnabled);
         setDiscount(invoice.discount);
         setBilledFrom(invoice.billedFrom);
@@ -162,7 +163,7 @@ function App() {
     };
 
     const viewInvoice = (invoice) => {
-        setItems(invoice.items);
+        setItems(invoice.items.map(item => ({ ...item, gst: item.gst || item.vat || '' })));
         setDiscountEnabled(invoice.discountEnabled);
         setDiscount(invoice.discount);
         setBilledFrom(invoice.billedFrom);
@@ -330,7 +331,7 @@ function App() {
                         </div>
                     </div>
                 </div>
-                
+
                 <div className="history-card">
                     {filteredInvoices.length === 0 ? (
                         <div className="history-empty">No saved receipts found. Generate an invoice to save it.</div>
@@ -373,22 +374,41 @@ function App() {
 
     return (
         <>
-            <div className="invoice-wrapper edit-view">
+            <form className="invoice-wrapper edit-view" onSubmit={handleGenerate}>
                 <div className="invoice-card">
                     <div className="header-row">
                         <div className="logo-upload-box">
-                            <UploadCloud size={28} color="#94a3b8" />
+                            {logoUrl ? (
+                                <div className="logo-preview-wrapper" onClick={() => fileInputRef.current?.click()} title="Click to change logo">
+                                    <img src={logoUrl} alt="Logo Preview" className="logo-preview-img" />
+                                    <button
+                                        className="remove-logo-btn"
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setLogoUrl(null);
+                                        }}
+                                        title="Remove logo"
+                                    >
+                                        <Trash2 size={14} />
+                                    </button>
+                                </div>
+                            ) : (
+                                <UploadCloud size={28} color="#94a3b8" />
+                            )}
                             <div className="logo-info">
-                                <span className="logo-title">Add your logo</span>
-                                <span className="logo-subtitle">Not required</span>
+                                <span className="logo-title">{logoUrl ? 'Logo Selected' : 'Add your logo'}</span>
+                                <span className="logo-subtitle">{logoUrl ? 'Click image to change' : 'Not required'}</span>
                             </div>
-                            <button
-                                className="btn-outline"
-                                type="button"
-                                onClick={() => fileInputRef.current?.click()}
-                            >
-                                Select File
-                            </button>
+                            {!logoUrl && (
+                                <button
+                                    className="btn-outline"
+                                    type="button"
+                                    onClick={() => fileInputRef.current?.click()}
+                                >
+                                    Select File
+                                </button>
+                            )}
                             <input
                                 ref={fileInputRef}
                                 type="file"
@@ -410,6 +430,7 @@ function App() {
                                     placeholder="Company name"
                                     value={billedFrom.name}
                                     onChange={(e) => setBilledFrom({ ...billedFrom, name: e.target.value })}
+                                    required
                                 />
                                 <input
                                     type="text"
@@ -417,13 +438,16 @@ function App() {
                                     placeholder="Address"
                                     value={billedFrom.address}
                                     onChange={(e) => setBilledFrom({ ...billedFrom, address: e.target.value })}
+                                    required
                                 />
                                 <input
                                     type="email"
                                     className="input-field"
-                                    placeholder="Email"
+                                    placeholder="Company email (e.g., owner@gmail.com)"
                                     value={billedFrom.email}
                                     onChange={(e) => setBilledFrom({ ...billedFrom, email: e.target.value })}
+                                    required
+                                    title="Please enter a valid Gmail or work email address"
                                 />
                             </div>
                         </div>
@@ -436,6 +460,7 @@ function App() {
                                     placeholder="Client name"
                                     value={billedTo.name}
                                     onChange={(e) => setBilledTo({ ...billedTo, name: e.target.value })}
+                                    required
                                 />
                                 <input
                                     type="text"
@@ -443,13 +468,16 @@ function App() {
                                     placeholder="Client address"
                                     value={billedTo.address}
                                     onChange={(e) => setBilledTo({ ...billedTo, address: e.target.value })}
+                                    required
                                 />
                                 <input
                                     type="email"
                                     className="input-field"
-                                    placeholder="Client email"
+                                    placeholder="Client email (e.g., client@gmail.com)"
                                     value={billedTo.email}
                                     onChange={(e) => setBilledTo({ ...billedTo, email: e.target.value })}
+                                    required
+                                    title="Please enter the client's valid email address"
                                 />
                             </div>
                         </div>
@@ -463,6 +491,7 @@ function App() {
                                 className="input-field"
                                 value={invoiceNumber}
                                 onChange={updateField(setInvoiceNumber)}
+                                required
                             />
                         </div>
                         <div className="input-wrapper">
@@ -475,6 +504,7 @@ function App() {
                                     setIssueDate(e.target.value);
                                     if (!dueDate) setDueDate(e.target.value);
                                 }}
+                                required
                             />
                         </div>
                         <div className="input-wrapper">
@@ -534,19 +564,15 @@ function App() {
                     )}
 
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <table className="items-table">
-                            <thead>
-                                <tr className="items-header">
-                                    <th className="header-cell" style={{ textAlign: 'left' }}>*Item</th>
-                                    <th className="header-cell" style={{ textAlign: 'left' }}>Quantity</th>
-                                    <th className="header-cell" style={{ textAlign: 'left' }}>Unit</th>
-                                    <th className="header-cell" style={{ textAlign: 'left' }}>*Price</th>
-                                    <th className="header-cell" style={{ textAlign: 'left' }}>VAT (%)</th>
-                                    <th className="header-cell" style={{ textAlign: 'left', paddingLeft: '8px' }}>Total ({currencySymbol})</th>
-                                    <th className="header-cell"></th>
-                                </tr>
-                            </thead>
-                        </table>
+                        <div className="items-header-row">
+                            <div className="header-cell" style={{ textAlign: 'left' }}>*Item</div>
+                            <div className="header-cell" style={{ textAlign: 'left' }}>Quantity</div>
+                            <div className="header-cell" style={{ textAlign: 'left' }}>Unit</div>
+                            <div className="header-cell" style={{ textAlign: 'left' }}>*Price</div>
+                            <div className="header-cell" style={{ textAlign: 'left' }}>Gst (%)</div>
+                            <div className="header-cell" style={{ textAlign: 'left', paddingLeft: '8px' }}>Total ({currencySymbol})</div>
+                            <div className="header-cell"></div>
+                        </div>
 
                         {items.map((item) => (
                             <div className="item-row-wrapper" key={item.id}>
@@ -559,6 +585,7 @@ function App() {
                                             placeholder='Item description'
                                             value={item.name}
                                             onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
+                                            required
                                         />
                                     </div>
                                     <input
@@ -567,6 +594,8 @@ function App() {
                                         placeholder='Qty'
                                         value={item.quantity}
                                         onChange={(e) => handleItemChange(item.id, 'quantity', e.target.value)}
+                                        min="0"
+                                        step="1"
                                     />
                                     <input
                                         type="text"
@@ -578,29 +607,35 @@ function App() {
                                     <input
                                         type="number"
                                         className="input-field"
-                                        
                                         placeholder="Price"
                                         value={item.price}
                                         onChange={(e) => handleItemChange(item.id, 'price', e.target.value)}
+                                        required
+                                        min="0"
+                                        step="1"
                                     />
-                                    <input
-                                        type="number"
+                                    <select
                                         className="input-field"
-                                        placeholder="VAT %"
-                                        value={item.vat}
-                                        onChange={(e) => handleItemChange(item.id, 'vat', e.target.value)}
-                                    />
+                                        value={item.gst || item.vat}
+                                        onChange={(e) => handleItemChange(item.id, 'gst', e.target.value)}
+                                        style={{ paddingRight: '4px' }}
+                                    >
+                                        <option value="0">0%</option>
+                                        <option value="5">5%</option>
+                                        <option value="12">12%</option>
+                                        <option value="18">18%</option>
+                                        <option value="28">28%</option>
+                                    </select>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
                                         <input
                                             type="text"
                                             className="input-field"
-                                            
                                             value={calculateItemTotal(item)}
                                             disabled
                                             style={{ backgroundColor: '#f8fafc' }}
                                         />
                                     </div>
-                                    <button className="delete-btn" onClick={() => handleRemoveItem(item.id)}>
+                                    <button className="delete-btn" type="button" onClick={() => handleRemoveItem(item.id)}>
                                         <Trash2 size={20} />
                                     </button>
                                 </div>
@@ -616,7 +651,7 @@ function App() {
                             </div>
                         ))}
 
-                        <button className="add-item-btn" onClick={handleAddItem}>
+                        <button className="add-item-btn" type="button" onClick={handleAddItem}>
                             <Plus size={16} /> Add Item
                         </button>
                     </div>
@@ -626,6 +661,7 @@ function App() {
                             <span className="input-label" style={{ fontWeight: 800 }}>Notes</span>
                             <textarea
                                 className="notes-textarea"
+                                placeholder="Enter payment terms, bank details, or a thank you message..."
                                 value={notes}
                                 onChange={(e) => setNotes(e.target.value)}
                             />
@@ -645,6 +681,9 @@ function App() {
                                         disabled={!discountEnabled}
                                         value={discount}
                                         onChange={(e) => setDiscount(e.target.value)}
+                                        min="0"
+                                        max="100"
+                                        step="1"
                                     />
                                     <span className="discount-symbol">%</span>
                                 </span>
@@ -656,6 +695,12 @@ function App() {
                                     <span>Sub Total</span>
                                     <span>{currencySymbol} {calculateSubtotal().toFixed(2)}</span>
                                 </div>
+                                {discountEnabled && parseFloat(discount) > 0 && (
+                                    <div className="subtotal-row" style={{ color: '#ef4444' }}>
+                                        <span>Discount ({discount}%)</span>
+                                        <span>-{currencySymbol} {getDiscountAmount()}</span>
+                                    </div>
+                                )}
                                 <div className="total-row">
                                     <span>Total</span>
                                     <span>{currencySymbol} {calculateTotal()}</span>
@@ -664,17 +709,18 @@ function App() {
                         </div>
                     </div>
                 </div>
-            </div>
+            
 
             <div className="generate-wrapper">
                 <button className="btn-history" type="button" onClick={() => setShowHistory(true)}>
                     Saved Receipts
                 </button>
                 <div style={{ width: '20px' }} />
-                <button className="btn-generate" type="button" onClick={handleGenerate}>
+                <button className="btn-generate" type="submit">
                     Generate Document
                 </button>
             </div>
+        </form >
         </>
     );
 }
