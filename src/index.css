@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?faDmily=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
   --primary-red: #ef4444;
@@ -58,7 +58,7 @@ body {
 }
 
 .logo-upload-box {
-  border: 1.5px dashed var(--border-light);
+  border: 1.5px dashed var(--primary-red);
   border-radius: 8px;
   padding: 16px 24px;
   display: flex;
@@ -82,7 +82,7 @@ body {
   overflow: visible;
   cursor: pointer;
   background-color: var(--white);
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--primary-red);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -510,7 +510,7 @@ select.input-field {
 }
 
 .notes-textarea {
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--primary-red);
   border-radius: 6px;
   padding: 12px;
   font-size: 14px;
@@ -1344,7 +1344,7 @@ input:checked+.slider:before {
   font-weight: 500;
   background-color: #f8fafc;
   border-radius: 12px;
-  border: 2px dashed var(--border-light);
+  border: 2px dashed var(--primary-red);
 }
 
 .table-responsive {

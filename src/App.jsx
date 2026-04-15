@@ -294,6 +294,13 @@ function App() {
                             </div>
                         </div>
                     </div>
+
+                    {notes && (
+                        <div className="preview-notes">
+                            <div className="preview-notes-title">Notes</div>
+                            <div className="preview-notes-text">{notes}</div>
+                        </div>
+                    )}
                 </div>
             </div>
         );
@@ -535,30 +542,85 @@ function App() {
                         <div className="info-grid">
                             <div className="input-wrapper">
                                 <span className="input-label">Payment Status</span>
-                                <input
-                                    type="text"
+                                <select
                                     className="input-field"
                                     value={paymentStatus}
                                     onChange={updateField(setPaymentStatus)}
-                                />
+                                >
+                                    <option value="Pending">Pending</option>
+                                    <option value="Paid">Paid</option>
+                                    <option value="Overdue">Overdue</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                    <option value="Partially Paid">Partially Paid</option>
+                                    <option value="Refunded">Refunded</option>
+                                    <option value="Draft">Draft</option>
+                                </select>
                             </div>
                             <div className="input-wrapper">
                                 <span className="input-label">Currency</span>
-                                <input
-                                    type="text"
+                                <select
                                     className="input-field"
                                     value={currency}
-                                    onChange={updateField(setCurrency)}
-                                />
+                                    onChange={(e) => {
+                                        const map = {
+                                            USD: '$', EUR: '€', GBP: '£', INR: '₹',
+                                            JPY: '¥', CNY: '¥', AUD: 'A$', CAD: 'C$',
+                                            CHF: 'Fr', SGD: 'S$', AED: 'د.إ', MYR: 'RM',
+                                            BRL: 'R$', ZAR: 'R', MXN: 'MX$', KRW: '₩',
+                                            HKD: 'HK$', NZD: 'NZ$', SEK: 'kr', NOK: 'kr',
+                                        };
+                                        setCurrency(e.target.value);
+                                        setCurrencySymbol(map[e.target.value] || e.target.value);
+                                    }}
+                                >
+                                    <option value="USD">USD – US Dollar</option>
+                                    <option value="EUR">EUR – Euro</option>
+                                    <option value="GBP">GBP – British Pound</option>
+                                    <option value="INR">INR – Indian Rupee</option>
+                                    <option value="JPY">JPY – Japanese Yen</option>
+                                    <option value="CNY">CNY – Chinese Yuan</option>
+                                    <option value="AUD">AUD – Australian Dollar</option>
+                                    <option value="CAD">CAD – Canadian Dollar</option>
+                                    <option value="CHF">CHF – Swiss Franc</option>
+                                    <option value="SGD">SGD – Singapore Dollar</option>
+                                    <option value="AED">AED – UAE Dirham</option>
+                                    <option value="MYR">MYR – Malaysian Ringgit</option>
+                                    <option value="BRL">BRL – Brazilian Real</option>
+                                    <option value="ZAR">ZAR – South African Rand</option>
+                                    <option value="MXN">MXN – Mexican Peso</option>
+                                    <option value="KRW">KRW – South Korean Won</option>
+                                    <option value="HKD">HKD – Hong Kong Dollar</option>
+                                    <option value="NZD">NZD – New Zealand Dollar</option>
+                                    <option value="SEK">SEK – Swedish Krona</option>
+                                    <option value="NOK">NOK – Norwegian Krone</option>
+                                </select>
                             </div>
                             <div className="input-wrapper">
                                 <span className="input-label">Currency Symbol</span>
-                                <input
-                                    type="text"
+                                <select
                                     className="input-field"
                                     value={currencySymbol}
                                     onChange={updateField(setCurrencySymbol)}
-                                />
+                                >
+                                    <option value="$">$ – Dollar</option>
+                                    <option value="€">€ – Euro</option>
+                                    <option value="£">£ – Pound</option>
+                                    <option value="₹">₹ – Rupee</option>
+                                    <option value="¥">¥ – Yen / Yuan</option>
+                                    <option value="A$">A$ – Australian Dollar</option>
+                                    <option value="C$">C$ – Canadian Dollar</option>
+                                    <option value="Fr">Fr – Swiss Franc</option>
+                                    <option value="S$">S$ – Singapore Dollar</option>
+                                    <option value="د.إ">د.إ – UAE Dirham</option>
+                                    <option value="RM">RM – Malaysian Ringgit</option>
+                                    <option value="R$">R$ – Brazilian Real</option>
+                                    <option value="R">R – South African Rand</option>
+                                    <option value="MX$">MX$ – Mexican Peso</option>
+                                    <option value="₩">₩ – Korean Won</option>
+                                    <option value="HK$">HK$ – Hong Kong Dollar</option>
+                                    <option value="NZ$">NZ$ – New Zealand Dollar</option>
+                                    <option value="kr">kr – Scandinavian Krone</option>
+                                </select>
                             </div>
                         </div>
                     )}
@@ -597,13 +659,32 @@ function App() {
                                         min="0"
                                         step="1"
                                     />
-                                    <input
-                                        type="text"
+                                    <select
                                         className="input-field"
-                                        placeholder='Unit'
                                         value={item.unit}
                                         onChange={(e) => handleItemChange(item.id, 'unit', e.target.value)}
-                                    />
+                                    >
+                                        <option value="">Unit</option>
+                                        <option value="pcs">pcs</option>
+                                        <option value="hrs">hrs</option>
+                                        <option value="days">days</option>
+                                        <option value="kg">kg</option>
+                                        <option value="g">g</option>
+                                        <option value="lbs">lbs</option>
+                                        <option value="m">m</option>
+                                        <option value="cm">cm</option>
+                                        <option value="ft">ft</option>
+                                        <option value="inch">inch</option>
+                                        <option value="L">L</option>
+                                        <option value="ml">ml</option>
+                                        <option value="box">box</option>
+                                        <option value="set">set</option>
+                                        <option value="pair">pair</option>
+                                        <option value="sqft">sqft</option>
+                                        <option value="sqm">sqm</option>
+                                        <option value="month">month</option>
+                                        <option value="year">year</option>
+                                    </select>
                                     <input
                                         type="number"
                                         className="input-field"
