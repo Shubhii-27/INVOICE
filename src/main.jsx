@@ -3,8 +3,14 @@ import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 
+let root = null
+let rootContainer = null
+
 function renderApp(container) {
-  const root = createRoot(container)
+  if (!root || rootContainer !== container) {
+    root = createRoot(container)
+    rootContainer = container
+  }
 
   root.render(
     <StrictMode>
@@ -15,15 +21,15 @@ function renderApp(container) {
 
 // WordPress / external embed API
 window.InvoiceWidget = {
-  init: (id = 'invoice-root') => {
-    const el = document.getElementById(id)
+  init: (target = 'invoice-root') => {
+    const container = typeof target === 'string' ? document.getElementById(target) : target
 
-    if (!el) {
-      console.error(`InvoiceWidget: container not found #${id}`)
+    if (!container) {
+      console.error(`InvoiceWidget: container not found ${target}`)
       return
     }
 
-    renderApp(el)
+    renderApp(container)
   }
 }
 
