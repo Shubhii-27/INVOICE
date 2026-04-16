@@ -1,10 +1,12 @@
 import { useRef, useState } from 'react';
 import { UploadCloud, GripVertical, Trash2, Plus, ArrowLeft, Download, Search } from 'lucide-react';
+import InvoiceReport from './InvoiceReport.jsx';
+import ReceiptHistory from './ReceiptHistory.jsx';
 import './index.css';
 
 function App() {
     const [items, setItems] = useState([
-        { id: 1, name: '', quantity: 1, unit: '', price: '', gst: '', description: '' }
+        { id: 1, name: '', quantity: 1, unit: '', price: '', cost: '', gst: '', description: '' }
     ]);
     const [discountEnabled, setDiscountEnabled] = useState(false);
     const [discount, setDiscount] = useState('');
@@ -20,11 +22,13 @@ function App() {
     const [deliveryDate, setDeliveryDate] = useState(() => new Date().toISOString().slice(0, 10));
     const [notes, setNotes] = useState('Thank you for your business. Please pay by the due date.');
     const [paymentStatus, setPaymentStatus] = useState('Pending');
-    const [currency, setCurrency] = useState('USD');
-    const [currencySymbol, setCurrencySymbol] = useState('$');
+    const [currency, setCurrency] = useState('INR');
+    const [currencySymbol, setCurrencySymbol] = useState('₹');
     const [showMoreOptions, setShowMoreOptions] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
     const [showHistory, setShowHistory] = useState(false);
+    const [showReport, setShowReport] = useState(false);
+    const [currentInvoiceId, setCurrentInvoiceId] = useState(null);
     const [logoUrl, setLogoUrl] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const fileInputRef = useRef(null);
@@ -73,8 +77,138 @@ function App() {
         return subtotal.toFixed(2);
     };
 
+    const calculateItemCostTotal = (item) => {
+        const quantity = parseFloat(item.quantity) || 0;
+        const cost = parseFloat(item.cost) || 0;
+        return parseFloat(quantity * cost).toFixed(2);
+    };
+
+    const calculateInvoiceCostTotal = (invoice) => {
+        return invoice.items.reduce((sum, item) => sum + parseFloat(calculateItemCostTotal(item) || 0), 0);
+    };
+
+    const calculateInvoiceProfit = (invoice) => {
+        const revenue = parseFloat(calculateInvoiceTotal(invoice) || 0);
+        const cost = parseFloat(calculateInvoiceCostTotal(invoice) || 0);
+        return (revenue - cost).toFixed(2);
+    };
+
+    const calculateInvoiceProfitMargin = (invoice) => {
+        const revenue = parseFloat(calculateInvoiceTotal(invoice) || 0);
+        const profit = parseFloat(calculateInvoiceProfit(invoice) || 0);
+        return revenue ? ((profit / revenue) * 100).toFixed(2) : '0.00';
+    };
+
+    const calculateInvoiceItemTotal = (item) => {
+        const quantity = parseFloat(item.quantity) || 0;
+        const price = parseFloat(item.price) || 0;
+        const gst = parseFloat(item.gst || item.vat) || 0;
+        const subtotal = quantity * price;
+        const gstAmount = subtotal * (gst / 100);
+        return parseFloat(subtotal + gstAmount).toFixed(2);
+    };
+
+    const calculateInvoiceSubtotal = (invoice) => {
+        return invoice.items.reduce((sum, item) => sum + parseFloat(calculateInvoiceItemTotal(item) || 0), 0);
+    };
+
+    const calculateInvoiceTotal = (invoice) => {
+        const subtotal = calculateInvoiceSubtotal(invoice);
+        const discountValue = parseFloat(invoice.discount) || 0;
+        if (invoice.discountEnabled && discountValue > 0) {
+            const discountAmt = parseFloat(((subtotal * discountValue) / 100).toFixed(2));
+            return (subtotal - discountAmt).toFixed(2);
+        }
+        return subtotal.toFixed(2);
+    };
+
+    const getReportSummary = () => {
+        const totalInvoices = savedInvoices.length;
+        const totalRevenue = savedInvoices.reduce((sum, inv) => sum + parseFloat(calculateInvoiceTotal(inv) || 0), 0);
+        const totalCost = savedInvoices.reduce((sum, inv) => sum + parseFloat(calculateInvoiceCostTotal(inv) || 0), 0);
+        const totalProfit = totalRevenue - totalCost;
+        const unpaidRevenue = savedInvoices.reduce((sum, inv) => {
+            const status = inv.paymentStatus || 'Pending';
+            const invoiceTotal = parseFloat(calculateInvoiceTotal(inv) || 0);
+            if (status === 'Paid') return sum;
+            return sum + invoiceTotal;
+        }, 0);
+        const averageInvoice = totalInvoices ? totalRevenue / totalInvoices : 0;
+        const statusCounts = savedInvoices.reduce((acc, inv) => {
+            const status = inv.paymentStatus || 'Pending';
+            acc[status] = (acc[status] || 0) + 1;
+            return acc;
+        }, {});
+        const profitMargin = totalRevenue ? (totalProfit / totalRevenue) * 100 : 0;
+
+        return {
+            totalInvoices,
+            totalRevenue,
+            totalCost,
+            totalProfit,
+            unpaidRevenue,
+            averageInvoice,
+            profitMargin,
+            statusCounts
+        };
+    };
+
+    const getMonthlyReport = () => {
+        const grouped = savedInvoices.reduce((acc, inv) => {
+            const date = new Date(inv.issueDate || inv.savedAt);
+            if (Number.isNaN(date.getTime())) return acc;
+            const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            const label = date.toLocaleDateString(undefined, { year: 'numeric', month: 'short' });
+            const revenue = parseFloat(calculateInvoiceTotal(inv) || 0);
+            const cost = parseFloat(calculateInvoiceCostTotal(inv) || 0);
+            const profit = revenue - cost;
+            if (!acc[key]) {
+                acc[key] = { key, label, revenue: 0, cost: 0, profit: 0, invoices: 0 };
+            }
+            acc[key].revenue += revenue;
+            acc[key].cost += cost;
+            acc[key].profit += profit;
+            acc[key].invoices += 1;
+            return acc;
+        }, {});
+
+        return Object.values(grouped).sort((a, b) => b.key.localeCompare(a.key));
+    };
+
+    const getClientReport = () => {
+        const grouped = savedInvoices.reduce((acc, inv) => {
+            const clientName = inv.billedTo?.name?.trim() || 'Unknown client';
+            const revenue = parseFloat(calculateInvoiceTotal(inv) || 0);
+            const cost = parseFloat(calculateInvoiceCostTotal(inv) || 0);
+            const profit = revenue - cost;
+
+            if (!acc[clientName]) {
+                acc[clientName] = {
+                    clientName,
+                    invoices: 0,
+                    revenue: 0,
+                    cost: 0,
+                    profit: 0
+                };
+            }
+
+            acc[clientName].invoices += 1;
+            acc[clientName].revenue += revenue;
+            acc[clientName].cost += cost;
+            acc[clientName].profit += profit;
+            return acc;
+        }, {});
+
+        return Object.values(grouped)
+            .map((client) => ({
+                ...client,
+                profitMargin: client.revenue ? (client.profit / client.revenue) * 100 : 0
+            }))
+            .sort((a, b) => b.profit - a.profit);
+    };
+
     const handleAddItem = () => {
-        setItems([...items, { id: Date.now(), name: '', quantity: 1, unit: '', price: '', gst: '', description: '' }]);
+        setItems([...items, { id: Date.now(), name: '', quantity: 1, unit: '', price: '', cost: '', gst: '', description: '' }]);
     };
 
     const handleRemoveItem = (id) => {
@@ -111,8 +245,9 @@ function App() {
 
     const handleGenerate = (e) => {
         if (e) e.preventDefault();
+        const invoiceId = currentInvoiceId || Date.now();
         const newInvoice = {
-            id: Date.now(),
+            id: invoiceId,
             savedAt: new Date().toISOString(),
             items,
             discountEnabled,
@@ -131,7 +266,7 @@ function App() {
         };
 
         let updatedInvoices;
-        const existingIndex = savedInvoices.findIndex(inv => inv.invoiceNumber === invoiceNumber);
+        const existingIndex = savedInvoices.findIndex(inv => inv.id === invoiceId);
 
         if (existingIndex >= 0) {
             updatedInvoices = [...savedInvoices];
@@ -141,11 +276,12 @@ function App() {
         }
 
         saveToLocalStorage(updatedInvoices);
+        setCurrentInvoiceId(invoiceId);
         setShowPreview(true);
     };
 
     const loadInvoice = (invoice) => {
-        setItems(invoice.items.map(item => ({ ...item, gst: item.gst || item.vat || '' })));
+        setItems(invoice.items.map(item => ({ ...item, cost: item.cost || '', gst: item.gst || item.vat || '' })));
         setDiscountEnabled(invoice.discountEnabled);
         setDiscount(invoice.discount);
         setBilledFrom(invoice.billedFrom);
@@ -159,11 +295,12 @@ function App() {
         setCurrency(invoice.currency || 'USD');
         setCurrencySymbol(invoice.currencySymbol || '$');
         setLogoUrl(invoice.logoUrl);
+        setCurrentInvoiceId(invoice.id);
         setShowHistory(false);
     };
 
     const viewInvoice = (invoice) => {
-        setItems(invoice.items.map(item => ({ ...item, gst: item.gst || item.vat || '' })));
+        setItems(invoice.items.map(item => ({ ...item, cost: item.cost || '', gst: item.gst || item.vat || '' })));
         setDiscountEnabled(invoice.discountEnabled);
         setDiscount(invoice.discount);
         setBilledFrom(invoice.billedFrom);
@@ -177,6 +314,7 @@ function App() {
         setCurrency(invoice.currency || 'USD');
         setCurrencySymbol(invoice.currencySymbol || '$');
         setLogoUrl(invoice.logoUrl);
+        setCurrentInvoiceId(invoice.id);
         setShowPreview(true);
     };
 
@@ -191,12 +329,16 @@ function App() {
 
     const updateField = (setter) => (event) => setter(event.target.value);
 
+    const previewBackLabel = showHistory ? 'Back to saved receipts' : showReport ? 'Back to report' : 'Back to edit';
+
+    const monthlyReport = getMonthlyReport();
+
     if (showPreview) {
         return (
             <div className="invoice-wrapper preview-view">
                 <div className="preview-toolbar">
                     <button className="btn-outline" type="button" onClick={() => setShowPreview(false)}>
-                        <ArrowLeft size={16} /> {showHistory ? 'Back to saved receipts' : 'Back to edit'}
+                        <ArrowLeft size={16} /> {previewBackLabel}
                     </button>
                     <button className="btn-generate" type="button" onClick={handlePrint}>
                         <Download size={16} /> Download / Print
@@ -269,7 +411,7 @@ function App() {
                                     <td>{parseFloat(item.quantity || 0)}</td>
                                     <td>{item.unit || '—'}</td>
                                     <td>{currencySymbol}{parseFloat(item.price || 0).toFixed(2)}</td>
-                                    <td>{item.vat ? `${item.vat}%` : '—'}</td>
+                                    <td>{(item.gst || item.vat) ? `${item.gst || item.vat}%` : '—'}</td>
                                     <td>{currencySymbol}{calculateItemTotal(item)}</td>
                                 </tr>
                             ))}
@@ -306,76 +448,37 @@ function App() {
         );
     }
 
-    if (showHistory) {
-        const filteredInvoices = savedInvoices.filter((inv) => {
-            const term = searchQuery.toLowerCase();
-            const matchesInvoiceNo = inv.invoiceNumber?.toLowerCase().includes(term);
-            const matchesClientName = inv.billedTo?.name?.toLowerCase().includes(term);
-            return matchesInvoiceNo || matchesClientName;
-        });
+    const reportSummary = getReportSummary();
+    const clientReport = getClientReport();
+    const recentInvoices = [...savedInvoices].sort((a, b) => b.savedAt.localeCompare(a.savedAt)).slice(0, 5);
 
+    if (showReport) {
         return (
-            <div className="invoice-wrapper history-view">
-                <div className="history-toolbar">
-                    <button className="btn-outline" type="button" onClick={() => setShowHistory(false)}>
-                        <ArrowLeft size={16} /> Back to edit
-                    </button>
-                    <h2 className="history-title">Saved Receipts</h2>
-                </div>
+            <InvoiceReport
+                reportSummary={reportSummary}
+                monthlyReport={monthlyReport}
+                clientReport={clientReport}
+                recentInvoices={recentInvoices}
+                currencySymbol={currencySymbol}
+                calculateInvoiceTotal={calculateInvoiceTotal}
+                setShowReport={setShowReport}
+                setShowHistory={setShowHistory}
+            />
+        );
+    }
 
-                <div style={{ padding: '0 0 24px 0', width: '100%' }}>
-                    <div style={{ position: 'relative', width: '100%', maxWidth: '100%' }}>
-                        <input
-                            type="text"
-                            className="input-field"
-                            placeholder="Search by client name or invoice #"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            style={{ paddingLeft: '40px', height: '48px' }}
-                        />
-                        <div style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', display: 'flex' }}>
-                            <Search size={20} />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="history-card">
-                    {filteredInvoices.length === 0 ? (
-                        <div className="history-empty">No saved receipts found. Generate an invoice to save it.</div>
-                    ) : (
-                        <div className="table-responsive">
-                            <table className="history-table">
-                                <thead>
-                                    <tr>
-                                        <th>Date Saved</th>
-                                        <th>Invoice #</th>
-                                        <th>Billed To</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredInvoices.map((inv) => (
-                                        <tr key={inv.id}>
-                                            <td data-label="Date Saved">{new Date(inv.savedAt).toLocaleString()}</td>
-                                            <td data-label="Invoice #"><span className="badge">#{inv.invoiceNumber}</span></td>
-                                            <td data-label="Billed To">{inv.billedTo?.name || '—'}</td>
-                                            <td>
-                                                <div className="action-buttons">
-                                                    <button className="btn-load" onClick={() => viewInvoice(inv)}>View</button>
-                                                    <button className="btn-load" onClick={() => loadInvoice(inv)}>Edit</button>
-                                                    <button className="btn-del" onClick={() => deleteInvoice(inv.id)} title="Delete">
-                                                        <Trash2 size={16} />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
-            </div>
+    if (showHistory) {
+        return (
+            <ReceiptHistory
+                savedInvoices={savedInvoices}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                viewInvoice={viewInvoice}
+                loadInvoice={loadInvoice}
+                deleteInvoice={deleteInvoice}
+                setShowHistory={setShowHistory}
+                setShowReport={setShowReport}
+            />
         );
     }
 
@@ -631,6 +734,7 @@ function App() {
                             <div className="header-cell" style={{ textAlign: 'left' }}>Quantity</div>
                             <div className="header-cell" style={{ textAlign: 'left' }}>Unit</div>
                             <div className="header-cell" style={{ textAlign: 'left' }}>*Price</div>
+                            <div className="header-cell" style={{ textAlign: 'left' }}>*Cost</div>
                             <div className="header-cell" style={{ textAlign: 'left' }}>Gst (%)</div>
                             <div className="header-cell" style={{ textAlign: 'left', paddingLeft: '8px' }}>Total ({currencySymbol})</div>
                             <div className="header-cell"></div>
@@ -692,6 +796,15 @@ function App() {
                                         value={item.price}
                                         onChange={(e) => handleItemChange(item.id, 'price', e.target.value)}
                                         required
+                                        min="0"
+                                        step="1"
+                                    />
+                                    <input
+                                        type="number"
+                                        className="input-field"
+                                        placeholder="Cost"
+                                        value={item.cost}
+                                        onChange={(e) => handleItemChange(item.id, 'cost', e.target.value)}
                                         min="0"
                                         step="1"
                                     />
@@ -790,18 +903,21 @@ function App() {
                         </div>
                     </div>
                 </div>
-            
 
-            <div className="generate-wrapper">
-                <button className="btn-history" type="button" onClick={() => setShowHistory(true)}>
-                    Saved Receipts
-                </button>
-                <div style={{ width: '20px' }} />
-                <button className="btn-generate" type="submit">
-                    Generate Document
-                </button>
-            </div>
-        </form >
+
+                <div className="generate-wrapper">
+                    <button className="btn-history" type="button" onClick={() => { setShowHistory(true); setShowReport(false); }}>
+                        Saved Receipts
+                    </button>
+                    <button className="btn-outline" type="button" onClick={() => { setShowReport(true); setShowHistory(false); }}>
+                        Invoice Report
+                    </button>
+                    <div style={{ width: '20px' }} />
+                    <button className="btn-generate" type="submit">
+                        Generate Document
+                    </button>
+                </div>
+            </form >
         </>
     );
 }
