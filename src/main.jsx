@@ -1,18 +1,34 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
 import App from './App.jsx'
+import './index.css'
 
-window.MyReactApp = {
-  init: function (containerId) {
-    const container = document.getElementById(containerId);
+function renderApp(container) {
+  const root = createRoot(container)
 
-    if (!container) {
-      console.error("Container not found:", containerId);
-      return;
+  root.render(
+    <StrictMode>
+      <App />
+    </StrictMode>
+  )
+}
+
+// WordPress / external embed API
+window.InvoiceWidget = {
+  init: (id = 'invoice-root') => {
+    const el = document.getElementById(id)
+
+    if (!el) {
+      console.error(`InvoiceWidget: container not found #${id}`)
+      return
     }
 
-    const root = ReactDOM.createRoot(container);
-    root.render(<App />);
+    renderApp(el)
   }
-};
+}
+
+// Auto mount for dev (Vite local)
+const devRoot = document.getElementById('root')
+if (devRoot) {
+  renderApp(devRoot)
+}
