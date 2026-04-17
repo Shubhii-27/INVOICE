@@ -87,18 +87,6 @@ function App() {
         return invoice.items.reduce((sum, item) => sum + parseFloat(calculateItemCostTotal(item) || 0), 0);
     };
 
-    const calculateInvoiceProfit = (invoice) => {
-        const revenue = parseFloat(calculateInvoiceTotal(invoice) || 0);
-        const cost = parseFloat(calculateInvoiceCostTotal(invoice) || 0);
-        return (revenue - cost).toFixed(2);
-    };
-
-    const calculateInvoiceProfitMargin = (invoice) => {
-        const revenue = parseFloat(calculateInvoiceTotal(invoice) || 0);
-        const profit = parseFloat(calculateInvoiceProfit(invoice) || 0);
-        return revenue ? ((profit / revenue) * 100).toFixed(2) : '0.00';
-    };
-
     const calculateInvoiceItemTotal = (item) => {
         const quantity = parseFloat(item.quantity) || 0;
         const price = parseFloat(item.price) || 0;
