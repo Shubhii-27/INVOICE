@@ -48,66 +48,64 @@ function App() {
         window.localStorage.setItem('savedInvoices', JSON.stringify(invoices));
     };
 
+    const parseNumber = (value) => {
+        const parsed = parseFloat(value);
+        return Number.isNaN(parsed) ? 0 : parsed;
+    };
+
     const calculateItemTotal = (item) => {
-        const quantity = parseFloat(item.quantity) || 0;
-        const price = parseFloat(item.price) || 0;
-        const gst = parseFloat(item.gst || item.vat) || 0;
+        const quantity = parseNumber(item.quantity);
+        const price = parseNumber(item.price);
+        const gst = parseNumber(item.gst || item.vat);
         const subtotal = quantity * price;
         const gstAmount = subtotal * (gst / 100);
-        return (subtotal + gstAmount).toFixed(2);
+        return Number((subtotal + gstAmount).toFixed(2));
     };
 
     const calculateSubtotal = () => {
-        return items.reduce((sum, item) => sum + parseFloat(calculateItemTotal(item) || 0), 0);
+        return items.reduce((sum, item) => sum + calculateItemTotal(item), 0);
     };
 
     const getDiscountAmount = () => {
         const subtotal = calculateSubtotal();
-        const discountValue = parseFloat(discount) || 0;
-        return ((subtotal * discountValue) / 100).toFixed(2);
+        const discountValue = parseNumber(discount);
+        return Number(((subtotal * discountValue) / 100).toFixed(2));
     };
 
     const calculateTotal = () => {
         const subtotal = calculateSubtotal();
-        const discountValue = parseFloat(discount) || 0;
+        const discountValue = parseNumber(discount);
         if (discountEnabled && discountValue > 0) {
-            const discountAmt = parseFloat(getDiscountAmount());
-            return (subtotal - discountAmt).toFixed(2);
+            const discountAmt = getDiscountAmount();
+            return Number((subtotal - discountAmt).toFixed(2));
         }
-        return subtotal.toFixed(2);
+        return Number(subtotal.toFixed(2));
     };
 
     const calculateItemCostTotal = (item) => {
-        const quantity = parseFloat(item.quantity) || 0;
-        const cost = parseFloat(item.cost) || 0;
-        return parseFloat(quantity * cost).toFixed(2);
+        const quantity = parseNumber(item.quantity);
+        const cost = parseNumber(item.cost);
+        return Number((quantity * cost).toFixed(2));
     };
 
     const calculateInvoiceCostTotal = (invoice) => {
-        return invoice.items.reduce((sum, item) => sum + parseFloat(calculateItemCostTotal(item) || 0), 0);
+        return invoice.items.reduce((sum, item) => sum + calculateItemCostTotal(item), 0);
     };
 
-    const calculateInvoiceItemTotal = (item) => {
-        const quantity = parseFloat(item.quantity) || 0;
-        const price = parseFloat(item.price) || 0;
-        const gst = parseFloat(item.gst || item.vat) || 0;
-        const subtotal = quantity * price;
-        const gstAmount = subtotal * (gst / 100);
-        return parseFloat(subtotal + gstAmount).toFixed(2);
-    };
+    const calculateInvoiceItemTotal = (item) => calculateItemTotal(item);
 
     const calculateInvoiceSubtotal = (invoice) => {
-        return invoice.items.reduce((sum, item) => sum + parseFloat(calculateInvoiceItemTotal(item) || 0), 0);
+        return invoice.items.reduce((sum, item) => sum + calculateInvoiceItemTotal(item), 0);
     };
 
     const calculateInvoiceTotal = (invoice) => {
         const subtotal = calculateInvoiceSubtotal(invoice);
-        const discountValue = parseFloat(invoice.discount) || 0;
+        const discountValue = parseNumber(invoice.discount);
         if (invoice.discountEnabled && discountValue > 0) {
-            const discountAmt = parseFloat(((subtotal * discountValue) / 100).toFixed(2));
-            return (subtotal - discountAmt).toFixed(2);
+            const discountAmt = Number(((subtotal * discountValue) / 100).toFixed(2));
+            return Number((subtotal - discountAmt).toFixed(2));
         }
-        return subtotal.toFixed(2);
+        return Number(subtotal.toFixed(2));
     };
 
     const getReportSummary = () => {
@@ -400,7 +398,7 @@ function App() {
                                     <td>{item.unit || '—'}</td>
                                     <td>{currencySymbol}{parseFloat(item.price || 0).toFixed(2)}</td>
                                     <td>{(item.gst || item.vat) ? `${item.gst || item.vat}%` : '—'}</td>
-                                    <td>{currencySymbol}{calculateItemTotal(item)}</td>
+                                    <td>{currencySymbol}{calculateItemTotal(item).toFixed(2)}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -412,15 +410,15 @@ function App() {
                                 <span>Sub Total</span>
                                 <span>{currencySymbol}{calculateSubtotal().toFixed(2)}</span>
                             </div>
-                            {discountEnabled && parseFloat(discount) > 0 ? (
+                            {discountEnabled && parseNumber(discount) > 0 ? (
                                 <div className="preview-totals-row">
                                     <span>Discount ({discount}%)</span>
-                                    <span>-{currencySymbol}{getDiscountAmount()}</span>
+                                    <span>-{currencySymbol}{getDiscountAmount().toFixed(2)}</span>
                                 </div>
                             ) : null}
                             <div className="preview-totals-row total">
                                 <span>Total</span>
-                                <span>{currencySymbol}{calculateTotal()}</span>
+                                <span>{currencySymbol}{calculateTotal().toFixed(2)}</span>
                             </div>
                         </div>
                     </div>
@@ -625,97 +623,6 @@ function App() {
                         </div>
                     </div>
 
-                    <div className="more-options-bar" onClick={() => setShowMoreOptions(!showMoreOptions)}>
-                        More Options {showMoreOptions ? '▲' : '▼'}
-                    </div>
-
-                    {showMoreOptions && (
-                        <div className="info-grid">
-                            <div className="input-wrapper">
-                                <span className="input-label">Payment Status</span>
-                                <select
-                                    className="input-field"
-                                    value={paymentStatus}
-                                    onChange={updateField(setPaymentStatus)}
-                                >
-                                    <option value="Pending">Pending</option>
-                                    <option value="Paid">Paid</option>
-                                    <option value="Overdue">Overdue</option>
-                                    <option value="Cancelled">Cancelled</option>
-                                    <option value="Partially Paid">Partially Paid</option>
-                                    <option value="Refunded">Refunded</option>
-                                    <option value="Draft">Draft</option>
-                                </select>
-                            </div>
-                            <div className="input-wrapper">
-                                <span className="input-label">Currency</span>
-                                <select
-                                    className="input-field"
-                                    value={currency}
-                                    onChange={(e) => {
-                                        const map = {
-                                            USD: '$', EUR: '€', GBP: '£', INR: '₹',
-                                            JPY: '¥', CNY: '¥', AUD: 'A$', CAD: 'C$',
-                                            CHF: 'Fr', SGD: 'S$', AED: 'د.إ', MYR: 'RM',
-                                            BRL: 'R$', ZAR: 'R', MXN: 'MX$', KRW: '₩',
-                                            HKD: 'HK$', NZD: 'NZ$', SEK: 'kr', NOK: 'kr',
-                                        };
-                                        setCurrency(e.target.value);
-                                        setCurrencySymbol(map[e.target.value] || e.target.value);
-                                    }}
-                                >
-                                    <option value="USD">USD – US Dollar</option>
-                                    <option value="EUR">EUR – Euro</option>
-                                    <option value="GBP">GBP – British Pound</option>
-                                    <option value="INR">INR – Indian Rupee</option>
-                                    <option value="JPY">JPY – Japanese Yen</option>
-                                    <option value="CNY">CNY – Chinese Yuan</option>
-                                    <option value="AUD">AUD – Australian Dollar</option>
-                                    <option value="CAD">CAD – Canadian Dollar</option>
-                                    <option value="CHF">CHF – Swiss Franc</option>
-                                    <option value="SGD">SGD – Singapore Dollar</option>
-                                    <option value="AED">AED – UAE Dirham</option>
-                                    <option value="MYR">MYR – Malaysian Ringgit</option>
-                                    <option value="BRL">BRL – Brazilian Real</option>
-                                    <option value="ZAR">ZAR – South African Rand</option>
-                                    <option value="MXN">MXN – Mexican Peso</option>
-                                    <option value="KRW">KRW – South Korean Won</option>
-                                    <option value="HKD">HKD – Hong Kong Dollar</option>
-                                    <option value="NZD">NZD – New Zealand Dollar</option>
-                                    <option value="SEK">SEK – Swedish Krona</option>
-                                    <option value="NOK">NOK – Norwegian Krone</option>
-                                </select>
-                            </div>
-                            <div className="input-wrapper">
-                                <span className="input-label">Currency Symbol</span>
-                                <select
-                                    className="input-field"
-                                    value={currencySymbol}
-                                    onChange={updateField(setCurrencySymbol)}
-                                >
-                                    <option value="$">$ – Dollar</option>
-                                    <option value="€">€ – Euro</option>
-                                    <option value="£">£ – Pound</option>
-                                    <option value="₹">₹ – Rupee</option>
-                                    <option value="¥">¥ – Yen / Yuan</option>
-                                    <option value="A$">A$ – Australian Dollar</option>
-                                    <option value="C$">C$ – Canadian Dollar</option>
-                                    <option value="Fr">Fr – Swiss Franc</option>
-                                    <option value="S$">S$ – Singapore Dollar</option>
-                                    <option value="د.إ">د.إ – UAE Dirham</option>
-                                    <option value="RM">RM – Malaysian Ringgit</option>
-                                    <option value="R$">R$ – Brazilian Real</option>
-                                    <option value="R">R – South African Rand</option>
-                                    <option value="MX$">MX$ – Mexican Peso</option>
-                                    <option value="₩">₩ – Korean Won</option>
-                                    <option value="HK$">HK$ – Hong Kong Dollar</option>
-                                    <option value="NZ$">NZ$ – New Zealand Dollar</option>
-                                    <option value="kr">kr – Scandinavian Krone</option>
-                                </select>
-                            </div>
-                        </div>
-                    )}
-
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <div className="items-header-row">
                             <div className="header-cell" style={{ textAlign: 'left' }}>*Item</div>
@@ -728,7 +635,7 @@ function App() {
                             <div className="header-cell"></div>
                         </div>
 
-                        {items.map((item) => (
+                        {items.map((item, index) => (
                             <div className="item-row-wrapper" key={item.id}>
                                 <div className="item-row">
                                     <div style={{ display: 'flex', gap: '8px' }}>
@@ -812,7 +719,7 @@ function App() {
                                         <input
                                             type="text"
                                             className="input-field"
-                                            value={calculateItemTotal(item)}
+                                            value={calculateItemTotal(item).toFixed(2)}
                                             disabled
                                             style={{ backgroundColor: '#f8fafc' }}
                                         />
@@ -821,6 +728,99 @@ function App() {
                                         <Trash2 size={20} />
                                     </button>
                                 </div>
+                                {index === 0 && (
+                                    <>
+                                        <div className="more-options-bar" onClick={() => setShowMoreOptions(!showMoreOptions)}>
+                                            More Options {showMoreOptions ? '▲' : '▼'}
+                                        </div>
+                                        {showMoreOptions && (
+                                            <div className="info-grid">
+                                                <div className="input-wrapper">
+                                                    <span className="input-label">Payment Status</span>
+                                                    <select
+                                                        className="input-field"
+                                                        value={paymentStatus}
+                                                        onChange={updateField(setPaymentStatus)}
+                                                    >
+                                                        <option value="Pending">Pending</option>
+                                                        <option value="Paid">Paid</option>
+                                                        <option value="Overdue">Overdue</option>
+                                                        <option value="Cancelled">Cancelled</option>
+                                                        <option value="Partially Paid">Partially Paid</option>
+                                                        <option value="Refunded">Refunded</option>
+                                                        <option value="Draft">Draft</option>
+                                                    </select>
+                                                </div>
+                                                <div className="input-wrapper">
+                                                    <span className="input-label">Currency</span>
+                                                    <select
+                                                        className="input-field"
+                                                        value={currency}
+                                                        onChange={(e) => {
+                                                            const map = {
+                                                                USD: '$', EUR: '€', GBP: '£', INR: '₹',
+                                                                JPY: '¥', CNY: '¥', AUD: 'A$', CAD: 'C$',
+                                                                CHF: 'Fr', SGD: 'S$', AED: 'د.إ', MYR: 'RM',
+                                                                BRL: 'R$', ZAR: 'R', MXN: 'MX$', KRW: '₩',
+                                                                HKD: 'HK$', NZD: 'NZ$', SEK: 'kr', NOK: 'kr',
+                                                            };
+                                                            setCurrency(e.target.value);
+                                                            setCurrencySymbol(map[e.target.value] || e.target.value);
+                                                        }}
+                                                    >
+                                                        <option value="USD">USD – US Dollar</option>
+                                                        <option value="EUR">EUR – Euro</option>
+                                                        <option value="GBP">GBP – British Pound</option>
+                                                        <option value="INR">INR – Indian Rupee</option>
+                                                        <option value="JPY">JPY – Japanese Yen</option>
+                                                        <option value="CNY">CNY – Chinese Yuan</option>
+                                                        <option value="AUD">AUD – Australian Dollar</option>
+                                                        <option value="CAD">CAD – Canadian Dollar</option>
+                                                        <option value="CHF">CHF – Swiss Franc</option>
+                                                        <option value="SGD">SGD – Singapore Dollar</option>
+                                                        <option value="AED">AED – UAE Dirham</option>
+                                                        <option value="MYR">MYR – Malaysian Ringgit</option>
+                                                        <option value="BRL">BRL – Brazilian Real</option>
+                                                        <option value="ZAR">ZAR – South African Rand</option>
+                                                        <option value="MXN">MXN – Mexican Peso</option>
+                                                        <option value="KRW">KRW – South Korean Won</option>
+                                                        <option value="HKD">HKD – Hong Kong Dollar</option>
+                                                        <option value="NZD">NZD – New Zealand Dollar</option>
+                                                        <option value="SEK">SEK – Swedish Krona</option>
+                                                        <option value="NOK">NOK – Norwegian Krone</option>
+                                                    </select>
+                                                </div>
+                                                <div className="input-wrapper">
+                                                    <span className="input-label">Currency Symbol</span>
+                                                    <select
+                                                        className="input-field"
+                                                        value={currencySymbol}
+                                                        onChange={updateField(setCurrencySymbol)}
+                                                    >
+                                                        <option value="$">$ – Dollar</option>
+                                                        <option value="€">€ – Euro</option>
+                                                        <option value="£">£ – Pound</option>
+                                                        <option value="₹">₹ – Rupee</option>
+                                                        <option value="¥">¥ – Yen / Yuan</option>
+                                                        <option value="A$">A$ – Australian Dollar</option>
+                                                        <option value="C$">C$ – Canadian Dollar</option>
+                                                        <option value="Fr">Fr – Swiss Franc</option>
+                                                        <option value="S$">S$ – Singapore Dollar</option>
+                                                        <option value="د.إ">د.إ – UAE Dirham</option>
+                                                        <option value="RM">RM – Malaysian Ringgit</option>
+                                                        <option value="R$">R$ – Brazilian Real</option>
+                                                        <option value="R">R – South African Rand</option>
+                                                        <option value="MX$">MX$ – Mexican Peso</option>
+                                                        <option value="₩">₩ – Korean Won</option>
+                                                        <option value="HK$">HK$ – Hong Kong Dollar</option>
+                                                        <option value="NZ$">NZ$ – New Zealand Dollar</option>
+                                                        <option value="kr">kr – Scandinavian Krone</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
                                 <div style={{ paddingLeft: '26px' }}>
                                     <input
                                         type="text"
@@ -877,15 +877,15 @@ function App() {
                                     <span>Sub Total</span>
                                     <span>{currencySymbol} {calculateSubtotal().toFixed(2)}</span>
                                 </div>
-                                {discountEnabled && parseFloat(discount) > 0 && (
+                                {discountEnabled && parseNumber(discount) > 0 && (
                                     <div className="subtotal-row" style={{ color: '#ef4444' }}>
                                         <span>Discount ({discount}%)</span>
-                                        <span>-{currencySymbol} {getDiscountAmount()}</span>
+                                        <span>-{currencySymbol} {getDiscountAmount().toFixed(2)}</span>
                                     </div>
                                 )}
                                 <div className="total-row">
                                     <span>Total</span>
-                                    <span>{currencySymbol} {calculateTotal()}</span>
+                                    <span>{currencySymbol} {calculateTotal().toFixed(2)}</span>
                                 </div>
                             </div>
                         </div>

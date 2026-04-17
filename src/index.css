@@ -44,8 +44,14 @@
 }
 
 #root .invoice-wrapper {
-  max-width: 800px;
+  max-width: 1000px;
   width: 100%;
+}
+
+@media (min-width: 1200px) {
+  #root .invoice-wrapper {
+    max-width: 1200px;
+  }
 }
 
 #root .invoice-card {
@@ -501,9 +507,14 @@
   padding: 12px;
   font-size: 14px;
   font-family: inherit;
-  resize: vertical;
-  min-height: 100px;
+  resize: none;
+  height: 140px;
+  max-height: 140px;
   width: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  line-height: 1.5;
   outline: none;
 }
 

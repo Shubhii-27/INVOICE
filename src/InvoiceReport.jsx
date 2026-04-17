@@ -164,7 +164,7 @@ export default function InvoiceReport({
                                         <td>#{inv.invoiceNumber}</td>
                                         <td>{inv.billedTo?.name || '—'}</td>
                                         <td>{inv.paymentStatus || 'Pending'}</td>
-                                        <td>{inv.currencySymbol || '$'}{calculateInvoiceTotal(inv)}</td>
+                                        <td>{inv.currencySymbol || '$'}{calculateInvoiceTotal(inv).toFixed(2)}</td>
                                     </tr>
                                 ))}
                             </tbody>
