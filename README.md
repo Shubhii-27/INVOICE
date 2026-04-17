@@ -40,3 +40,14 @@ This project now builds as a UMD widget and exposes `window.InvoiceWidget.init()
    ```
 
 If you prefer an iframe embed, create a simple static HTML page that includes the widget and embed that page via WordPress iframe shortcode or block.
+
+## Deployment
+
+This project is now ready to deploy as a static app.
+
+- Build command: `npm run build`
+- Output directory: `dist`
+- Vercel config: `vercel.json`
+- Netlify redirects: `public/_redirects`
+
+For Vercel, simply import the repo and deploy. For Netlify, deploy the `dist` folder or connect the repository and use the same build command.
