@@ -6,7 +6,7 @@ import './index.css';
 
 function App() {
     const [items, setItems] = useState([
-        { id: 1, name: '', quantity: 1, unit: '', price: '', cost: '', gst: '', description: '' }
+        { id: 1, name: '', quantity: '', unit: '', price: '', cost: '', gst: '', description: '' }
     ]);
     const [discountEnabled, setDiscountEnabled] = useState(false);
     const [discount, setDiscount] = useState('');
@@ -196,7 +196,7 @@ function App() {
     };
 
     const handleAddItem = () => {
-        setItems([...items, { id: Date.now(), name: '', quantity: 1, unit: '', price: '', cost: '', gst: '', description: '' }]);
+        setItems([...items, { id: Date.now(), name: '', quantity: '', unit: '', price: '', cost: '', gst: '', description: '' }]);
     };
 
     const handleRemoveItem = (id) => {
@@ -756,7 +756,7 @@ function App() {
                                         value={item.unit}
                                         onChange={(e) => handleItemChange(item.id, 'unit', e.target.value)}
                                     >
-                                        <option value="">Unit</option>
+                                        <option value="" disabled>Select unit</option>
                                         <option value="pcs">pcs</option>
                                         <option value="hrs">hrs</option>
                                         <option value="days">days</option>

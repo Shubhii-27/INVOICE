@@ -388,7 +388,7 @@
 
 #root .items-header-row {
   display: grid;
-  grid-template-columns: 3fr 1fr 1fr 1.2fr 1.2fr 1fr 1.5fr 40px;
+  grid-template-columns: 3fr 2.6fr 2fr 2.8fr 2.8fr 2.2fr 1.6fr 40px;
   gap: 12px;
   padding-bottom: 8px;
 }
@@ -402,10 +402,16 @@
 
 #root .item-row {
   display: grid;
-  grid-template-columns: 3fr 1fr 1fr 1.2fr 1.2fr 1fr 1.5fr 40px;
+  grid-template-columns: 3fr 2.6fr 2fr 2.8fr 2.8fr 2.2fr 1.6fr 40px;
   gap: 12px;
   align-items: flex-start;
   margin-bottom: 8px;
+}
+
+#root .item-row>input,
+#root .item-row>select,
+#root .item-row>div {
+  min-width: 0;
 }
 
 #root .item-row-wrapper {
@@ -645,11 +651,11 @@
   border-radius: 50%;
 }
 
-#root input:checked + .slider {
+#root input:checked+.slider {
   background-color: var(--primary-red);
 }
 
-#root input:checked + .slider:before {
+#root input:checked+.slider:before {
   transform: translateX(16px);
 }
 
@@ -881,6 +887,7 @@
     opacity: 0;
     transform: translateY(15px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -915,7 +922,7 @@
   }
 
   #root .item-row {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
     position: relative;
     padding: 16px;
@@ -924,16 +931,19 @@
     border: 1px solid var(--border-light);
   }
 
-  #root .item-row > div:nth-child(1) {
+  #root .item-row>div:nth-child(1) {
     grid-column: span 2;
     padding-right: 40px;
   }
 
-  #root .item-row > div {
+  #root .item-row>div,
+  #root .item-row>input,
+  #root .item-row>select {
     grid-column: span 1;
+    min-width: 0;
   }
 
-  #root .item-row > button.delete-btn {
+  #root .item-row>button.delete-btn {
     position: absolute;
     top: 12px;
     right: 12px;
@@ -943,7 +953,7 @@
     color: var(--primary-red);
   }
 
-  #root .item-row-wrapper > div:last-child {
+  #root .item-row-wrapper>div:last-child {
     padding-left: 0 !important;
     margin-top: 8px;
   }
@@ -1209,9 +1219,7 @@
     margin: 16px 12px;
   }
 
-  #root .item-row {
-    grid-template-columns: 1fr;
-  }
+
 
   #root .generate-wrapper {
     flex-direction: column;
