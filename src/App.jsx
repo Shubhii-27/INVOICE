@@ -324,54 +324,51 @@ function App() {
             <div className="invoice-wrapper preview-view">
                 <div className="preview-toolbar">
                     <button className="btn-outline" type="button" onClick={() => setShowPreview(false)}>
-                        <ArrowLeft size={16} /> {previewBackLabel}
+                        <ArrowLeft size={18} /> {previewBackLabel}
                     </button>
                     <button className="btn-generate" type="button" onClick={handlePrint}>
-                        <Download size={16} /> Download / Print
+                        <Download size={20} /> Download / Print Invoice
                     </button>
                 </div>
 
                 <div className="preview-card">
                     <div className="preview-header">
-                        <div>
-                            <h2 className="preview-title">Invoice</h2>
-                            <p className="preview-number">Invoice #{invoiceNumber}</p>
+                        <div className="preview-header-top-row">
+                            <div className="preview-logo-box">
+                                {logoUrl ? <img src={logoUrl} alt="Logo" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <span style={{ fontWeight: 800, color: '#ef4444' }}>LOGO</span>}
+                            </div>
+                            <div className="preview-header-content">
+                                <h2 className="preview-title">Invoice</h2>
+                                <p className="preview-number">INV-{invoiceNumber}</p>
+                            </div>
                         </div>
-                        <div className="preview-logo-box">
-                            {logoUrl ? <img src={logoUrl} alt="Logo" /> : <span>Logo</span>}
+                    </div>
+
+                    <div className="preview-body-top">
+                        <div style={{ textAlign: 'right', marginLeft: 'auto' }}>
+                            <div className="preview-detail-title" style={{ border: 'none', marginBottom: '4px' }}>Billed From</div>
+                            <div className="preview-detail-value" style={{ fontWeight: 700 }}>
+                                {billedFrom.name || 'Your Company Name'}<br />
+                                <span style={{ fontWeight: 400, opacity: 0.8 }}>{billedFrom.address || 'Address goes here'}</span>
+                            </div>
                         </div>
                     </div>
 
                     <div className="preview-details-grid">
                         <div className="preview-detail">
-                            <div className="preview-detail-title">Billed From</div>
+                            <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: '#101828' }}>Invoice To:</div>
                             <div className="preview-detail-value">
-                                {billedFrom.name || 'Your company name'}<br />
-                                {billedFrom.address || 'Company address, city, state'}<br />
-                                {billedFrom.email || 'email@example.com'}
+                                <strong>{billedTo.name || 'Client Name'}</strong><br />
+                                {billedTo.address || 'Client Address'}<br />
+                                {billedTo.email}
                             </div>
                         </div>
-                        <div className="preview-detail">
-                            <div className="preview-detail-title">Billed To</div>
+                        <div className="preview-detail" style={{ textAlign: 'right' }}>
+                            <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: '#101828' }}>Invoice No:</div>
                             <div className="preview-detail-value">
-                                {billedTo.name || 'Client name'}<br />
-                                {billedTo.address || 'Client address, city, state'}<br />
-                                {billedTo.email || 'client@example.com'}
-                            </div>
-                        </div>
-                        <div className="preview-detail">
-                            <div className="preview-detail-title">Dates</div>
-                            <div className="preview-detail-value">
-                                <strong>Issue Date:</strong> {formatDate(issueDate)}<br />
-                                <strong>Due Date:</strong> {formatDate(dueDate)}<br />
-                                <strong>Delivery Date:</strong> {formatDate(deliveryDate)}
-                            </div>
-                        </div>
-                        <div className="preview-detail">
-                            <div className="preview-detail-title">Status</div>
-                            <div className="preview-detail-value">
-                                <strong>Payment:</strong> {paymentStatus}<br />
-                                <strong>Currency:</strong> {currency} ({currencySymbol})
+                                <strong>Date:</strong> {formatDate(issueDate)}<br />
+                                <strong>Due:</strong> {formatDate(dueDate)}<br />
+                                <strong>Status:</strong> {paymentStatus}
                             </div>
                         </div>
                     </div>
@@ -379,40 +376,46 @@ function App() {
                     <table className="preview-items-table">
                         <thead>
                             <tr>
-                                <th>Description</th>
-                                <th>Qty</th>
-                                <th>Unit</th>
+                                <th style={{ width: '60px' }}>S.l. No</th>
+                                <th>Product Description</th>
                                 <th>Price</th>
-                                <th>VAT</th>
+                                <th>QTY</th>
                                 <th>Total</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {items.map((item) => (
+                            {items.map((item, index) => (
                                 <tr key={item.id}>
+                                    <td>{index + 1}</td>
                                     <td>
                                         <strong>{item.name || 'Product / Service'}</strong>
                                         {item.description ? <div className="preview-description">{item.description}</div> : null}
                                     </td>
-                                    <td>{parseFloat(item.quantity || 0)}</td>
-                                    <td>{item.unit || '—'}</td>
                                     <td>{currencySymbol}{parseFloat(item.price || 0).toFixed(2)}</td>
-                                    <td>{(item.gst || item.vat) ? `${item.gst || item.vat}%` : '—'}</td>
+                                    <td>{parseFloat(item.quantity || 0)} {item.unit}</td>
                                     <td>{currencySymbol}{calculateItemTotal(item).toFixed(2)}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
 
-                    <div className="preview-summary">
-                        <div className="preview-totals">
-                            <div className="preview-totals-row">
+                    <div className="preview-summary" style={{ marginTop: '40px' }}>
+                        <div style={{ flex: 1, paddingRight: '40px' }}>
+                            {notes && (
+                                <div className="preview-notes" style={{ margin: 0, padding: 0, backgroundColor: 'transparent', border: 'none', boxShadow: 'none' }}>
+                                    <div className="preview-notes-title" style={{ borderBottom: '2px solid #ef4444', display: 'inline-block', paddingBottom: '4px' }}>Terms & Conditions:</div>
+                                    <div className="preview-notes-text" style={{ marginTop: '10px' }}>{notes}</div>
+                                </div>
+                            )}
+                        </div>
+                        <div className="preview-totals" style={{ width: '300px' }}>
+                            <div className="preview-totals-row" style={{ border: 'none', padding: '5px 20px' }}>
                                 <span>Sub Total</span>
                                 <span>{currencySymbol}{calculateSubtotal().toFixed(2)}</span>
                             </div>
                             {discountEnabled && parseNumber(discount) > 0 ? (
-                                <div className="preview-totals-row">
-                                    <span>Discount ({discount}%)</span>
+                                <div className="preview-totals-row" style={{ border: 'none', padding: '5px 20px' }}>
+                                    <span>Discount</span>
                                     <span>-{currencySymbol}{getDiscountAmount().toFixed(2)}</span>
                                 </div>
                             ) : null}
@@ -423,12 +426,14 @@ function App() {
                         </div>
                     </div>
 
-                    {notes && (
-                        <div className="preview-notes">
-                            <div className="preview-notes-title">Notes</div>
-                            <div className="preview-notes-text">{notes}</div>
+                    <div className="preview-signature-area">
+                        <div className="signature-box">
+                            <div className="signature-line"></div>
+                            <div className="signature-label">Signature</div>
                         </div>
-                    )}
+                    </div>
+
+                    <div className="preview-footer-geometric"></div>
                 </div>
             </div>
         );
@@ -472,51 +477,57 @@ function App() {
         <>
             <form className="invoice-wrapper edit-view" onSubmit={handleGenerate}>
                 <div className="invoice-card">
-                    <div className="header-row">
-                        <div className="logo-upload-box">
-                            {logoUrl ? (
-                                <div className="logo-preview-wrapper" onClick={() => fileInputRef.current?.click()} title="Click to change logo">
-                                    <img src={logoUrl} alt="Logo Preview" className="logo-preview-img" />
-                                    <button
-                                        className="remove-logo-btn"
-                                        type="button"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setLogoUrl(null);
-                                        }}
-                                        title="Remove logo"
-                                    >
-                                        <Trash2 size={14} />
-                                    </button>
+                    <div className="card-header-geometric">
+                        <div className="header-row">
+                            <div className="logo-upload-box">
+                                {logoUrl ? (
+                                    <div className="logo-preview-wrapper" onClick={() => fileInputRef.current?.click()} title="Click to change logo">
+                                        <img src={logoUrl} alt="Logo Preview" className="logo-preview-img" />
+                                        <button
+                                            className="remove-logo-btn"
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setLogoUrl(null);
+                                            }}
+                                            title="Remove logo"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="logo-preview-wrapper" onClick={() => fileInputRef.current?.click()}>
+                                        <UploadCloud size={32} color="var(--primary)" />
+                                    </div>
+                                )}
+                                <div className="logo-info">
+                                    <span className="logo-title" style={{ color: 'white' }}>{logoUrl ? 'Business Logo' : 'Add your logo'}</span>
+                                    <span className="logo-subtitle" style={{ color: 'rgba(255,255,255,0.6)' }}>{logoUrl ? 'Click to replace' : 'JPG, PNG supported'}</span>
                                 </div>
-                            ) : (
-                                <UploadCloud size={28} color="#94a3b8" />
-                            )}
-                            <div className="logo-info">
-                                <span className="logo-title">{logoUrl ? 'Logo Selected' : 'Add your logo'}</span>
-                                <span className="logo-subtitle">{logoUrl ? 'Click image to change' : 'Not required'}</span>
+                                {!logoUrl && (
+                                    <button
+                                        className="btn-outline"
+                                        type="button"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.2)' }}
+                                    >
+                                        Select File
+                                    </button>
+                                )}
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    onChange={handleLogoChange}
+                                />
                             </div>
-                            {!logoUrl && (
-                                <button
-                                    className="btn-outline"
-                                    type="button"
-                                    onClick={() => fileInputRef.current?.click()}
-                                >
-                                    Select File
-                                </button>
-                            )}
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                accept="image/*"
-                                style={{ display: 'none' }}
-                                onChange={handleLogoChange}
-                            />
+                            <h1 className="invoice-title" style={{ color: 'white', background: 'none', WebkitTextFillColor: 'initial' }}>Invoice</h1>
                         </div>
-                        <h1 className="invoice-title">INVOICE</h1>
                     </div>
 
-                    <div className="details-row">
+                    <div className="card-body-editor">
+                        <div className="details-row">
                         <div className="detail-box">
                             <span className="detail-label">*Billed From</span>
                             <div className="detail-fields">
@@ -625,6 +636,7 @@ function App() {
 
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <div className="items-header-row">
+                            <div className="header-cell"></div> {/* Spacer for drag handle */}
                             <div className="header-cell" style={{ textAlign: 'left' }}>*Item</div>
                             <div className="header-cell" style={{ textAlign: 'left' }}>Quantity</div>
                             <div className="header-cell" style={{ textAlign: 'left' }}>Unit</div>
@@ -638,17 +650,15 @@ function App() {
                         {items.map((item, index) => (
                             <div className="item-row-wrapper" key={item.id}>
                                 <div className="item-row">
-                                    <div style={{ display: 'flex', gap: '8px' }}>
-                                        <div className="item-row-grip"><GripVertical size={18} /></div>
-                                        <input
-                                            type="text"
-                                            className="input-field"
-                                            placeholder='Item description'
-                                            value={item.name}
-                                            onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
-                                            required
-                                        />
-                                    </div>
+                                    <div className="item-row-grip"><GripVertical size={18} /></div>
+                                    <input
+                                        type="text"
+                                        className="input-field"
+                                        placeholder='Item description'
+                                        value={item.name}
+                                        onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
+                                        required
+                                    />
                                     <input
                                         type="number"
                                         className="input-field"
@@ -721,7 +731,7 @@ function App() {
                                             className="input-field"
                                             value={calculateItemTotal(item).toFixed(2)}
                                             disabled
-                                            style={{ backgroundColor: '#f8fafc' }}
+                                            style={{ backgroundColor: 'transparent' }}
                                         />
                                     </div>
                                     <button className="delete-btn" type="button" onClick={() => handleRemoveItem(item.id)}>
@@ -838,74 +848,82 @@ function App() {
                         </button>
                     </div>
 
-                    <div className="bottom-section">
-                        <div className="notes-section">
-                            <span className="input-label" style={{ fontWeight: 800 }}>Notes</span>
-                            <textarea
-                                className="notes-textarea"
-                                placeholder="Enter payment terms, bank details, or a thank you message..."
-                                value={notes}
-                                onChange={(e) => setNotes(e.target.value)}
-                            />
-                        </div>
+                        <div className="bottom-section">
+                            <div className="notes-section">
+                                <span className="detail-label">Notes / Terms & Conditions</span>
+                                <textarea
+                                    className="notes-textarea"
+                                    placeholder="Enter additional notes, payment terms, or terms & conditions here..."
+                                    value={notes}
+                                    onChange={updateField(setNotes)}
+                                ></textarea>
+                            </div>
 
-                        <div className="summary-section">
-                            <label className="discount-row">
-                                <span className="switch">
-                                    <input type="checkbox" checked={discountEnabled} onChange={(e) => setDiscountEnabled(e.target.checked)} />
-                                    <span className="slider"></span>
-                                </span>
-                                <span className="discount-label">Discount</span>
-                                <span className="discount-input-wrapper">
-                                    <input
-                                        type="number"
-                                        className="discount-input"
-                                        disabled={!discountEnabled}
-                                        value={discount}
-                                        onChange={(e) => setDiscount(e.target.value)}
-                                        min="0"
-                                        max="100"
-                                        step="1"
-                                    />
-                                    <span className="discount-symbol">%</span>
-                                </span>
-                            </label>
-
-                            <div className="totals-box">
-                                <span className="totals-label">Total</span>
-                                <div className="subtotal-row">
-                                    <span>Sub Total</span>
-                                    <span>{currencySymbol} {calculateSubtotal().toFixed(2)}</span>
-                                </div>
-                                {discountEnabled && parseNumber(discount) > 0 && (
-                                    <div className="subtotal-row" style={{ color: '#ef4444' }}>
-                                        <span>Discount ({discount}%)</span>
-                                        <span>-{currencySymbol} {getDiscountAmount().toFixed(2)}</span>
+                            <div className="summary-section">
+                                <div className="totals-box">
+                                    <div className="subtotal-row">
+                                        <span className="totals-label">Sub Total</span>
+                                        <span>{currencySymbol}{calculateSubtotal().toFixed(2)}</span>
                                     </div>
-                                )}
-                                <div className="total-row">
-                                    <span>Total</span>
-                                    <span>{currencySymbol} {calculateTotal().toFixed(2)}</span>
+
+                                    <div className="discount-row">
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <label className="switch">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={discountEnabled}
+                                                    onChange={(e) => setDiscountEnabled(e.target.checked)}
+                                                />
+                                                <span className="slider"></span>
+                                            </label>
+                                            <span className="discount-label">Add Discount</span>
+                                        </div>
+                                        {discountEnabled && (
+                                            <div className="discount-input-wrapper">
+                                                <input
+                                                    type="number"
+                                                    className="discount-input"
+                                                    placeholder="0"
+                                                    value={discount}
+                                                    onChange={updateField(setDiscount)}
+                                                    min="0"
+                                                    max="100"
+                                                />
+                                                <span className="discount-symbol">%</span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {discountEnabled && parseNumber(discount) > 0 && (
+                                        <div className="subtotal-row">
+                                            <span className="totals-label">Discount Amount</span>
+                                            <span style={{ color: 'var(--primary)' }}>-{currencySymbol}{getDiscountAmount().toFixed(2)}</span>
+                                        </div>
+                                    )}
+
+                                    <div className="total-row">
+                                        <span className="total-label">Total Amount</span>
+                                        <span className="total-value">{currencySymbol}{calculateTotal().toFixed(2)}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <div className="generate-wrapper">
+                            <button className="btn-generate" type="submit">
+                                <Download size={20} /> Generate & Save Invoice
+                            </button>
+                            <button className="btn-history" type="button" onClick={() => setShowHistory(true)}>
+                                <Search size={18} /> Invoice History
+                            </button>
+                            <button className="btn-outline" type="button" onClick={() => setShowReport(true)}>
+                                Profit & Loss Report
+                            </button>
+                        </div>
                     </div>
+                    <div className="card-footer-geometric"></div>
                 </div>
-
-
-                <div className="generate-wrapper">
-                    <button className="btn-history" type="button" onClick={() => { setShowHistory(true); setShowReport(false); }}>
-                        Saved Receipts
-                    </button>
-                    <button className="btn-outline" type="button" onClick={() => { setShowReport(true); setShowHistory(false); }}>
-                        Invoice Report
-                    </button>
-                    <div style={{ width: '20px' }} />
-                    <button className="btn-generate" type="submit">
-                        Generate Document
-                    </button>
-                </div>
-            </form >
+            </form>
         </>
     );
 }

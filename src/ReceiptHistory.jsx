@@ -22,12 +22,12 @@ export default function ReceiptHistory({
         <div className="invoice-wrapper history-view">
             <div className="history-toolbar">
                 <button className="btn-outline" type="button" onClick={() => setShowHistory(false)}>
-                    <ArrowLeft size={16} /> Back to edit
+                    <ArrowLeft size={18} /> Back to Edit
                 </button>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <h2 className="history-title">Saved Receipts</h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <h2 className="history-title">Saved Receipt Archive</h2>
                     <button className="btn-outline" type="button" onClick={() => { setShowReport(true); setShowHistory(false); }}>
-                        Invoice Report
+                        Business Intelligence
                     </button>
                 </div>
             </div>

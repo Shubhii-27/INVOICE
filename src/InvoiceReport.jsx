@@ -18,12 +18,12 @@ export default function InvoiceReport({
         <div className="invoice-wrapper history-view">
             <div className="history-toolbar">
                 <button className="btn-outline" type="button" onClick={() => setShowReport(false)}>
-                    <ArrowLeft size={16} /> Back to edit
+                    <ArrowLeft size={18} /> Back to Edit
                 </button>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <h2 className="history-title">Complete Invoice Report</h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <h2 className="history-title">Business Intelligence Report</h2>
                     <button className="btn-history" type="button" onClick={() => { setShowHistory(true); setShowReport(false); }}>
-                        Saved Receipts
+                        View Saved Receipts
                     </button>
                 </div>
             </div>
