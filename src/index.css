@@ -2170,6 +2170,10 @@ body {
   #root .preview-toolbar .btn-generate {
     min-height: 6.5vh;
   }
+
+  #root .preview-toolbar .btn-generate {
+    margin-top: 8px;
+  }
 }
 
 /* Fluid preview sizing override (% and vh based) */
