@@ -454,7 +454,7 @@ body {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
   color: var(--white);
   border: none;
-  padding: 16px 48px;
+  padding: 10px 22px;
   font-size: 14px;
   font-weight: 800;
   text-transform: uppercase;
@@ -1074,7 +1074,10 @@ body {
 
 #root .preview-toolbar .btn-outline,
 #root .preview-toolbar .btn-generate {
-  min-height: 44px;
+  width: 30px;
+  min-height: 6vh;
+  padding-top: 1.2vh;
+  padding-bottom: 1.2vh;
   white-space: nowrap;
 }
 
@@ -1906,13 +1909,15 @@ body {
     margin: 0;
     padding: 0;
     width: 210mm;
-    height: 297mm;
-    max-height: 297mm;
+    height: 297mm !important;
+    max-height: 297mm !important;
     page-break-after: avoid;
     page-break-inside: avoid;
     box-sizing: border-box;
     position: relative;
-    overflow: visible;
+    overflow: hidden !important;
+    transform: scale(0.94);
+    transform-origin: top center;
   }
 
   #root .preview-header {
@@ -1921,52 +1926,61 @@ body {
   }
 
   #root .preview-header-top-row {
-    padding: 10mm 16mm !important;
+    padding: 7mm 12mm !important;
   }
 
   #root .preview-body-top {
-    padding: 6mm 16mm !important;
+    padding: 4mm 12mm !important;
   }
 
   #root .preview-details-grid {
-    padding: 0 16mm !important;
-    gap: 8mm !important;
-    margin-bottom: 6mm !important;
+    padding: 0 12mm !important;
+    gap: 4mm !important;
+    margin-bottom: 3mm !important;
   }
 
   #root .preview-items-table {
-    width: calc(100% - 32mm) !important;
-    margin: 4mm 16mm !important;
-    table-layout: fixed;
+    width: calc(100% - 24mm) !important;
+    margin: 2mm 12mm !important;
+    table-layout: auto;
   }
 
   #root .preview-items-table th,
   #root .preview-items-table td {
-    padding: 3mm 2.5mm !important;
+    padding: 2mm 1.8mm !important;
     vertical-align: top;
     word-break: break-word;
+    white-space: normal !important;
+    font-size: 11px !important;
+    line-height: 1.25 !important;
   }
 
   #root .preview-summary {
-    padding: 0 16mm !important;
-    margin-top: 8mm !important;
+    padding: 0 12mm !important;
+    margin-top: 3mm !important;
     align-items: flex-start !important;
   }
 
   #root .preview-summary-notes {
-    padding-right: 8mm !important;
+    padding-right: 4mm !important;
   }
 
   #root .preview-totals {
-    width: 72mm !important;
+    width: 62mm !important;
+  }
+
+  #root .preview-totals-row {
+    padding: 2.2mm 2.5mm !important;
+    font-size: 12px !important;
   }
 
   #root .preview-signature-area {
-    margin: 12mm 16mm 10mm !important;
+    margin: 7mm 12mm 6mm !important;
   }
 
   #root .preview-footer-geometric {
-    margin-top: 8mm !important;
+    margin-top: 3mm !important;
+    height: 42mm !important;
   }
 
 }
@@ -2157,6 +2171,7 @@ body {
 }
 
 @media (max-width: 480px) {
+
   #root .preview-header-top-row,
   #root .preview-body-top,
   #root .preview-details-grid,
@@ -2234,6 +2249,7 @@ body {
 }
 
 @media (max-width: 480px) {
+
   #root .preview-toolbar .btn-outline,
   #root .preview-toolbar .btn-generate {
     min-height: 7vh;
