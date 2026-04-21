@@ -256,11 +256,23 @@
 
     .history-table td::before {
         content: attr(data-label);
-        float: left;
+        float: none;
         font-weight: 700;
         font-size: 10px;
         text-transform: uppercase;
         color: var(--text-muted);
+    }
+
+    .history-table td[data-label] {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        text-align: left;
+    }
+
+    .history-table td[data-label]::before {
+        flex-shrink: 0;
     }
 }
 
@@ -270,6 +282,7 @@
     text-align: left;
     border-bottom: 1px solid var(--border-light);
     font-size: 14px;
+    line-height: 1.5;
 }
 
 @media (max-width: 768px) {
