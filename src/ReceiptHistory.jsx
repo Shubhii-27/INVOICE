@@ -24,7 +24,7 @@ export default function ReceiptHistory({
                 <button className="btn-outline" type="button" onClick={() => setShowHistory(false)}>
                     <ArrowLeft size={18} /> Back to Edit
                 </button>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                <div className="history-toolbar-content">
                     <h2 className="history-title">Saved Receipt Archive</h2>
                     <button className="btn-outline" type="button" onClick={() => { setShowReport(true); setShowHistory(false); }}>
                         Business Intelligence

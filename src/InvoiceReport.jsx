@@ -20,7 +20,7 @@ export default function InvoiceReport({
                 <button className="btn-outline" type="button" onClick={() => setShowReport(false)}>
                     <ArrowLeft size={18} /> Back to Edit
                 </button>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                <div className="history-toolbar-content">
                     <h2 className="history-title">Business Intelligence Report</h2>
                     <button className="btn-history" type="button" onClick={() => { setShowHistory(true); setShowReport(false); }}>
                         View Saved Receipts
