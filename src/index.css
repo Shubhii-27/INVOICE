@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
 /* ============================= */
 /* CSS VARIABLES */
 /* ============================= */
@@ -2055,6 +2061,114 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===== Final global responsive alignment (all devices) ===== */
+#root .preview-toolbar,
+#root .preview-card,
+#root .preview-summary,
+#root .preview-details-grid,
+#root .preview-totals,
+#root .preview-summary-notes {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+#root .preview-header-top-row,
+#root .preview-body-top,
+#root .preview-details-grid,
+#root .preview-summary,
+#root .preview-signature-area {
+  padding-left: 4% !important;
+  padding-right: 4% !important;
+}
+
+#root .preview-items-table {
+  width: 100% !important;
+  margin: 1.25vh 0 !important;
+}
+
+#root .preview-items-table th,
+#root .preview-items-table td {
+  text-align: left;
+  vertical-align: top;
+}
+
+#root .preview-items-table th:nth-child(1),
+#root .preview-items-table td:nth-child(1) {
+  text-align: center;
+}
+
+#root .preview-items-table th:nth-child(3),
+#root .preview-items-table td:nth-child(3),
+#root .preview-items-table th:nth-child(4),
+#root .preview-items-table td:nth-child(4),
+#root .preview-items-table th:nth-child(5),
+#root .preview-items-table td:nth-child(5) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#root .preview-totals-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+#root .preview-totals-row span:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 768px) {
+  #root .preview-toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.25vh;
+  }
+
+  #root .preview-toolbar .btn-outline,
+  #root .preview-toolbar .btn-generate {
+    width: 100% !important;
+    min-height: 6vh;
+    justify-content: center;
+    text-align: center;
+  }
+
+  #root .preview-header-content,
+  #root .preview-number,
+  #root .preview-body-top>div,
+  #root .preview-detail,
+  #root .preview-detail-title,
+  #root .preview-detail-value {
+    text-align: left !important;
+  }
+
+  #root .preview-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5vh;
+  }
+}
+
+@media (max-width: 480px) {
+  #root .preview-header-top-row,
+  #root .preview-body-top,
+  #root .preview-details-grid,
+  #root .preview-summary,
+  #root .preview-signature-area {
+    padding-left: 3% !important;
+    padding-right: 3% !important;
+  }
+
+  #root .preview-toolbar .btn-outline,
+  #root .preview-toolbar .btn-generate {
+    min-height: 6.5vh;
   }
 }
 
