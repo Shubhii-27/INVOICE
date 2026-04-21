@@ -48,64 +48,77 @@ function App() {
         window.localStorage.setItem('savedInvoices', JSON.stringify(invoices));
     };
 
+    const roundCurrency = (value) => Number((Number(value) || 0).toFixed(2));
+
     const parseNumber = (value) => {
         const parsed = parseFloat(value);
-        return Number.isNaN(parsed) ? 0 : parsed;
+        if (Number.isNaN(parsed) || !Number.isFinite(parsed)) return 0;
+        return parsed;
     };
 
+    const clampPercent = (value) => {
+        const percent = parseNumber(value);
+        return Math.min(Math.max(percent, 0), 100);
+    };
+
+    const clampNonNegative = (value) => Math.max(parseNumber(value), 0);
+
     const calculateItemTotal = (item) => {
-        const quantity = parseNumber(item.quantity);
-        const price = parseNumber(item.price);
-        const gst = parseNumber(item.gst || item.vat);
+        const quantity = clampNonNegative(item.quantity);
+        const price = clampNonNegative(item.price);
+        const gst = clampPercent(item.gst || item.vat);
         const subtotal = quantity * price;
         const gstAmount = subtotal * (gst / 100);
-        return Number((subtotal + gstAmount).toFixed(2));
+        return roundCurrency(subtotal + gstAmount);
     };
 
     const calculateSubtotal = () => {
-        return items.reduce((sum, item) => sum + calculateItemTotal(item), 0);
+        return roundCurrency(items.reduce((sum, item) => sum + calculateItemTotal(item), 0));
     };
 
     const getDiscountAmount = () => {
+        if (!discountEnabled) return 0;
         const subtotal = calculateSubtotal();
-        const discountValue = parseNumber(discount);
-        return Number(((subtotal * discountValue) / 100).toFixed(2));
+        const discountValue = clampPercent(discount);
+        return roundCurrency((subtotal * discountValue) / 100);
     };
 
     const calculateTotal = () => {
         const subtotal = calculateSubtotal();
-        const discountValue = parseNumber(discount);
+        const discountValue = clampPercent(discount);
         if (discountEnabled && discountValue > 0) {
             const discountAmt = getDiscountAmount();
-            return Number((subtotal - discountAmt).toFixed(2));
+            return roundCurrency(Math.max(subtotal - discountAmt, 0));
         }
-        return Number(subtotal.toFixed(2));
+        return roundCurrency(subtotal);
     };
 
     const calculateItemCostTotal = (item) => {
-        const quantity = parseNumber(item.quantity);
-        const cost = parseNumber(item.cost);
-        return Number((quantity * cost).toFixed(2));
+        const quantity = clampNonNegative(item.quantity);
+        const cost = clampNonNegative(item.cost);
+        return roundCurrency(quantity * cost);
     };
 
     const calculateInvoiceCostTotal = (invoice) => {
-        return invoice.items.reduce((sum, item) => sum + calculateItemCostTotal(item), 0);
+        const invoiceItems = Array.isArray(invoice.items) ? invoice.items : [];
+        return roundCurrency(invoiceItems.reduce((sum, item) => sum + calculateItemCostTotal(item), 0));
     };
 
     const calculateInvoiceItemTotal = (item) => calculateItemTotal(item);
 
     const calculateInvoiceSubtotal = (invoice) => {
-        return invoice.items.reduce((sum, item) => sum + calculateInvoiceItemTotal(item), 0);
+        const invoiceItems = Array.isArray(invoice.items) ? invoice.items : [];
+        return roundCurrency(invoiceItems.reduce((sum, item) => sum + calculateInvoiceItemTotal(item), 0));
     };
 
     const calculateInvoiceTotal = (invoice) => {
         const subtotal = calculateInvoiceSubtotal(invoice);
-        const discountValue = parseNumber(invoice.discount);
+        const discountValue = clampPercent(invoice.discount);
         if (invoice.discountEnabled && discountValue > 0) {
-            const discountAmt = Number(((subtotal * discountValue) / 100).toFixed(2));
-            return Number((subtotal - discountAmt).toFixed(2));
+            const discountAmt = roundCurrency((subtotal * discountValue) / 100);
+            return roundCurrency(Math.max(subtotal - discountAmt, 0));
         }
-        return Number(subtotal.toFixed(2));
+        return roundCurrency(subtotal);
     };
 
     const getReportSummary = () => {
