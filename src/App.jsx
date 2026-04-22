@@ -846,7 +846,7 @@ function App() {
                                                 style={{ backgroundColor: 'transparent' }}
                                             />
                                         </div>
-                                        <button className="delete-btn" type="button" onClick={() => items.length > 1 ? setItemDeleteConfirmId(item.id) : null} title="Delete item">
+                                        <button className="delete-btn" type="button" onClick={() => setItemDeleteConfirmId(item.id)} title="Delete item">
                                             <Trash2 size={20} />
                                         </button>
                                     </div>
@@ -1068,20 +1068,26 @@ function App() {
                         <button className="confirm-close" onClick={() => setItemDeleteConfirmId(null)} title="Close">
                             <X size={18} />
                         </button>
-                        <div className="confirm-icon">
+                        <div className="confirm-icon" style={items.length === 1 ? { background: 'rgba(251,191,36,0.1)', border: '2px solid rgba(251,191,36,0.3)', color: '#f59e0b' } : {}}>
                             <AlertTriangle size={32} />
                         </div>
-                        <h3 className="confirm-title">Delete Item?</h3>
+                        <h3 className="confirm-title">
+                            {items.length === 1 ? 'Cannot Delete' : 'Delete Item?'}
+                        </h3>
                         <p className="confirm-message">
-                            Are you sure you want to remove this item from the invoice?
+                            {items.length === 1
+                                ? 'At least one item is required. Add another item before deleting this one.'
+                                : 'Are you sure you want to remove this item from the invoice?'}
                         </p>
                         <div className="confirm-actions">
                             <button className="confirm-btn-cancel" onClick={() => setItemDeleteConfirmId(null)}>
-                                No
+                                {items.length === 1 ? 'OK' : 'No'}
                             </button>
-                            <button className="confirm-btn-delete" onClick={() => { handleRemoveItem(itemDeleteConfirmId); setItemDeleteConfirmId(null); }}>
-                                Yes
-                            </button>
+                            {items.length > 1 && (
+                                <button className="confirm-btn-delete" onClick={() => { handleRemoveItem(itemDeleteConfirmId); setItemDeleteConfirmId(null); }}>
+                                    Yes
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
