@@ -217,7 +217,18 @@ function App() {
     };
 
     const handleItemChange = (id, field, value) => {
-        setItems(items.map((item) => (item.id === id ? { ...item, [field]: value } : item)));
+        setItems(items.map((item) => {
+            if (item.id === id) {
+                const updatedItem = { ...item, [field]: value };
+                if (field === 'quantity' || field === 'price') {
+                    const quantity = parseFloat(updatedItem.quantity) || 0;
+                    const price = parseFloat(updatedItem.price) || 0;
+                    updatedItem.cost = (quantity * price).toFixed(2);
+                }
+                return updatedItem;
+            }
+            return item;
+        }));
     };
 
     const handleLogoChange = (event) => {
@@ -386,7 +397,7 @@ function App() {
                         </div>
                     </div>
 
-                    <table className="preview-items-table">
+                    <div className="preview-table" >  <table className="preview-items-table">
                         <thead>
                             <tr>
                                 <th style={{ width: '60px' }}>S.l. No</th>
@@ -411,6 +422,7 @@ function App() {
                             ))}
                         </tbody>
                     </table>
+                    </div>
 
                     <div className="preview-summary">
                         <div className="preview-summary-notes">
@@ -724,7 +736,8 @@ function App() {
                                             value={item.cost}
                                             onChange={(e) => handleItemChange(item.id, 'cost', e.target.value)}
                                             min="0"
-                                            step="1"
+                                            step="0.01"
+                                            readOnly
                                         />
                                         <select
                                             className="input-field"

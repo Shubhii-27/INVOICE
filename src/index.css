@@ -1065,7 +1065,7 @@ body {
 
 #root .preview-toolbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
@@ -1076,9 +1076,9 @@ body {
 #root .preview-toolbar .btn-generate {
   width: 30px;
   min-height: 6vh;
-  padding-top: 1.2vh;
-  padding-bottom: 1.2vh;
+  padding: 0;
   white-space: nowrap;
+  box-sizing: border-box;
 }
 
 /* ============================= */
@@ -1178,7 +1178,7 @@ body {
 #root .preview-body-top {
   display: flex;
   justify-content: space-between;
-  padding: 20px 60px;
+  /* padding: 20px 60px; */
   margin-top: 0;
   position: relative;
   z-index: 20;
@@ -1224,6 +1224,9 @@ body {
   /* Fix: Dark text for white receipt value */
 }
 
+#root .preview-table{
+  padding: 0px 4%;
+}
 #root .preview-items-table {
   width: calc(100% - 120px);
   margin: 10px 60px;
@@ -1861,6 +1864,7 @@ body {
     margin: 0 !important;
     padding: 0 !important;
     width: 210mm;
+    height: 330mm;
     background: #fff !important;
   }
 
@@ -1872,6 +1876,7 @@ body {
     background: #fff;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+    display: block;
   }
 
   #root .invoice-wrapper {
@@ -1909,78 +1914,95 @@ body {
     margin: 0;
     padding: 0;
     width: 210mm;
-    height: 297mm !important;
-    max-height: 297mm !important;
-    page-break-after: avoid;
+    height: auto;
+    max-height: none;
+    page-break-after: always;
     page-break-inside: avoid;
     box-sizing: border-box;
     position: relative;
-    overflow: hidden !important;
-    transform: scale(0.94);
-    transform-origin: top center;
+    overflow: visible;
   }
 
   #root .preview-header {
-    height: auto !important;
-    min-height: 62mm !important;
+    height: 65mm !important;
+    min-height: 65mm !important;
+    padding: 0 !important;
   }
 
   #root .preview-header-top-row {
-    padding: 7mm 12mm !important;
+    padding: 8mm 15mm !important;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
   }
 
   #root .preview-body-top {
-    padding: 4mm 12mm !important;
+    padding: 5mm 15mm !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  #root .preview-logo-box {
+    width: 30mm;
+    height: 30mm;
   }
 
   #root .preview-details-grid {
-    padding: 0 12mm !important;
-    gap: 4mm !important;
-    margin-bottom: 3mm !important;
+    padding: 0 15mm !important;
+    gap: 5mm !important;
+    margin: 5mm 0 !important;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
   #root .preview-items-table {
-    width: calc(100% - 24mm) !important;
-    margin: 2mm 12mm !important;
-    table-layout: auto;
+    width: calc(100% - 30mm) !important;
+    margin: 5mm 15mm !important;
+    table-layout: fixed;
   }
 
   #root .preview-items-table th,
   #root .preview-items-table td {
-    padding: 2mm 1.8mm !important;
+    padding: 3mm 2mm !important;
     vertical-align: top;
     word-break: break-word;
     white-space: normal !important;
-    font-size: 11px !important;
-    line-height: 1.25 !important;
+    font-size: 10px !important;
+    line-height: 1.3 !important;
   }
 
   #root .preview-summary {
-    padding: 0 12mm !important;
-    margin-top: 3mm !important;
-    align-items: flex-start !important;
+    display: flex;
+    padding: 0 15mm !important;
+    margin-top: 5mm !important;
+    justify-content: space-between;
+    gap: 10mm;
   }
 
   #root .preview-summary-notes {
-    padding-right: 4mm !important;
+    flex: 1;
+    padding-right: 0 !important;
+    font-size: 10px;
   }
 
   #root .preview-totals {
-    width: 62mm !important;
+    width: 70mm !important;
+    flex-shrink: 0;
   }
 
   #root .preview-totals-row {
-    padding: 2.2mm 2.5mm !important;
-    font-size: 12px !important;
+    padding: 2.5mm 3mm !important;
+    font-size: 11px !important;
   }
 
   #root .preview-signature-area {
-    margin: 7mm 12mm 6mm !important;
+    margin: 8mm 15mm 10mm !important;
   }
 
   #root .preview-footer-geometric {
-    margin-top: 3mm !important;
-    height: 42mm !important;
+    margin-top: 10mm !important;
+    height: 40mm !important;
   }
 
 }
@@ -2210,7 +2232,7 @@ body {
 
 #root .preview-toolbar .btn-outline,
 #root .preview-toolbar .btn-generate {
-  width: 49%;
+  width: 25%;
   min-height: 6vh;
   padding-top: 1.2vh;
   padding-bottom: 1.2vh;
