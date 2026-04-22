@@ -114,12 +114,13 @@ body {
 #root::before {
   content: "";
   position: absolute;
-  top: -10%;
-  right: -5%;
+  
+
+  
   width: 400px;
   height: 400px;
   background: radial-gradient(circle, rgba(239, 68, 68, 0.12) 0%, transparent 70%);
-  border-radius: 50%;
+  border-radius: 8px;
   z-index: 0;
 }
 
@@ -129,17 +130,8 @@ body {
   }
 }
 
-#root::after {
-  content: "";
-  position: absolute;
-  bottom: -10%;
-  left: -5%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-  border-radius: 50%;
-  z-index: 0;
-}
+
+
 
 @media (max-width: 768px) {
   #root::after {
@@ -1178,7 +1170,7 @@ body {
 #root .preview-body-top {
   display: flex;
   justify-content: space-between;
-  /* padding: 20px 60px; */
+  padding: 20px 60px;
   margin-top: 0;
   position: relative;
   z-index: 20;
@@ -1224,9 +1216,6 @@ body {
   /* Fix: Dark text for white receipt value */
 }
 
-#root .preview-table{
-  padding: 0px 4%;
-}
 #root .preview-items-table {
   width: calc(100% - 120px);
   margin: 10px 60px;

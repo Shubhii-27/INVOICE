@@ -1,4 +1,5 @@
-import { ArrowLeft, Search, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, Search, Trash2, AlertTriangle, X } from 'lucide-react';
 import './ReceiptHistory.css';
 
 export default function ReceiptHistory({
@@ -11,6 +12,8 @@ export default function ReceiptHistory({
     setShowHistory,
     setShowReport
 }) {
+    const [confirmId, setConfirmId] = useState(null);
+
     const filteredInvoices = savedInvoices.filter((inv) => {
         const term = searchQuery.toLowerCase();
         const matchesInvoiceNo = inv.invoiceNumber?.toLowerCase().includes(term);
@@ -18,8 +21,48 @@ export default function ReceiptHistory({
         return matchesInvoiceNo || matchesClientName;
     });
 
+    const handleDeleteClick = (id) => {
+        setConfirmId(id);
+    };
+
+    const handleConfirmDelete = () => {
+        deleteInvoice(confirmId);
+        setConfirmId(null);
+    };
+
+    const handleCancelDelete = () => {
+        setConfirmId(null);
+    };
+
     return (
         <div className="invoice-wrapper history-view">
+
+            {/* ── Confirmation Modal ── */}
+            {confirmId !== null && (
+                <div className="confirm-overlay" onClick={handleCancelDelete}>
+                    <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
+                        <button className="confirm-close" onClick={handleCancelDelete} title="Close">
+                            <X size={18} />
+                        </button>
+                        <div className="confirm-icon">
+                            <AlertTriangle size={32} />
+                        </div>
+                        <h3 className="confirm-title">Delete Receipt?</h3>
+                        <p className="confirm-message">
+                            This action cannot be undone. Are you sure you want to permanently delete this receipt?
+                        </p>
+                        <div className="confirm-actions">
+                            <button className="confirm-btn-cancel" onClick={handleCancelDelete}>
+                                No
+                            </button>
+                            <button className="confirm-btn-delete" onClick={handleConfirmDelete}>
+                                Yes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="history-toolbar">
                 <button className="btn-outline" type="button" onClick={() => setShowHistory(false)}>
                     <ArrowLeft size={18} /> Back to Edit
@@ -71,7 +114,7 @@ export default function ReceiptHistory({
                                             <div className="action-buttons">
                                                 <button className="btn-load" onClick={() => viewInvoice(inv)}>View</button>
                                                 <button className="btn-load" onClick={() => loadInvoice(inv)}>Edit</button>
-                                                <button className="btn-del" onClick={() => deleteInvoice(inv.id)} title="Delete">
+                                                <button className="btn-del" onClick={() => handleDeleteClick(inv.id)} title="Delete">
                                                     <Trash2 size={16} />
                                                 </button>
                                             </div>

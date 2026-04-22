@@ -31,6 +31,7 @@ function App() {
     const [currentInvoiceId, setCurrentInvoiceId] = useState(null);
     const [logoUrl, setLogoUrl] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [deleteConfirmation, setDeleteConfirmation] = useState(null);
     const fileInputRef = useRef(null);
 
     const [savedInvoices, setSavedInvoices] = useState(() => {
@@ -329,8 +330,17 @@ function App() {
     };
 
     const deleteInvoice = (id) => {
+        setDeleteConfirmation(id);
+    };
+
+    const confirmDelete = (id) => {
         const updatedInvoices = savedInvoices.filter(inv => inv.id !== id);
         saveToLocalStorage(updatedInvoices);
+        setDeleteConfirmation(null);
+    };
+
+    const cancelDelete = () => {
+        setDeleteConfirmation(null);
     };
 
     const handlePrint = () => {
@@ -345,122 +355,147 @@ function App() {
 
     if (showPreview) {
         return (
-            <div className="invoice-wrapper preview-view">
-                <div className="preview-toolbar">
-                    <button className="btn-outline" type="button" onClick={() => setShowPreview(false)}>
-                        <ArrowLeft size={18} /> {previewBackLabel}
-                    </button>
-                    <button className="btn-generate" type="button" onClick={handlePrint}>
-                        <Download size={20} /> Download / Print Invoice
-                    </button>
-                </div>
-
-                <div className="preview-card">
-                    <div className="preview-header">
-                        <div className="preview-header-top-row">
-                            <div className="preview-logo-box">
-                                {logoUrl ? <img src={logoUrl} alt="Logo" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <span style={{ fontWeight: 800, color: '#ef4444' }}>LOGO</span>}
-                            </div>
-                            <div className="preview-header-content">
-                                <h2 className="preview-title">Invoice</h2>
-                                <p className="preview-number">INV-{invoiceNumber}</p>
-                            </div>
-                        </div>
+            <>
+                <div className="invoice-wrapper preview-view">
+                    <div className="preview-toolbar">
+                        <button className="btn-outline" type="button" onClick={() => setShowPreview(false)}>
+                            <ArrowLeft size={18} /> {previewBackLabel}
+                        </button>
+                        <button className="btn-generate" type="button" onClick={handlePrint}>
+                            <Download size={20} /> Download / Print Invoice
+                        </button>
                     </div>
 
-                    <div className="preview-body-top">
-                        <div style={{ textAlign: 'right', marginLeft: 'auto' }}>
-                            <div className="preview-detail-title" style={{ border: 'none', marginBottom: '4px' }}>Billed From</div>
-                            <div className="preview-detail-value" style={{ fontWeight: 700 }}>
-                                {billedFrom.name || 'Your Company Name'}<br />
-                                <span style={{ fontWeight: 400, opacity: 0.8 }}>{billedFrom.address || 'Address goes here'}</span>
+                    <div className="preview-card">
+                        <div className="preview-header">
+                            <div className="preview-header-top-row">
+                                <div className="preview-logo-box">
+                                    {logoUrl ? <img src={logoUrl} alt="Logo" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <span style={{ fontWeight: 800, color: '#ef4444' }}>LOGO</span>}
+                                </div>
+                                <div className="preview-header-content">
+                                    <h2 className="preview-title">Invoice</h2>
+                                    <p className="preview-number">INV-{invoiceNumber}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="preview-details-grid">
-                        <div className="preview-detail">
-                            <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: '#101828' }}>Invoice To:</div>
-                            <div className="preview-detail-value">
-                                <strong>{billedTo.name || 'Client Name'}</strong><br />
-                                {billedTo.address || 'Client Address'}<br />
-                                {billedTo.email}
+                        <div className="preview-body-top">
+                            <div style={{ textAlign: 'right', marginLeft: 'auto' }}>
+                                <div className="preview-detail-title" style={{ border: 'none', marginBottom: '4px' }}>Billed From</div>
+                                <div className="preview-detail-value" style={{ fontWeight: 700 }}>
+                                    {billedFrom.name || 'Your Company Name'}<br />
+                                    <span style={{ fontWeight: 400, opacity: 0.8 }}>{billedFrom.address || 'Address goes here'}</span>
+                                </div>
                             </div>
                         </div>
-                        <div className="preview-detail" style={{ textAlign: 'right' }}>
-                            <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: '#101828' }}>Invoice No:</div>
-                            <div className="preview-detail-value">
-                                <strong>Date:</strong> {formatDate(issueDate)}<br />
-                                <strong>Due:</strong> {formatDate(dueDate)}<br />
-                                <strong>Status:</strong> {paymentStatus}
-                            </div>
-                        </div>
-                    </div>
 
-                    <div className="preview-table" >  <table className="preview-items-table">
-                        <thead>
-                            <tr>
-                                <th style={{ width: '60px' }}>S.l. No</th>
-                                <th>Product Description</th>
-                                <th>Price</th>
-                                <th>QTY</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {items.map((item, index) => (
-                                <tr key={item.id}>
-                                    <td>{index + 1}</td>
-                                    <td>
-                                        <strong>{item.name || 'Product / Service'}</strong>
-                                        {item.description ? <div className="preview-description">{item.description}</div> : null}
-                                    </td>
-                                    <td>{currencySymbol}{parseFloat(item.price || 0).toFixed(2)}</td>
-                                    <td>{parseFloat(item.quantity || 0)} {item.unit}</td>
-                                    <td>{currencySymbol}{calculateItemTotal(item).toFixed(2)}</td>
+                        <div className="preview-details-grid">
+                            <div className="preview-detail">
+                                <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: '#101828' }}>Invoice To:</div>
+                                <div className="preview-detail-value">
+                                    <strong>{billedTo.name || 'Client Name'}</strong><br />
+                                    {billedTo.address || 'Client Address'}<br />
+                                    {billedTo.email}
+                                </div>
+                            </div>
+                            <div className="preview-detail" style={{ textAlign: 'right' }}>
+                                <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: '#101828' }}>Invoice No:</div>
+                                <div className="preview-detail-value">
+                                    <strong>Date:</strong> {formatDate(issueDate)}<br />
+                                    <strong>Due:</strong> {formatDate(dueDate)}<br />
+                                    <strong>Status:</strong> {paymentStatus}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="preview-table" >  <table className="preview-items-table">
+                            <thead>
+                                <tr>
+                                    <th style={{ width: '60px' }}>S.l. No</th>
+                                    <th>Product Description</th>
+                                    <th>Price</th>
+                                    <th>QTY</th>
+                                    <th>Total</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    </div>
-
-                    <div className="preview-summary">
-                        <div className="preview-summary-notes">
-                            {notes && (
-                                <div className="preview-notes" style={{ margin: 0, padding: 0, backgroundColor: 'transparent', border: 'none', boxShadow: 'none' }}>
-                                    <div className="preview-notes-title" style={{ borderBottom: '2px solid #ef4444', display: 'inline-block', paddingBottom: '4px' }}>Terms & Conditions:</div>
-                                    <div className="preview-notes-text" style={{ marginTop: '10px' }}>{notes}</div>
-                                </div>
-                            )}
+                            </thead>
+                            <tbody>
+                                {items.map((item, index) => (
+                                    <tr key={item.id}>
+                                        <td>{index + 1}</td>
+                                        <td>
+                                            <strong>{item.name || 'Product / Service'}</strong>
+                                            {item.description ? <div className="preview-description">{item.description}</div> : null}
+                                        </td>
+                                        <td>{currencySymbol}{parseFloat(item.price || 0).toFixed(2)}</td>
+                                        <td>{parseFloat(item.quantity || 0)} {item.unit}</td>
+                                        <td>{currencySymbol}{calculateItemTotal(item).toFixed(2)}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                         </div>
-                        <div className="preview-totals">
-                            <div className="preview-totals-row" style={{ border: 'none', padding: '5px 20px' }}>
-                                <span>Sub Total</span>
-                                <span>{currencySymbol}{calculateSubtotal().toFixed(2)}</span>
+
+                        <div className="preview-summary">
+                            <div className="preview-summary-notes">
+                                {notes && (
+                                    <div className="preview-notes" style={{ margin: 0, padding: 0, backgroundColor: 'transparent', border: 'none', boxShadow: 'none' }}>
+                                        <div className="preview-notes-title" style={{ borderBottom: '2px solid #ef4444', display: 'inline-block', paddingBottom: '4px' }}>Terms & Conditions:</div>
+                                        <div className="preview-notes-text" style={{ marginTop: '10px' }}>{notes}</div>
+                                    </div>
+                                )}
                             </div>
-                            {discountEnabled && parseNumber(discount) > 0 ? (
+                            <div className="preview-totals">
                                 <div className="preview-totals-row" style={{ border: 'none', padding: '5px 20px' }}>
-                                    <span>Discount</span>
-                                    <span>-{currencySymbol}{getDiscountAmount().toFixed(2)}</span>
+                                    <span>Sub Total</span>
+                                    <span>{currencySymbol}{calculateSubtotal().toFixed(2)}</span>
                                 </div>
-                            ) : null}
-                            <div className="preview-totals-row total">
-                                <span>Total</span>
-                                <span>{currencySymbol}{calculateTotal().toFixed(2)}</span>
+                                {discountEnabled && parseNumber(discount) > 0 ? (
+                                    <div className="preview-totals-row" style={{ border: 'none', padding: '5px 20px' }}>
+                                        <span>Discount</span>
+                                        <span>-{currencySymbol}{getDiscountAmount().toFixed(2)}</span>
+                                    </div>
+                                ) : null}
+                                <div className="preview-totals-row total">
+                                    <span>Total</span>
+                                    <span>{currencySymbol}{calculateTotal().toFixed(2)}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="preview-signature-area">
+                            <div className="signature-box">
+                                <div className="signature-line"></div>
+                                <div className="signature-label">Signature</div>
+                            </div>
+                        </div>
+
+                        <div className="preview-footer-geometric"></div>
+                    </div>
+                </div>
+                {deleteConfirmation && (
+                    <div className="delete-confirmation-modal">
+                        <div className="delete-confirmation-overlay" onClick={cancelDelete}></div>
+                        <div className="delete-confirmation-dialog">
+                            <h3>Delete Receipt</h3>
+                            <p>Are you sure you want to delete this receipt? This action cannot be undone.</p>
+                            <div className="delete-confirmation-buttons">
+                                <button
+                                    className="btn-cancel"
+                                    onClick={cancelDelete}
+                                >
+                                    No
+                                </button>
+                                <button
+                                    className="btn-confirm-delete"
+                                    onClick={() => confirmDelete(deleteConfirmation)}
+                                >
+                                    Yes, Delete
+                                </button>
                             </div>
                         </div>
                     </div>
-
-                    <div className="preview-signature-area">
-                        <div className="signature-box">
-                            <div className="signature-line"></div>
-                            <div className="signature-label">Signature</div>
-                        </div>
-                    </div>
-
-                    <div className="preview-footer-geometric"></div>
-                </div>
-            </div>
+                )}
+            </>
         );
     }
 
@@ -470,31 +505,81 @@ function App() {
 
     if (showReport) {
         return (
-            <InvoiceReport
-                reportSummary={reportSummary}
-                monthlyReport={monthlyReport}
-                clientReport={clientReport}
-                recentInvoices={recentInvoices}
-                currencySymbol={currencySymbol}
-                calculateInvoiceTotal={calculateInvoiceTotal}
-                setShowReport={setShowReport}
-                setShowHistory={setShowHistory}
-            />
+            <>
+                <InvoiceReport
+                    reportSummary={reportSummary}
+                    monthlyReport={monthlyReport}
+                    clientReport={clientReport}
+                    recentInvoices={recentInvoices}
+                    currencySymbol={currencySymbol}
+                    calculateInvoiceTotal={calculateInvoiceTotal}
+                    setShowReport={setShowReport}
+                    setShowHistory={setShowHistory}
+                />
+                {deleteConfirmation && (
+                    <div className="delete-confirmation-modal">
+                        <div className="delete-confirmation-overlay" onClick={cancelDelete}></div>
+                        <div className="delete-confirmation-dialog">
+                            <h3>Delete Receipt</h3>
+                            <p>Are you sure you want to delete this receipt? This action cannot be undone.</p>
+                            <div className="delete-confirmation-buttons">
+                                <button
+                                    className="btn-cancel"
+                                    onClick={cancelDelete}
+                                >
+                                    No
+                                </button>
+                                <button
+                                    className="btn-confirm-delete"
+                                    onClick={() => confirmDelete(deleteConfirmation)}
+                                >
+                                    Yes, Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </>
         );
     }
 
     if (showHistory) {
         return (
-            <ReceiptHistory
-                savedInvoices={savedInvoices}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                viewInvoice={viewInvoice}
-                loadInvoice={loadInvoice}
-                deleteInvoice={deleteInvoice}
-                setShowHistory={setShowHistory}
-                setShowReport={setShowReport}
-            />
+            <>
+                <ReceiptHistory
+                    savedInvoices={savedInvoices}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    viewInvoice={viewInvoice}
+                    loadInvoice={loadInvoice}
+                    deleteInvoice={deleteInvoice}
+                    setShowHistory={setShowHistory}
+                    setShowReport={setShowReport}
+                />
+                {deleteConfirmation && (
+                    <div className="delete-confirmation-modal">
+                        <div className="delete-confirmation-overlay" onClick={cancelDelete}></div>
+                        <div className="delete-confirmation-dialog">
+                            <h3>Delete Receipt</h3>
+                            <p>Are you sure you want to delete this receipt? This action cannot be undone.</p>
+                            <div className="delete-confirmation-buttons">
+                                <button
+                                    className="btn-cancel"
+                                    onClick={cancelDelete}
+                                >
+                                    No
+                                </button>
+                                <button
+                                    className="btn-confirm-delete"
+                                    onClick={() => confirmDelete(deleteConfirmation)}
+                                >
+                                    Yes, Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </>
         );
     }
 
@@ -950,6 +1035,30 @@ function App() {
                     <div className="card-footer-geometric"></div>
                 </div>
             </form>
+
+            {deleteConfirmation && (
+                <div className="delete-confirmation-modal">
+                    <div className="delete-confirmation-overlay" onClick={cancelDelete}></div>
+                    <div className="delete-confirmation-dialog">
+                        <h3>Delete Receipt</h3>
+                        <p>Are you sure you want to delete this receipt? This action cannot be undone.</p>
+                        <div className="delete-confirmation-buttons">
+                            <button
+                                className="btn-cancel"
+                                onClick={cancelDelete}
+                            >
+                                No
+                            </button>
+                            <button
+                                className="btn-confirm-delete"
+                                onClick={() => confirmDelete(deleteConfirmation)}
+                            >
+                                Yes, Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }
