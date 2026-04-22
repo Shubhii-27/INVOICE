@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { UploadCloud, GripVertical, Trash2, Plus, ArrowLeft, Download, Search } from 'lucide-react';
+import { UploadCloud, GripVertical, Trash2, Plus, ArrowLeft, Download, Search, AlertTriangle, X } from 'lucide-react';
 import InvoiceReport from './InvoiceReport.jsx';
 import ReceiptHistory from './ReceiptHistory.jsx';
 import './index.css';
@@ -32,6 +32,7 @@ function App() {
     const [logoUrl, setLogoUrl] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [deleteConfirmation, setDeleteConfirmation] = useState(null);
+    const [itemDeleteConfirmId, setItemDeleteConfirmId] = useState(null);
     const fileInputRef = useRef(null);
 
     const [savedInvoices, setSavedInvoices] = useState(() => {
@@ -845,7 +846,7 @@ function App() {
                                                 style={{ backgroundColor: 'transparent' }}
                                             />
                                         </div>
-                                        <button className="delete-btn" type="button" onClick={() => handleRemoveItem(item.id)}>
+                                        <button className="delete-btn" type="button" onClick={() => items.length > 1 ? setItemDeleteConfirmId(item.id) : null} title="Delete item">
                                             <Trash2 size={20} />
                                         </button>
                                     </div>
@@ -1054,6 +1055,32 @@ function App() {
                                 onClick={() => confirmDelete(deleteConfirmation)}
                             >
                                 Yes, Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Item Row Delete Confirmation Modal ── */}
+            {itemDeleteConfirmId !== null && (
+                <div className="confirm-overlay" onClick={() => setItemDeleteConfirmId(null)}>
+                    <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
+                        <button className="confirm-close" onClick={() => setItemDeleteConfirmId(null)} title="Close">
+                            <X size={18} />
+                        </button>
+                        <div className="confirm-icon">
+                            <AlertTriangle size={32} />
+                        </div>
+                        <h3 className="confirm-title">Delete Item?</h3>
+                        <p className="confirm-message">
+                            Are you sure you want to remove this item from the invoice?
+                        </p>
+                        <div className="confirm-actions">
+                            <button className="confirm-btn-cancel" onClick={() => setItemDeleteConfirmId(null)}>
+                                No
+                            </button>
+                            <button className="confirm-btn-delete" onClick={() => { handleRemoveItem(itemDeleteConfirmId); setItemDeleteConfirmId(null); }}>
+                                Yes
                             </button>
                         </div>
                     </div>
