@@ -554,6 +554,7 @@ function App() {
                     viewInvoice={viewInvoice}
                     loadInvoice={loadInvoice}
                     deleteInvoice={deleteInvoice}
+                    calculateInvoiceTotal={calculateInvoiceTotal}
                     setShowHistory={setShowHistory}
                     setShowReport={setShowReport}
                 />

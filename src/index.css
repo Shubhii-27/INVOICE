@@ -1844,156 +1844,188 @@ body {
 @page {
   size: A4;
   margin: 0;
+  
 }
 
 @media print {
+  @page {
+    size: A4;
+    margin: 0mm;
+  }
 
   html,
   body {
     margin: 0 !important;
     padding: 0 !important;
-    width: 210mm;
-    height: 330mm;
-    background: #fff !important;
+    background: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    height: 100%;
+    width: 100%;
   }
 
   #root {
-    width: 210mm;
-    height: auto;
-    padding: 0;
-    margin: 0;
-    background: #fff;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-    display: block;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+    min-height: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100%;
+  }
+
+  /* Hide UI elements during print */
+  .preview-toolbar,
+  .history-toolbar,
+  .btn-outline,
+  .btn-generate,
+  .btn-history,
+  .remove-logo-btn,
+  .delete-confirmation-modal,
+  .add-item-btn,
+  .item-row-grip,
+  .delete-btn,
+  .logo-info,
+  .more-options-bar {
+    display: none !important;
+  }
+
+  /* Ensure inputs look like text in print if they are on screen */
+  .input-field {
+    border: none !important;
+    padding: 0 !important;
+    background: transparent !important;
   }
 
   #root .invoice-wrapper {
-    max-width: 210mm !important;
-    width: 210mm !important;
-    height: auto !important;
+    max-width: 100% !important;
+    width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
-  }
-
-  #root .preview-toolbar {
-    display: none !important;
-  }
-
-  #root .invoice-wrapper.edit-view,
-  #root .btn-outline,
-  #root .delete-btn,
-  #root .add-item-btn,
-  #root .switch,
-  #root .generate-wrapper,
-  #root .btn-generate,
-  #root .more-options-bar,
-  #root .discount-input-wrapper,
-  #root .input-field,
-  #root .description-input,
-  #root textarea,
-  #root input[type="file"] {
-    display: none !important;
+    display: block !important;
+    height: 100%;
   }
 
   #root .preview-card {
-    box-shadow: none;
-    border-radius: 0;
-    border: none;
-    margin: 0;
-    padding: 0;
-    width: 210mm;
-    height: auto;
-    max-height: none;
-    page-break-after: always;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: #ffffff !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    page-break-after: avoid;
     page-break-inside: avoid;
-    box-sizing: border-box;
-    position: relative;
-    overflow: visible;
   }
 
+  /* Force background colors and images to print */
+  .preview-header,
+  .preview-header::before,
+  .preview-header::after,
+  .preview-footer-geometric,
+  .preview-footer-geometric::before,
+  .preview-items-table th,
+  .preview-totals-row.total,
+  .preview-notes,
+  .preview-logo-box,
+  .preview-items-table tbody tr:nth-child(even) {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Maintain layout proportions */
   #root .preview-header {
-    height: 65mm !important;
-    min-height: 65mm !important;
-    padding: 0 !important;
+    height: 55mm !important;
+    min-height: 55mm !important;
+    display: block !important;
+    visibility: visible !important;
+    flex-shrink: 0;
   }
 
   #root .preview-header-top-row {
     padding: 8mm 15mm !important;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
+    display: flex !important;
+    justify-content: space-between !important;
   }
 
   #root .preview-body-top {
-    padding: 5mm 15mm !important;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-
-  #root .preview-logo-box {
-    width: 30mm;
-    height: 30mm;
+    padding: 2mm 15mm !important;
+    display: flex !important;
+    justify-content: flex-end !important;
   }
 
   #root .preview-details-grid {
-    padding: 0 15mm !important;
-    gap: 5mm !important;
-    margin: 5mm 0 !important;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    padding: 4mm 15mm !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8mm !important;
+    flex-shrink: 0;
   }
 
   #root .preview-items-table {
     width: calc(100% - 30mm) !important;
-    margin: 5mm 15mm !important;
-    table-layout: fixed;
+    margin: 4mm 15mm !important;
+    border-collapse: collapse !important;
+    flex-grow: 1;
   }
 
   #root .preview-items-table th,
   #root .preview-items-table td {
-    padding: 3mm 2mm !important;
-    vertical-align: top;
-    word-break: break-word;
-    white-space: normal !important;
-    font-size: 10px !important;
-    line-height: 1.3 !important;
+    padding: 3mm 3mm !important;
+    font-size: 10.5px !important;
+    border-bottom: 1px solid #cbd5e1 !important;
   }
 
   #root .preview-summary {
-    display: flex;
     padding: 0 15mm !important;
     margin-top: 5mm !important;
-    justify-content: space-between;
-    gap: 10mm;
-  }
-
-  #root .preview-summary-notes {
-    flex: 1;
-    padding-right: 0 !important;
-    font-size: 10px;
-  }
-
-  #root .preview-totals {
-    width: 70mm !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
     flex-shrink: 0;
   }
 
+  #root .preview-summary-notes {
+    flex: 1 !important;
+    padding-right: 8mm !important;
+  }
+
+  #root .preview-totals {
+    width: 75mm !important;
+    flex-shrink: 0 !important;
+  }
+
   #root .preview-totals-row {
-    padding: 2.5mm 3mm !important;
+    padding: 2.5mm 3.5mm !important;
     font-size: 11px !important;
   }
 
+  #root .preview-notes {
+    margin: 5mm 15mm !important;
+    padding: 4mm !important;
+    font-size: 10px !important;
+    border-left: 3px solid #ef4444 !important;
+  }
+
   #root .preview-signature-area {
-    margin: 8mm 15mm 10mm !important;
+    margin: 8mm 15mm 12mm !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    flex-shrink: 0;
   }
 
   #root .preview-footer-geometric {
-    margin-top: 10mm !important;
-    height: 40mm !important;
+    height: 35mm !important;
+    margin-top: auto !important;
+    display: block !important;
+    visibility: visible !important;
+    flex-shrink: 0;
   }
-
 }
 
 /* ============================= */

@@ -9,6 +9,7 @@ export default function ReceiptHistory({
     viewInvoice,
     loadInvoice,
     deleteInvoice,
+    calculateInvoiceTotal,
     setShowHistory,
     setShowReport
 }) {
@@ -36,8 +37,6 @@ export default function ReceiptHistory({
 
     return (
         <div className="invoice-wrapper history-view">
-
-            {/* ── Confirmation Modal ── */}
             {confirmId !== null && (
                 <div className="confirm-overlay" onClick={handleCancelDelete}>
                     <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
@@ -101,6 +100,8 @@ export default function ReceiptHistory({
                                     <th>Date Saved</th>
                                     <th>Invoice #</th>
                                     <th>Billed To</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -110,6 +111,16 @@ export default function ReceiptHistory({
                                         <td data-label="Date Saved">{new Date(inv.savedAt).toLocaleString()}</td>
                                         <td data-label="Invoice #"><span className="badge">#{inv.invoiceNumber}</span></td>
                                         <td data-label="Billed To">{inv.billedTo?.name || '—'}</td>
+                                        <td data-label="Amount">
+                                            <span className="amount-cell">
+                                                {inv.currencySymbol || '₹'}{calculateInvoiceTotal(inv).toFixed(2)}
+                                            </span>
+                                        </td>
+                                        <td data-label="Status">
+                                            <span className="status-badge">
+                                                {inv.paymentStatus || 'Pending'}
+                                            </span>
+                                        </td>
                                         <td>
                                             <div className="action-buttons">
                                                 <button className="btn-load" onClick={() => viewInvoice(inv)}>View</button>
