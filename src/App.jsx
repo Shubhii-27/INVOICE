@@ -33,6 +33,7 @@ function App() {
     const [searchQuery, setSearchQuery] = useState('');
     const [deleteConfirmation, setDeleteConfirmation] = useState(null);
     const [itemDeleteConfirmId, setItemDeleteConfirmId] = useState(null);
+    const [selectedTemplate, setSelectedTemplate] = useState('classic');
     const fileInputRef = useRef(null);
 
     const [savedInvoices, setSavedInvoices] = useState(() => {
@@ -221,13 +222,7 @@ function App() {
     const handleItemChange = (id, field, value) => {
         setItems(items.map((item) => {
             if (item.id === id) {
-                const updatedItem = { ...item, [field]: value };
-                if (field === 'quantity' || field === 'price') {
-                    const quantity = parseFloat(updatedItem.quantity) || 0;
-                    const price = parseFloat(updatedItem.price) || 0;
-                    updatedItem.cost = (quantity * price).toFixed(2);
-                }
-                return updatedItem;
+                return { ...item, [field]: value };
             }
             return item;
         }));
@@ -362,12 +357,27 @@ function App() {
                         <button className="btn-outline" type="button" onClick={() => setShowPreview(false)}>
                             <ArrowLeft size={18} /> {previewBackLabel}
                         </button>
+                        <div className="template-selector-wrapper" style={{ marginLeft: 'auto', marginRight: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--text-main)' }}>Template:</span>
+                            <select 
+                                className="input-field" 
+                                style={{ padding: '8px 32px 8px 12px', minHeight: 'auto', width: 'auto', border: '1px solid var(--border-light)' }}
+                                value={selectedTemplate} 
+                                onChange={(e) => setSelectedTemplate(e.target.value)}
+                            >
+                                <option value="classic">Classic Red</option>
+                                <option value="modern">Modern Blue</option>
+                                <option value="minimalist">Minimalist Clean</option>
+                                <option value="professional">Professional Corporate</option>
+                                <option value="elegant">Elegant Dark</option>
+                            </select>
+                        </div>
                         <button className="btn-generate" type="button" onClick={handlePrint}>
-                            <Download size={20} /> Download / Print Invoice
+                            <Download size={20} /> Download / Print
                         </button>
                     </div>
 
-                    <div className="preview-card">
+                    <div className={`preview-card ${selectedTemplate}`}>
                         <div className="preview-header">
                             <div className="preview-header-top-row">
                                 <div className="preview-logo-box">
@@ -819,12 +829,12 @@ function App() {
                                         <input
                                             type="number"
                                             className="input-field"
-                                            placeholder="Cost"
+                                            placeholder="Unit Cost"
                                             value={item.cost}
                                             onChange={(e) => handleItemChange(item.id, 'cost', e.target.value)}
                                             min="0"
                                             step="0.01"
-                                            readOnly
+                                            title="Your purchase price for this item (for profit calculation)"
                                         />
                                         <select
                                             className="input-field"
