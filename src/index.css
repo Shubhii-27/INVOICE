@@ -1218,7 +1218,8 @@ body {
 }
 
 #root .preview-header {
-  height: 280px;
+  min-height: 240px;
+  height: auto;
   background-color: #0c0a09;
   background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 L60 40 L100 50 L60 60 L50 100 L40 60 L0 50 L40 40 Z' fill='rgba(239, 68, 68, 0.05)'/%3E%3C/svg%3E");
   background-size: 80px 80px;
@@ -1227,7 +1228,7 @@ body {
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  padding: 0;
+  padding-bottom: 40px;
   clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
   margin-bottom: 0;
 }
@@ -1265,6 +1266,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  flex-wrap: wrap;
   position: relative;
   z-index: 10;
   padding: 40px 60px;
@@ -1274,7 +1276,6 @@ body {
   position: relative;
   z-index: 10;
   text-align: right;
-  transform: translateY(-10px);
 }
 
 #root .preview-title {
@@ -1339,7 +1340,7 @@ body {
   font-size: 14px;
   line-height: 1.6;
   text-align: left;
-  color: #000000 !important;
+  color: inherit;
 }
 
 #root .preview-items-table {
@@ -2270,9 +2271,7 @@ body {
   }
 
   /* Force all text to be black in print except for header/totals */
-  #root .preview-card,
   #root .preview-items-table td,
-  #root .preview-detail-value,
   #root .preview-notes-text,
   #root .preview-totals-row:not(.total) span,
   #root .preview-description {
@@ -2282,12 +2281,15 @@ body {
 
   /* Maintain layout proportions */
   #root .preview-header {
-    height: 60mm !important;
-    min-height: 60mm !important;
+    height: auto !important;
+    min-height: 50mm !important;
+    padding-bottom: 10mm !important;
     display: block !important;
     visibility: visible !important;
     flex-shrink: 0;
     position: relative !important;
+    clip-path: none !important; /* Disable clip-path in print to avoid layout issues */
+    background-image: none !important;
   }
 
   #root .preview-header-top-row {
@@ -2297,9 +2299,11 @@ body {
   }
 
   #root .preview-body-top {
-    padding: 5mm 15mm !important;
+    padding: 10mm 15mm 5mm !important;
     display: flex !important;
     justify-content: flex-end !important;
+    margin-top: 0 !important;
+    clear: both !important;
   }
 
   #root .preview-details-grid {
@@ -2673,10 +2677,12 @@ body {
   #root .preview-header-content {
     text-align: left;
     width: 100%;
+    margin-top: 16px;
   }
 
   #root .preview-number {
     text-align: left;
+    margin-top: 8px;
   }
 
   #root .preview-body-top {
@@ -3123,8 +3129,9 @@ body {
   background-color: #0f172a;
   background-image: none;
   height: auto;
+  min-height: auto;
   clip-path: none;
-  padding: 0;
+  padding: 0 0 20px 0;
   border-bottom: 4px solid #d97706; /* Gold */
 }
 #root .preview-card.elegant .preview-header::before, 
@@ -3132,7 +3139,7 @@ body {
   display: none;
 }
 #root .preview-card.elegant .preview-header-top-row {
-  padding: 50px 60px 30px;
+  padding: 50px 60px 50px; /* Increased bottom padding to prevent overlap */
 }
 #root .preview-card.elegant .preview-title {
   color: #ffffff;
