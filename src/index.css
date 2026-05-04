@@ -1569,17 +1569,25 @@ body {
 
   #root .item-row {
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    gap: 20px; /* Increased gap */
     position: relative;
-    padding: 44px 16px 16px;
+    padding: 48px 20px 24px; /* Increased padding */
     background: #ffffff;
-    border-radius: 12px;
+    border-radius: 16px;
     border: 1px solid var(--border-light);
     box-shadow: var(--shadow-sm);
+    margin-bottom: 20px; /* Added gap between editor item cards */
   }
 
   #root .mobile-label {
     display: block;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--primary); /* Consistent primary color for labels */
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+    text-align: left;
   }
 
   #root .item-row-grip {
@@ -1834,8 +1842,20 @@ body {
     border-collapse: collapse;
   }
 
-  #root .preview-items-table thead {
-    display: table-header-group;
+  #root .preview-items-table thead th {
+    font-size: 8px;
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    padding: 12px 4px;
+    background-color: var(--primary); /* Premium Red background */
+    color: var(--white); /* White text for contrast */
+    border-bottom: 2px solid #0f172a;
+    border-right: 1px solid rgba(255, 255, 255, 0.2); /* Subtle separators as seen in image */
+  }
+
+  #root .preview-items-table thead th:last-child {
+    border-right: none;
   }
 
   #root .preview-items-table tbody {
@@ -1869,15 +1889,15 @@ body {
     display: table;
     width: 100%;
     table-layout: fixed;
-    font-size: 8.5px; /* Slightly smaller for absolute fit */
+    font-size: 8px; /* Reduced for numbers to fit better */
     border-collapse: collapse;
     margin: 0;
   }
 
   #root .preview-items-table th,
   #root .preview-items-table td {
-    padding: 6px 1px;
-    vertical-align: top;
+    padding: 8px 6px; /* Increased to force gap between columns */
+    vertical-align: middle;
     word-break: break-word;
     overflow: visible;
     line-height: 1.1;
@@ -1885,7 +1905,7 @@ body {
 
   #root .preview-items-table th:nth-child(1),
   #root .preview-items-table td:nth-child(1) {
-    width: 20px;
+    width: 25px;
     text-align: center;
   }
 
@@ -1897,21 +1917,21 @@ body {
 
   #root .preview-items-table th:nth-child(3),
   #root .preview-items-table td:nth-child(3) {
-    width: 70px; /* Increased for prices */
+    width: 80px; /* More space for price */
     text-align: right;
     white-space: nowrap;
   }
 
   #root .preview-items-table th:nth-child(4),
   #root .preview-items-table td:nth-child(4) {
-    width: 32px;
+    width: 42px; /* More space for qty */
     text-align: center;
     white-space: nowrap;
   }
 
   #root .preview-items-table th:nth-child(5),
   #root .preview-items-table td:nth-child(5) {
-    width: 80px; /* Increased for totals */
+    width: 90px; /* More space for total */
     text-align: right;
     white-space: nowrap;
   }
