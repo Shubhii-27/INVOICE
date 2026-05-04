@@ -121,7 +121,7 @@ export default function ReceiptHistory({
                                                 {inv.paymentStatus || 'Pending'}
                                             </span>
                                         </td>
-                                        <td>
+                                        <td data-label="Actions">
                                             <div className="action-buttons">
                                                 <button className="btn-load" onClick={() => viewInvoice(inv)}>View</button>
                                                 <button className="btn-load" onClick={() => loadInvoice(inv)}>Edit</button>

@@ -72,7 +72,7 @@ function App() {
         const gst = clampPercent(item.gst || item.vat);
         const subtotal = quantity * price;
         const gstAmount = subtotal * (gst / 100);
-        return roundCurrency(subtotal + gstAmount);
+        return subtotal + gstAmount;
     };
 
     const calculateSubtotal = () => {
@@ -103,15 +103,15 @@ function App() {
     };
 
     const calculateInvoiceCostTotal = (invoice) => {
-        const invoiceItems = Array.isArray(invoice.items) ? invoice.items : [];
-        return roundCurrency(invoiceItems.reduce((sum, item) => sum + calculateItemCostTotal(item), 0));
+        const items = Array.isArray(invoice.items) ? invoice.items : [];
+        return items.reduce((sum, item) => sum + calculateItemCostTotal(item), 0);
     };
 
     const calculateInvoiceItemTotal = (item) => calculateItemTotal(item);
 
     const calculateInvoiceSubtotal = (invoice) => {
-        const invoiceItems = Array.isArray(invoice.items) ? invoice.items : [];
-        return roundCurrency(invoiceItems.reduce((sum, item) => sum + calculateInvoiceItemTotal(item), 0));
+        const items = Array.isArray(invoice.items) ? invoice.items : [];
+        return items.reduce((sum, item) => sum + calculateItemTotal(item), 0);
     };
 
     const calculateInvoiceTotal = (invoice) => {
@@ -299,8 +299,8 @@ function App() {
         setDeliveryDate(invoice.deliveryDate);
         setNotes(invoice.notes);
         setPaymentStatus(invoice.paymentStatus || 'Pending');
-        setCurrency(invoice.currency || 'USD');
-        setCurrencySymbol(invoice.currencySymbol || '$');
+        setCurrency(invoice.currency || 'INR');
+        setCurrencySymbol(invoice.currencySymbol || '₹');
         setLogoUrl(invoice.logoUrl);
         setCurrentInvoiceId(invoice.id);
         setShowHistory(false);
@@ -318,8 +318,8 @@ function App() {
         setDeliveryDate(invoice.deliveryDate);
         setNotes(invoice.notes);
         setPaymentStatus(invoice.paymentStatus || 'Pending');
-        setCurrency(invoice.currency || 'USD');
-        setCurrencySymbol(invoice.currencySymbol || '$');
+        setCurrency(invoice.currency || 'INR');
+        setCurrencySymbol(invoice.currencySymbol || '₹');
         setLogoUrl(invoice.logoUrl);
         setCurrentInvoiceId(invoice.id);
         setShowPreview(true);
@@ -421,24 +421,24 @@ function App() {
                         <div className="preview-table" >  <table className="preview-items-table">
                             <thead>
                                 <tr>
-                                    <th style={{ width: '60px' }}>S.l. No</th>
-                                    <th>Product Description</th>
+                                    <th style={{ width: '35px' }}>#</th>
+                                    <th>Description</th>
                                     <th>Price</th>
-                                    <th>QTY</th>
+                                    <th>Qty</th>
                                     <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {items.map((item, index) => (
                                     <tr key={item.id}>
-                                        <td>{index + 1}</td>
-                                        <td>
+                                        <td data-label="S.L. No">{index + 1}</td>
+                                        <td data-label="Description">
                                             <strong>{item.name || 'Product / Service'}</strong>
                                             {item.description ? <div className="preview-description">{item.description}</div> : null}
                                         </td>
-                                        <td>{currencySymbol}{parseFloat(item.price || 0).toFixed(2)}</td>
-                                        <td>{parseFloat(item.quantity || 0)} {item.unit}</td>
-                                        <td>{currencySymbol}{calculateItemTotal(item).toFixed(2)}</td>
+                                        <td data-label="Price">{currencySymbol}{parseFloat(item.price || 0).toFixed(2)}</td>
+                                        <td data-label="Qty">{parseFloat(item.quantity || 0)} {item.unit}</td>
+                                        <td data-label="Total">{currencySymbol}{calculateItemTotal(item).toFixed(2)}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -1019,31 +1019,6 @@ function App() {
                 </div>
             </form>
 
-            {deleteConfirmation && (
-                <div className="delete-confirmation-modal">
-                    <div className="delete-confirmation-overlay" onClick={cancelDelete}></div>
-                    <div className="delete-confirmation-dialog">
-                        <h3>Delete Receipt</h3>
-                        <p>Are you sure you want to delete this receipt? This action cannot be undone.</p>
-                        <div className="delete-confirmation-buttons">
-                            <button
-                                className="btn-cancel"
-                                onClick={cancelDelete}
-                            >
-                                No
-                            </button>
-                            <button
-                                className="btn-confirm-delete"
-                                onClick={() => confirmDelete(deleteConfirmation)}
-                            >
-                                Yes, Delete
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* ── Item Row Delete Confirmation Modal ── */}
             {itemDeleteConfirmId !== null && (
                 <div className="confirm-overlay" onClick={() => setItemDeleteConfirmId(null)}>
                     <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
@@ -1074,15 +1049,21 @@ function App() {
                     </div>
                 </div>
             )}
+
             {deleteConfirmation && (
-                <div className="delete-confirmation-modal">
-                    <div className="delete-confirmation-overlay" onClick={cancelDelete}></div>
-                    <div className="delete-confirmation-dialog">
-                        <h3>Delete Receipt</h3>
-                        <p>Are you sure you want to delete this receipt? This action cannot be undone.</p>
-                        <div className="delete-confirmation-buttons">
-                            <button className="btn-cancel" onClick={cancelDelete}>No</button>
-                            <button className="btn-confirm-delete" onClick={() => confirmDelete(deleteConfirmation)}>Yes, Delete</button>
+                <div className="confirm-overlay" onClick={cancelDelete}>
+                    <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
+                        <button className="confirm-close" onClick={cancelDelete} title="Close">
+                            <X size={18} />
+                        </button>
+                        <div className="confirm-icon">
+                            <AlertTriangle size={32} />
+                        </div>
+                        <h3 className="confirm-title">Delete Receipt</h3>
+                        <p className="confirm-message">Are you sure you want to delete this receipt? This action cannot be undone.</p>
+                        <div className="confirm-actions">
+                            <button className="confirm-btn-cancel" onClick={cancelDelete}>No</button>
+                            <button className="confirm-btn-delete" onClick={() => confirmDelete(deleteConfirmation)}>Yes, Delete</button>
                         </div>
                     </div>
                 </div>

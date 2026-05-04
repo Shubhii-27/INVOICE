@@ -125,21 +125,21 @@
 
 @media (max-width: 1024px) {
     .history-card {
-        padding: 32px;
+        padding: 24px 16px;
         border-radius: 16px;
     }
 }
 
 @media (max-width: 768px) {
     .history-card {
-        padding: 24px;
+        padding: 16px 12px;
         border-radius: 12px;
     }
 }
 
 @media (max-width: 480px) {
     .history-card {
-        padding: 16px;
+        padding: 12px 6px;
         border-radius: 10px;
     }
 }
@@ -265,14 +265,23 @@
 
     .history-table td[data-label] {
         display: flex;
+        flex-direction: column; /* Label on top */
         align-items: flex-start;
-        justify-content: space-between;
-        gap: 12px;
+        justify-content: flex-start;
+        gap: 6px;
         text-align: left;
+        min-height: auto;
+        padding: 12px 0;
     }
 
     .history-table td[data-label]::before {
-        flex-shrink: 0;
+        content: attr(data-label);
+        font-weight: 800;
+        font-size: 10px;
+        text-transform: uppercase;
+        color: var(--primary); /* Use primary color for label visibility */
+        text-align: left;
+        margin-bottom: 2px;
     }
 }
 
