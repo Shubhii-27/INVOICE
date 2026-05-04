@@ -1339,8 +1339,7 @@ body {
   font-size: 14px;
   line-height: 1.6;
   text-align: left;
-  color: #1e293b;
-  /* Fix: Dark text for white receipt value */
+  color: #000000 !important;
 }
 
 #root .preview-items-table {
@@ -1349,15 +1348,23 @@ body {
   border-collapse: collapse;
 }
 
-#root .preview-items-table th,
-#root .preview-items-table td {
+#root .preview-items-table td,
+#root .preview-items-table td strong {
   padding: 16px 12px;
   border-bottom: 1px solid #cbd5e1;
   font-size: 14px;
   line-height: 1.5;
   text-align: left;
-  color: #0f172a;
-  /* Explicit dark color for all table cells */
+  color: #000000 !important; /* Force black text for rows */
+}
+
+#root .preview-items-table th {
+  padding: 16px 12px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #ffffff !important; /* Force white text for header */
+  background-color: #ef4444 !important;
 }
 
 #root .preview-items-table th:nth-child(3),
@@ -1367,16 +1374,6 @@ body {
 #root .preview-items-table th:nth-child(5),
 #root .preview-items-table td:nth-child(5) {
   text-align: right;
-}
-
-#root .preview-items-table th {
-  text-transform: uppercase;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  color: var(--white);
-  background-color: #ef4444;
-  border: none;
 }
 
 #root .preview-items-table tbody tr:nth-child(even) {
@@ -1429,8 +1426,8 @@ body {
   background-color: transparent;
   font-size: 15px;
   border-bottom: 1px solid #cbd5e1;
-  color: #0f172a;
-  /* Explicit dark color for summary labels */
+  color: #000000 !important;
+  /* Explicit black color for summary labels */
 }
 
 #root .preview-totals-row span:last-child {
@@ -2270,6 +2267,17 @@ body {
   .preview-items-table tbody tr:nth-child(even) {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+
+  /* Force all text to be black in print except for header/totals */
+  #root .preview-card,
+  #root .preview-items-table td,
+  #root .preview-detail-value,
+  #root .preview-notes-text,
+  #root .preview-totals-row:not(.total) span,
+  #root .preview-description {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
   }
 
   /* Maintain layout proportions */
