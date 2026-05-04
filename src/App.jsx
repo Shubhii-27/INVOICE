@@ -357,11 +357,10 @@ function App() {
                         <button className="btn-outline" type="button" onClick={() => setShowPreview(false)}>
                             <ArrowLeft size={18} /> {previewBackLabel}
                         </button>
-                        <div className="template-selector-wrapper" style={{ marginLeft: 'auto', marginRight: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--text-main)' }}>Template:</span>
+                        <div className="template-selector-wrapper">
+                            <span className="template-label">Template:</span>
                             <select 
-                                className="input-field" 
-                                style={{ padding: '8px 32px 8px 12px', minHeight: 'auto', width: 'auto', border: '1px solid var(--border-light)' }}
+                                className="template-select" 
                                 value={selectedTemplate} 
                                 onChange={(e) => setSelectedTemplate(e.target.value)}
                             >
@@ -707,60 +706,78 @@ function App() {
                                 <div className="item-row-wrapper" key={item.id}>
                                     <div className="item-row">
                                         <div className="item-row-grip"><GripVertical size={18} /></div>
-                                        <input
-                                            type="text"
-                                            className="input-field"
-                                            placeholder='Item description'
-                                            value={item.name}
-                                            onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
-                                            required
-                                        />
-                                        <input
-                                            type="number"
-                                            className="input-field"
-                                            placeholder='Qty'
-                                            value={item.quantity}
-                                            onChange={(e) => handleItemChange(item.id, 'quantity', e.target.value)}
-                                            min="0"
-                                            step="1"
-                                        />
-                                        <select
-                                            className="input-field"
-                                            value={item.unit}
-                                            onChange={(e) => handleItemChange(item.id, 'unit', e.target.value)}
-                                        >
-                                            <option value="" disabled>Select unit</option>
-                                            <option value="pcs">pcs</option>
-                                            <option value="hrs">hrs</option>
-                                            <option value="days">days</option>
-                                            <option value="kg">kg</option>
-                                            <option value="g">g</option>
-                                            <option value="lbs">lbs</option>
-                                            <option value="m">m</option>
-                                            <option value="cm">cm</option>
-                                            <option value="ft">ft</option>
-                                            <option value="inch">inch</option>
-                                            <option value="L">L</option>
-                                            <option value="ml">ml</option>
-                                            <option value="box">box</option>
-                                            <option value="set">set</option>
-                                            <option value="pair">pair</option>
-                                            <option value="sqft">sqft</option>
-                                            <option value="sqm">sqm</option>
-                                            <option value="month">month</option>
-                                            <option value="year">year</option>
-                                        </select>
-                                        <input
-                                            type="number"
-                                            className="input-field"
-                                            placeholder="Price"
-                                            value={item.price}
-                                            onChange={(e) => handleItemChange(item.id, 'price', e.target.value)}
-                                            required
-                                            min="0"
-                                            step="1"
-                                        />
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        
+                                        <div className="item-input-group name-field">
+                                            <span className="mobile-label">Item Description</span>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder='Item description'
+                                                value={item.name}
+                                                onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div className="item-input-group">
+                                            <span className="mobile-label">Quantity</span>
+                                            <input
+                                                type="number"
+                                                className="input-field"
+                                                placeholder='Qty'
+                                                value={item.quantity}
+                                                onChange={(e) => handleItemChange(item.id, 'quantity', e.target.value)}
+                                                min="0"
+                                                step="1"
+                                            />
+                                        </div>
+
+                                        <div className="item-input-group">
+                                            <span className="mobile-label">Unit</span>
+                                            <select
+                                                className="input-field"
+                                                value={item.unit}
+                                                onChange={(e) => handleItemChange(item.id, 'unit', e.target.value)}
+                                            >
+                                                <option value="" disabled>Select unit</option>
+                                                <option value="pcs">pcs</option>
+                                                <option value="hrs">hrs</option>
+                                                <option value="days">days</option>
+                                                <option value="kg">kg</option>
+                                                <option value="g">g</option>
+                                                <option value="lbs">lbs</option>
+                                                <option value="m">m</option>
+                                                <option value="cm">cm</option>
+                                                <option value="ft">ft</option>
+                                                <option value="inch">inch</option>
+                                                <option value="L">L</option>
+                                                <option value="ml">ml</option>
+                                                <option value="box">box</option>
+                                                <option value="set">set</option>
+                                                <option value="pair">pair</option>
+                                                <option value="sqft">sqft</option>
+                                                <option value="sqm">sqm</option>
+                                                <option value="month">month</option>
+                                                <option value="year">year</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="item-input-group">
+                                            <span className="mobile-label">Price</span>
+                                            <input
+                                                type="number"
+                                                className="input-field"
+                                                placeholder="Price"
+                                                value={item.price}
+                                                onChange={(e) => handleItemChange(item.id, 'price', e.target.value)}
+                                                required
+                                                min="0"
+                                                step="1"
+                                            />
+                                        </div>
+
+                                        <div className="item-input-group">
+                                            <span className="mobile-label">Amount</span>
                                             <input
                                                 type="text"
                                                 className="input-field"
@@ -770,19 +787,25 @@ function App() {
                                                 title="Amount before GST"
                                             />
                                         </div>
-                                        <select
-                                            className="input-field"
-                                            value={item.gst || item.vat}
-                                            onChange={(e) => handleItemChange(item.id, 'gst', e.target.value)}
-                                            style={{ paddingRight: '4px' }}
-                                        >
-                                            <option value="0">0%</option>
-                                            <option value="5">5%</option>
-                                            <option value="12">12%</option>
-                                            <option value="18">18%</option>
-                                            <option value="28">28%</option>
-                                        </select>
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+
+                                        <div className="item-input-group">
+                                            <span className="mobile-label">GST (%)</span>
+                                            <select
+                                                className="input-field"
+                                                value={item.gst || item.vat}
+                                                onChange={(e) => handleItemChange(item.id, 'gst', e.target.value)}
+                                                style={{ paddingRight: '4px' }}
+                                            >
+                                                <option value="0">0%</option>
+                                                <option value="5">5%</option>
+                                                <option value="12">12%</option>
+                                                <option value="18">18%</option>
+                                                <option value="28">28%</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="item-input-group">
+                                            <span className="mobile-label">Total ({currencySymbol})</span>
                                             <input
                                                 type="text"
                                                 className="input-field"
@@ -791,6 +814,7 @@ function App() {
                                                 style={{ backgroundColor: 'transparent' }}
                                             />
                                         </div>
+
                                         <button className="delete-btn" type="button" onClick={() => setItemDeleteConfirmId(item.id)} title="Delete item">
                                             <Trash2 size={20} />
                                         </button>
@@ -888,22 +912,20 @@ function App() {
                                             )}
                                         </>
                                     )}
-                                    <div style={{ paddingLeft: '26px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                    <div className="item-extras">
                                         <input
                                             type="text"
                                             className="description-input"
                                             placeholder="Add Description..."
                                             value={item.description}
                                             onChange={(e) => handleItemChange(item.id, 'description', e.target.value)}
-                                            style={{ flex: 1 }}
                                         />
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                            <span style={{ fontSize: '10px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>Unit Purchase Cost:</span>
+                                        <div className="cost-input-wrapper">
+                                            <span className="cost-label">Unit Purchase Cost:</span>
                                             <input
                                                 type="number"
-                                                className="input-field"
+                                                className="input-field cost-input"
                                                 placeholder="0.00"
-                                                style={{ width: '80px', height: '34px', padding: '4px 8px', fontSize: '12px', minHeight: 'auto' }}
                                                 value={item.cost}
                                                 onChange={(e) => handleItemChange(item.id, 'cost', e.target.value)}
                                                 min="0"

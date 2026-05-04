@@ -127,12 +127,12 @@ export default function InvoiceReport({
                             <tbody>
                                 {clientReport.map((client) => (
                                     <tr key={client.clientName}>
-                                        <td>{client.clientName}</td>
-                                        <td>{client.invoices}</td>
-                                        <td>{currencySymbol}{client.revenue.toFixed(2)}</td>
-                                        <td>{currencySymbol}{client.cost.toFixed(2)}</td>
-                                        <td className={client.profit >= 0 ? 'profit-positive' : 'profit-negative'}>{currencySymbol}{client.profit.toFixed(2)}</td>
-                                        <td>{client.profitMargin.toFixed(2)}%</td>
+                                        <td data-label="Client">{client.clientName}</td>
+                                        <td data-label="Invoices">{client.invoices}</td>
+                                        <td data-label="Revenue">{currencySymbol}{client.revenue.toFixed(2)}</td>
+                                        <td data-label="Cost">{currencySymbol}{client.cost.toFixed(2)}</td>
+                                        <td data-label="Profit" className={client.profit >= 0 ? 'profit-positive' : 'profit-negative'}>{currencySymbol}{client.profit.toFixed(2)}</td>
+                                        <td data-label="Margin">{client.profitMargin.toFixed(2)}%</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -160,11 +160,11 @@ export default function InvoiceReport({
                             <tbody>
                                 {recentInvoices.map((inv) => (
                                     <tr key={inv.id}>
-                                        <td>{new Date(inv.savedAt).toLocaleString()}</td>
-                                        <td>#{inv.invoiceNumber}</td>
-                                        <td>{inv.billedTo?.name || '—'}</td>
-                                        <td>{inv.paymentStatus || 'Pending'}</td>
-                                        <td>{inv.currencySymbol || '$'}{calculateInvoiceTotal(inv).toFixed(2)}</td>
+                                        <td data-label="Date Saved">{new Date(inv.savedAt).toLocaleString()}</td>
+                                        <td data-label="Invoice #">#{inv.invoiceNumber}</td>
+                                        <td data-label="Client">{inv.billedTo?.name || '—'}</td>
+                                        <td data-label="Status">{inv.paymentStatus || 'Pending'}</td>
+                                        <td data-label="Total">{inv.currencySymbol || '$'}{calculateInvoiceTotal(inv).toFixed(2)}</td>
                                     </tr>
                                 ))}
                             </tbody>

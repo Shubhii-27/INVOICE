@@ -378,15 +378,50 @@
 }
 
 @media (max-width: 768px) {
-    .table-responsive {
-        max-height: 300px;
-    }
-
-    .report-list-table {
+    .report-list-table,
+    .report-list-table thead,
+    .report-list-table tbody,
+    .report-list-table th,
+    .report-list-table td,
+    .report-list-table tr {
         display: block;
         width: 100%;
-        overflow-x: auto;
-        white-space: nowrap;
+    }
+
+    .report-list-table thead {
+        display: none;
+    }
+
+    .report-list-table tbody tr {
+        background: #f8fafc;
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .report-list-table td {
+        padding: 10px 0;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: right !important;
+    }
+
+    .report-list-table td:last-child {
+        border-bottom: none;
+    }
+
+    .report-list-table td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        font-size: 11px;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        text-align: left;
+        margin-right: 12px;
     }
 }
 
