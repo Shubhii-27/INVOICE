@@ -381,7 +381,7 @@ function App() {
                         <div className="preview-header">
                             <div className="preview-header-top-row">
                                 <div className="preview-logo-box">
-                                    {logoUrl ? <img src={logoUrl} alt="Logo" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <span style={{ fontWeight: 800, color: '#ef4444' }}>LOGO</span>}
+                                    {logoUrl ? <img src={logoUrl} alt="Logo" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <span style={{ fontWeight: 800, color: 'var(--primary)' }}>LOGO</span>}
                                 </div>
                                 <div className="preview-header-content">
                                     <h2 className="preview-title">Invoice</h2>
@@ -450,7 +450,7 @@ function App() {
                             <div className="preview-summary-notes">
                                 {notes && (
                                     <div className="preview-notes" style={{ margin: 0, padding: 0, backgroundColor: 'transparent', border: 'none', boxShadow: 'none' }}>
-                                        <div className="preview-notes-title" style={{ borderBottom: '2px solid #ef4444', display: 'inline-block', paddingBottom: '4px' }}>Terms & Conditions:</div>
+                                        <div className="preview-notes-title" style={{ borderBottom: '2px solid var(--primary)', display: 'inline-block', paddingBottom: '4px' }}>Terms & Conditions:</div>
                                         <div className="preview-notes-text" style={{ marginTop: '10px' }}>{notes}</div>
                                     </div>
                                 )}
@@ -483,29 +483,7 @@ function App() {
                         <div className="preview-footer-geometric"></div>
                     </div>
                 </div>
-                {deleteConfirmation && (
-                    <div className="delete-confirmation-modal">
-                        <div className="delete-confirmation-overlay" onClick={cancelDelete}></div>
-                        <div className="delete-confirmation-dialog">
-                            <h3>Delete Receipt</h3>
-                            <p>Are you sure you want to delete this receipt? This action cannot be undone.</p>
-                            <div className="delete-confirmation-buttons">
-                                <button
-                                    className="btn-cancel"
-                                    onClick={cancelDelete}
-                                >
-                                    No
-                                </button>
-                                <button
-                                    className="btn-confirm-delete"
-                                    onClick={() => confirmDelete(deleteConfirmation)}
-                                >
-                                    Yes, Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
+
             </>
         );
     }
@@ -527,29 +505,7 @@ function App() {
                     setShowReport={setShowReport}
                     setShowHistory={setShowHistory}
                 />
-                {deleteConfirmation && (
-                    <div className="delete-confirmation-modal">
-                        <div className="delete-confirmation-overlay" onClick={cancelDelete}></div>
-                        <div className="delete-confirmation-dialog">
-                            <h3>Delete Receipt</h3>
-                            <p>Are you sure you want to delete this receipt? This action cannot be undone.</p>
-                            <div className="delete-confirmation-buttons">
-                                <button
-                                    className="btn-cancel"
-                                    onClick={cancelDelete}
-                                >
-                                    No
-                                </button>
-                                <button
-                                    className="btn-confirm-delete"
-                                    onClick={() => confirmDelete(deleteConfirmation)}
-                                >
-                                    Yes, Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
+
             </>
         );
     }
@@ -568,29 +524,7 @@ function App() {
                     setShowHistory={setShowHistory}
                     setShowReport={setShowReport}
                 />
-                {deleteConfirmation && (
-                    <div className="delete-confirmation-modal">
-                        <div className="delete-confirmation-overlay" onClick={cancelDelete}></div>
-                        <div className="delete-confirmation-dialog">
-                            <h3>Delete Receipt</h3>
-                            <p>Are you sure you want to delete this receipt? This action cannot be undone.</p>
-                            <div className="delete-confirmation-buttons">
-                                <button
-                                    className="btn-cancel"
-                                    onClick={cancelDelete}
-                                >
-                                    No
-                                </button>
-                                <button
-                                    className="btn-confirm-delete"
-                                    onClick={() => confirmDelete(deleteConfirmation)}
-                                >
-                                    Yes, Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
+
             </>
         );
     }
@@ -763,7 +697,7 @@ function App() {
                                 <div className="header-cell" style={{ textAlign: 'left' }}>Quantity</div>
                                 <div className="header-cell" style={{ textAlign: 'left' }}>Unit</div>
                                 <div className="header-cell" style={{ textAlign: 'left' }}>*Price</div>
-                                <div className="header-cell" style={{ textAlign: 'left' }}>*Cost</div>
+                                <div className="header-cell" style={{ textAlign: 'left' }}>Amount</div>
                                 <div className="header-cell" style={{ textAlign: 'left' }}>Gst (%)</div>
                                 <div className="header-cell" style={{ textAlign: 'left', paddingLeft: '8px' }}>Total ({currencySymbol})</div>
                                 <div className="header-cell"></div>
@@ -826,16 +760,16 @@ function App() {
                                             min="0"
                                             step="1"
                                         />
-                                        <input
-                                            type="number"
-                                            className="input-field"
-                                            placeholder="Unit Cost"
-                                            value={item.cost}
-                                            onChange={(e) => handleItemChange(item.id, 'cost', e.target.value)}
-                                            min="0"
-                                            step="0.01"
-                                            title="Your purchase price for this item (for profit calculation)"
-                                        />
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                value={(parseNumber(item.quantity) * parseNumber(item.price)).toFixed(2)}
+                                                disabled
+                                                style={{ backgroundColor: 'transparent' }}
+                                                title="Amount before GST"
+                                            />
+                                        </div>
                                         <select
                                             className="input-field"
                                             value={item.gst || item.vat}
@@ -954,14 +888,29 @@ function App() {
                                             )}
                                         </>
                                     )}
-                                    <div style={{ paddingLeft: '26px' }}>
+                                    <div style={{ paddingLeft: '26px', display: 'flex', gap: '12px', alignItems: 'center' }}>
                                         <input
                                             type="text"
                                             className="description-input"
                                             placeholder="Add Description..."
                                             value={item.description}
                                             onChange={(e) => handleItemChange(item.id, 'description', e.target.value)}
+                                            style={{ flex: 1 }}
                                         />
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                            <span style={{ fontSize: '10px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>Unit Purchase Cost:</span>
+                                            <input
+                                                type="number"
+                                                className="input-field"
+                                                placeholder="0.00"
+                                                style={{ width: '80px', height: '34px', padding: '4px 8px', fontSize: '12px', minHeight: 'auto' }}
+                                                value={item.cost}
+                                                onChange={(e) => handleItemChange(item.id, 'cost', e.target.value)}
+                                                min="0"
+                                                step="0.01"
+                                                title="Internal purchase cost for profit calculation"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -1099,6 +1048,19 @@ function App() {
                                     Yes
                                 </button>
                             )}
+                        </div>
+                    </div>
+                </div>
+            )}
+            {deleteConfirmation && (
+                <div className="delete-confirmation-modal">
+                    <div className="delete-confirmation-overlay" onClick={cancelDelete}></div>
+                    <div className="delete-confirmation-dialog">
+                        <h3>Delete Receipt</h3>
+                        <p>Are you sure you want to delete this receipt? This action cannot be undone.</p>
+                        <div className="delete-confirmation-buttons">
+                            <button className="btn-cancel" onClick={cancelDelete}>No</button>
+                            <button className="btn-confirm-delete" onClick={() => confirmDelete(deleteConfirmation)}>Yes, Delete</button>
                         </div>
                     </div>
                 </div>

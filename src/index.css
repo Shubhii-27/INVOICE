@@ -90,7 +90,7 @@ body {
 #root {
   background: var(--bg-gradient);
   color: var(--text-main);
-  padding: 60px 20px;
+  padding: 40px 0;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -101,13 +101,13 @@ body {
 
 @media (max-width: 768px) {
   #root {
-    padding: 40px 12px;
+    padding: 20px 0;
   }
 }
 
 @media (max-width: 480px) {
   #root {
-    padding: 24px 8px;
+    padding: 10px 0;
   }
 }
 
@@ -140,16 +140,22 @@ body {
 }
 
 #root .invoice-wrapper {
-  max-width: 1000px;
+  max-width: 100%;
   width: 100%;
-  margin: 0 auto;
-  padding: 0 12px;
+  margin: 0;
+  padding: 0 16px;
   box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  #root .invoice-wrapper {
+    padding: 0;
+  }
 }
 
 @media (min-width: 1200px) {
   #root .invoice-wrapper {
-    max-width: 1200px;
+    max-width: 100%;
     padding: 0;
   }
 }
@@ -1383,7 +1389,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ef4444;
+  background-color: var(--primary);
   clip-path: polygon(0 40%, 100% 10%, 100% 30%, 0 60%);
 }
 
@@ -1496,6 +1502,8 @@ body {
 
   #root .invoice-card {
     border-radius: 12px;
+    padding: 24px 16px;
+    margin: 10px 16px;
   }
 
   #root .card-body-editor {
@@ -1573,10 +1581,10 @@ body {
   }
 
   #root .preview-card {
-    width: 100%;
-    max-width: 100% !important;
-    margin: 0;
-    border-radius: 10px;
+    width: auto;
+    max-width: calc(100% - 32px) !important;
+    margin: 10px 16px;
+    border-radius: 12px;
   }
 
   #root .preview-toolbar {
@@ -1600,13 +1608,14 @@ body {
   }
 
   #root .preview-header-top-row {
-    padding: 20px 16px 40px;
-    gap: 16px;
+    padding: 24px 16px 40px;
+    gap: 20px;
     flex-wrap: wrap;
   }
 
   #root .preview-header-content {
     transform: none;
+    text-align: left;
   }
 
   #root .preview-title {
@@ -1614,30 +1623,51 @@ body {
   }
 
   #root .preview-logo-box {
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   #root .preview-body-top {
-    padding: 20px 16px;
+    padding: 24px 16px;
   }
 
   #root .preview-details-grid {
     padding: 0 16px;
-    gap: 10px;
+    gap: 16px;
   }
 
   #root .preview-items-table {
-    display: block;
-    width: calc(100% - 32px);
-    margin: 10px 16px;
-    overflow-x: auto;
-    white-space: nowrap;
+    display: table;
+    width: calc(100% - 24px);
+    margin: 10px 12px;
+    table-layout: auto;
   }
 
   #root .preview-items-table th,
   #root .preview-items-table td {
-    padding: 12px 14px;
-    font-size: 13px;
+    padding: 8px 4px;
+    font-size: 11px;
+    line-height: 1.2;
+    word-break: normal;
+  }
+
+  /* Prevent wrapping for numeric columns to avoid vertical stacking */
+  #root .preview-items-table th:nth-child(1),
+  #root .preview-items-table td:nth-child(1),
+  #root .preview-items-table th:nth-child(3),
+  #root .preview-items-table td:nth-child(3),
+  #root .preview-items-table th:nth-child(4),
+  #root .preview-items-table td:nth-child(4),
+  #root .preview-items-table th:nth-child(5),
+  #root .preview-items-table td:nth-child(5) {
+    white-space: nowrap !important;
+    width: 1%; /* Shrink to fit content */
+  }
+
+  #root .preview-items-table th:nth-child(2),
+  #root .preview-items-table td:nth-child(2) {
+    width: auto;
+    white-space: normal;
+    min-width: 80px;
   }
 
   #root .preview-summary {
@@ -2040,6 +2070,15 @@ body {
     visibility: visible !important;
     width: 100% !important;
   }
+
+  /* Hide footer for other templates in print */
+  #root .preview-card.modern .preview-footer-geometric,
+  #root .preview-card.minimalist .preview-footer-geometric,
+  #root .preview-card.professional .preview-footer-geometric,
+  #root .preview-card.elegant .preview-footer-geometric {
+    display: none !important;
+    visibility: hidden !important;
+  }
 }
 
 /* ============================= */
@@ -2152,13 +2191,14 @@ body {
 #root .preview-details-grid,
 #root .preview-summary,
 #root .preview-signature-area {
-  padding-left: 4% !important;
-  padding-right: 4% !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
 }
 
 #root .preview-items-table {
   width: 100% !important;
   margin: 1.25vh 0 !important;
+  border-collapse: collapse;
 }
 
 #root .preview-items-table th,
@@ -2178,7 +2218,7 @@ body {
 #root .preview-items-table td:nth-child(4),
 #root .preview-items-table th:nth-child(5),
 #root .preview-items-table td:nth-child(5) {
-  text-align: right;
+  text-align: right !important;
   font-variant-numeric: tabular-nums;
 }
 
@@ -2215,8 +2255,13 @@ body {
   #root .preview-body-top>div,
   #root .preview-detail,
   #root .preview-detail-title,
-  #root .preview-detail-value {
+  #root .preview-detail-value,
+  #root .preview-notes {
     text-align: left !important;
+  }
+  
+  #root .signature-box {
+    text-align: center !important;
   }
 
   #root .preview-summary {
@@ -2274,8 +2319,8 @@ body {
 }
 
 #root .preview-items-table {
-  width: 90%;
-  margin: 1.5vh 5%;
+  width: 100%;
+  margin: 1.5vh 0;
 }
 
 #root .preview-summary {
@@ -2294,8 +2339,8 @@ body {
   }
 
   #root .preview-items-table {
-    width: 94%;
-    margin: 1.2vh 3%;
+    width: 100%;
+    margin: 1.2vh 0;
   }
 
   #root .preview-summary,
@@ -2314,8 +2359,8 @@ body {
   }
 
   #root .preview-items-table {
-    width: 96%;
-    margin: 1vh 2%;
+    width: 100%;
+    margin: 1vh 0;
   }
 
   #root .preview-summary,
@@ -2358,7 +2403,8 @@ body {
 
   #root .preview-items-table th,
   #root .preview-items-table td {
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-word;
   }
 
   #root .preview-summary {
