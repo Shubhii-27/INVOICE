@@ -404,11 +404,12 @@
     .report-list-table td {
         padding: 12px 0;
         border-bottom: 1px solid #e2e8f0;
-        display: flex;
-        flex-direction: column; /* Label on top */
+        display: grid;
+        grid-template-columns: 100px 1fr;
         justify-content: flex-start;
         align-items: flex-start;
-        text-align: left !important;
+        text-align: right !important;
+        gap: 12px;
     }
 
     .report-list-table td:last-child {
@@ -422,9 +423,9 @@
         text-transform: uppercase;
         color: var(--primary);
         text-align: left;
-        margin-bottom: 4px;
         display: block;
         width: 100%;
+        margin-top: 3px;
     }
 }
 

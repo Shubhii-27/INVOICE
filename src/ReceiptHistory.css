@@ -264,15 +264,14 @@
     }
 
     .history-table td[data-label] {
-        display: flex;
-        flex-direction: column;
-        /* Label on top */
+        display: grid;
+        grid-template-columns: 100px 1fr;
         align-items: flex-start;
-        justify-content: flex-start;
-        gap: 6px;
-        text-align: left;
+        gap: 12px;
+        text-align: right !important;
         min-height: auto;
         padding: 12px 0;
+        border-bottom: 1px solid #f1f5f9;
     }
 
     .history-table td[data-label]::before {
@@ -282,10 +281,10 @@
         text-transform: uppercase;
         color: var(--primary);
         text-align: left;
-        margin-bottom: 6px;
         letter-spacing: 0.5px;
         display: block;
         width: 100%;
+        margin-top: 3px;
     }
 
     .history-table tbody tr {
