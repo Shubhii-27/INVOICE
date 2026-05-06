@@ -137,8 +137,8 @@ body {
 
 @media (min-width: 1025px) {
   .main-content {
-    padding-left: 294px; /* Exactly sidebar width */
-    padding-right: 0;
+    padding-left: 344px; /* 294px sidebar + 50px alignment margin */
+    padding-right: 50px;
   }
 }
 
@@ -178,7 +178,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 0;
+  padding: 0 50px;
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(16px);
   border-bottom: 3px solid #e2e8f0;
@@ -3888,5 +3888,10 @@ body {
     width: 100% !important;
     justify-content: center !important;
   }
+}
+
+
+.header-page-title {
+  margin: 15px !important;
 }
 
