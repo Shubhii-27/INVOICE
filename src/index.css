@@ -137,8 +137,8 @@ body {
 
 @media (min-width: 1025px) {
   .main-content {
-    padding-left: 334px; /* 294px sidebar + 40px alignment margin */
-    padding-right: 40px;
+    padding-left: 294px; /* Exactly sidebar width */
+    padding-right: 0;
   }
 }
 
@@ -178,10 +178,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 0 40px;
+  padding: 0;
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(16px);
-  border-bottom: 2px solid #ef4444;
+  border-bottom: 3px solid #e2e8f0;
   border-radius: 0;
   z-index: 999;
   transition: all 0.3s ease;
@@ -267,9 +267,9 @@ body {
 }
 
 #root .invoice-wrapper {
-  max-width: 1200px;
+  max-width: none;
   width: 100%;
-  margin: 0 auto;
+  margin: 0;
   padding: 0;
   box-sizing: border-box;
   position: relative;
@@ -3428,7 +3428,7 @@ body {
   bottom: 0;
   width: 294px;
   background-color: #ffffff;
-  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  border-right: 3px solid #e2e8f0;
   border-radius: 0;
   display: flex;
   flex-direction: column;
@@ -3683,6 +3683,7 @@ body {
 
 .dark-mode .sidebar {
   background-color: #1c1917 !important;
+  border-right: 3px solid #292524 !important;
 }
 
 .dark-mode .input-field,
@@ -3734,7 +3735,7 @@ body {
 
 .dark-mode .desktop-page-header {
   background-color: #0c0a09 !important;
-  border-bottom: 2px solid #ef4444 !important;
+  border-bottom: 3px solid #292524 !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
 }
 
@@ -3786,3 +3787,106 @@ body {
 .dark-mode .preview-toolbar select.template-select {
   color: var(--primary) !important;
 }
+
+
+.dark-mode .logo-text {
+  color: #fafaf9 !important;
+}
+
+
+/* Global Responsive Audit & Fixes */
+
+/* 1. Content Padding Synchronization */
+@media (max-width: 1024px) {
+  .main-content {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    padding-bottom: 40px !important;
+  }
+}
+
+/* 2. Header & Title Scaling */
+@media (max-width: 768px) {
+  .header-page-title {
+    font-size: 20px !important;
+  }
+  
+  .invoice-title {
+    font-size: 24px !important;
+    letter-spacing: 1px !important;
+  }
+}
+
+/* 3. Invoice Card & Form Fields */
+@media (max-width: 768px) {
+  .invoice-card {
+    padding: 20px 15px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  .details-row {
+    flex-direction: column !important;
+    gap: 15px !important;
+  }
+  
+  .detail-box {
+    width: 100% !important;
+  }
+}
+
+/* 4. Table & Lists Responsiveness */
+.preview-table {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 640px) {
+  .preview-items-table th, 
+  .preview-items-table td {
+    padding: 10px 8px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* 5. Totals & Summary Section */
+@media (max-width: 768px) {
+  .bottom-section {
+    flex-direction: column !important;
+    gap: 30px !important;
+  }
+  
+  .summary-section {
+    width: 100% !important;
+  }
+  
+  .totals-box {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
+
+/* 6. Navigation Enhancements */
+@media (max-width: 1024px) {
+  .sidebar {
+    box-shadow: 20px 0 50px rgba(0,0,0,0.3) !important;
+  }
+  
+  .logo-text {
+    font-size: 22px !important;
+  }
+}
+
+/* 7. Button & Interactive Element Sizing */
+@media (max-width: 480px) {
+  .btn-generate {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  
+  .add-item-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+

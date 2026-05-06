@@ -1055,6 +1055,7 @@ function App() {
                 showPreview={showPreview}
                 darkMode={darkMode}
                 onToggleDarkMode={toggleDarkMode}
+                savedInvoices={savedInvoices}
             />
 
             <main className="main-content">

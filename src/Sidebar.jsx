@@ -20,7 +20,8 @@ const Sidebar = ({
   onNavigate,
   showPreview,
   darkMode,
-  onToggleDarkMode
+  onToggleDarkMode,
+  savedInvoices
 }) => {
   const menuItems = [
     { id: 'edit', label: 'Create Invoice', icon: <PlusCircle size={20} /> },
