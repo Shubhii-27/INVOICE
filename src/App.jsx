@@ -1060,7 +1060,6 @@ function App() {
             <main className="main-content">
                 <header className="desktop-page-header">
                     <div className="header-title-group">
-                        <span className="header-icon">{icon}</span>
                         <h1 className="header-page-title">{title}</h1>
                     </div>
                 </header>
