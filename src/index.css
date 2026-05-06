@@ -3895,3 +3895,83 @@ body {
   margin: 15px !important;
 }
 
+
+@media (min-width: 1025px) {
+  .main-content {
+    padding-left: 334px !important;
+    padding-right: 40px !important;
+  }
+  .desktop-page-header {
+    padding: 0 40px !important;
+  }
+}
+
+
+@media (min-width: 1025px) {
+  .main-content {
+    padding-left: 299px !important;
+    padding-right: 5px !important;
+  }
+  .desktop-page-header {
+    padding: 0 5px !important;
+  }
+}
+
+
+/* Specific P&L Page Margin */
+.history-view {
+  padding-right: 5px !important;
+}
+
+
+@media (min-width: 1025px) {
+  .main-content {
+    padding-left: 304px !important;
+    padding-right: 10px !important;
+  }
+  .desktop-page-header {
+    padding: 0 10px !important;
+  }
+}
+
+.history-view {
+  padding-right: 10px !important;
+}
+
+
+/* Create Invoice Specific Margins */
+@media (min-width: 1025px) {
+  .edit-view {
+    margin-left: 5px !important;
+    margin-right: 10px !important;
+    width: calc(100% - 15px) !important;
+  }
+}
+
+.edit-view {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+
+@media (min-width: 1025px) {
+  .main-content {
+    padding-left: 299px !important; /* 294px sidebar + 5px margin */
+    padding-right: 10px !important;
+  }
+  .desktop-page-header {
+    padding-left: 5px !important;
+    padding-right: 10px !important;
+  }
+}
+
+
+@media (min-width: 1025px) {
+  .main-content {
+    padding-left: 297px !important; /* 294px sidebar + 3px margin */
+  }
+  .desktop-page-header {
+    padding-left: 3px !important;
+  }
+}
+
