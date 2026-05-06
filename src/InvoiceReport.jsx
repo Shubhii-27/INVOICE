@@ -16,17 +16,6 @@ export default function InvoiceReport({
 
     return (
         <div className="invoice-wrapper history-view">
-            <div className="history-toolbar">
-                <button className="btn-outline" type="button" onClick={() => setShowReport(false)}>
-                    <ArrowLeft size={18} /> Back to Edit
-                </button>
-                <div className="history-toolbar-content">
-                    <h2 className="history-title">Business Intelligence Report</h2>
-                    <button className="btn-history" type="button" onClick={() => { setShowHistory(true); setShowReport(false); }}>
-                        View Saved Receipts
-                    </button>
-                </div>
-            </div>
 
             <div className="report-grid">
                 <div className="report-card">

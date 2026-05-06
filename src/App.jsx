@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react';
-import { UploadCloud, GripVertical, Trash2, Plus, ArrowLeft, Download, Search, AlertTriangle, X } from 'lucide-react';
+import { UploadCloud, GripVertical, Trash2, Plus, ArrowLeft, Download, Search, AlertTriangle, X, FileText, History, PieChart, PlusCircle } from 'lucide-react';
 import InvoiceReport from './InvoiceReport.jsx';
 import ReceiptHistory from './ReceiptHistory.jsx';
 import './index.css';
+import Sidebar from './Sidebar.jsx';
 
 function App() {
     const [items, setItems] = useState([
@@ -34,6 +35,7 @@ function App() {
     const [deleteConfirmation, setDeleteConfirmation] = useState(null);
     const [itemDeleteConfirmId, setItemDeleteConfirmId] = useState(null);
     const [selectedTemplate, setSelectedTemplate] = useState('classic');
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const fileInputRef = useRef(null);
 
     const [savedInvoices, setSavedInvoices] = useState(() => {
@@ -51,12 +53,16 @@ function App() {
         window.localStorage.setItem('savedInvoices', JSON.stringify(invoices));
     };
 
-    const roundCurrency = (value) => Number((Number(value) || 0).toFixed(2));
+    const roundCurrency = (value) => {
+        const num = typeof value === 'number' ? value : parseFloat(value);
+        if (Number.isNaN(num)) return 0;
+        return Math.round((num + Number.EPSILON) * 100) / 100;
+    };
 
     const parseNumber = (value) => {
+        if (value === null || value === undefined || value === '') return 0;
         const parsed = parseFloat(value);
-        if (Number.isNaN(parsed) || !Number.isFinite(parsed)) return 0;
-        return parsed;
+        return Number.isNaN(parsed) || !Number.isFinite(parsed) ? 0 : parsed;
     };
 
     const clampPercent = (value) => {
@@ -69,14 +75,16 @@ function App() {
     const calculateItemTotal = (item) => {
         const quantity = clampNonNegative(item.quantity);
         const price = clampNonNegative(item.price);
-        const gst = clampPercent(item.gst || item.vat);
+        // Use nullish coalescing to allow 0 as a valid GST value
+        const gst = clampPercent(item.gst ?? item.vat ?? 0);
         const subtotal = quantity * price;
         const gstAmount = subtotal * (gst / 100);
-        return subtotal + gstAmount;
+        return roundCurrency(subtotal + gstAmount);
     };
 
     const calculateSubtotal = () => {
-        return roundCurrency(items.reduce((sum, item) => sum + calculateItemTotal(item), 0));
+        const total = items.reduce((sum, item) => sum + calculateItemTotal(item), 0);
+        return roundCurrency(total);
     };
 
     const getDiscountAmount = () => {
@@ -88,12 +96,8 @@ function App() {
 
     const calculateTotal = () => {
         const subtotal = calculateSubtotal();
-        const discountValue = clampPercent(discount);
-        if (discountEnabled && discountValue > 0) {
-            const discountAmt = getDiscountAmount();
-            return roundCurrency(Math.max(subtotal - discountAmt, 0));
-        }
-        return roundCurrency(subtotal);
+        const discountAmt = getDiscountAmount();
+        return roundCurrency(Math.max(subtotal - discountAmt, 0));
     };
 
     const calculateItemCostTotal = (item) => {
@@ -103,22 +107,18 @@ function App() {
     };
 
     const calculateInvoiceCostTotal = (invoice) => {
-        const items = Array.isArray(invoice.items) ? invoice.items : [];
-        return items.reduce((sum, item) => sum + calculateItemCostTotal(item), 0);
-    };
-
-    const calculateInvoiceItemTotal = (item) => calculateItemTotal(item);
-
-    const calculateInvoiceSubtotal = (invoice) => {
-        const items = Array.isArray(invoice.items) ? invoice.items : [];
-        return items.reduce((sum, item) => sum + calculateItemTotal(item), 0);
+        const invItems = Array.isArray(invoice?.items) ? invoice.items : [];
+        const total = invItems.reduce((sum, item) => sum + calculateItemCostTotal(item), 0);
+        return roundCurrency(total);
     };
 
     const calculateInvoiceTotal = (invoice) => {
-        const subtotal = calculateInvoiceSubtotal(invoice);
+        if (!invoice) return 0;
+        const invItems = Array.isArray(invoice.items) ? invoice.items : [];
+        const subtotal = invItems.reduce((sum, item) => sum + calculateItemTotal(item), 0);
         const discountValue = clampPercent(invoice.discount);
         if (invoice.discountEnabled && discountValue > 0) {
-            const discountAmt = roundCurrency((subtotal * discountValue) / 100);
+            const discountAmt = (subtotal * discountValue) / 100;
             return roundCurrency(Math.max(subtotal - discountAmt, 0));
         }
         return roundCurrency(subtotal);
@@ -126,14 +126,13 @@ function App() {
 
     const getReportSummary = () => {
         const totalInvoices = savedInvoices.length;
-        const totalRevenue = savedInvoices.reduce((sum, inv) => sum + parseFloat(calculateInvoiceTotal(inv) || 0), 0);
-        const totalCost = savedInvoices.reduce((sum, inv) => sum + parseFloat(calculateInvoiceCostTotal(inv) || 0), 0);
+        const totalRevenue = savedInvoices.reduce((sum, inv) => sum + calculateInvoiceTotal(inv), 0);
+        const totalCost = savedInvoices.reduce((sum, inv) => sum + calculateInvoiceCostTotal(inv), 0);
         const totalProfit = totalRevenue - totalCost;
         const unpaidRevenue = savedInvoices.reduce((sum, inv) => {
             const status = inv.paymentStatus || 'Pending';
-            const invoiceTotal = parseFloat(calculateInvoiceTotal(inv) || 0);
             if (status === 'Paid') return sum;
-            return sum + invoiceTotal;
+            return sum + calculateInvoiceTotal(inv);
         }, 0);
         const averageInvoice = totalInvoices ? totalRevenue / totalInvoices : 0;
         const statusCounts = savedInvoices.reduce((acc, inv) => {
@@ -349,9 +348,27 @@ function App() {
 
     const monthlyReport = getMonthlyReport();
 
-    if (showPreview) {
-        return (
-            <>
+    const activeView = showHistory ? 'history' : showReport ? 'report' : 'edit';
+
+    const handleNavigate = (view) => {
+        if (view === 'edit') {
+            setShowHistory(false);
+            setShowReport(false);
+            setShowPreview(false);
+        } else if (view === 'history') {
+            setShowHistory(true);
+            setShowReport(false);
+            setShowPreview(false);
+        } else if (view === 'report') {
+            setShowHistory(false);
+            setShowReport(true);
+            setShowPreview(false);
+        }
+    };
+
+    const getContent = () => {
+        if (showPreview) {
+            return (
                 <div className="invoice-wrapper preview-view">
                     <div className="preview-toolbar">
                         <button className="btn-outline" type="button" onClick={() => setShowPreview(false)}>
@@ -401,7 +418,7 @@ function App() {
 
                         <div className="preview-details-grid">
                             <div className="preview-detail">
-                                <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: '#101828' }}>Invoice To:</div>
+                                <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: 'var(--text-main)' }}>Invoice To:</div>
                                 <div className="preview-detail-value">
                                     <strong>{billedTo.name || 'Client Name'}</strong><br />
                                     {billedTo.address || 'Client Address'}<br />
@@ -409,7 +426,7 @@ function App() {
                                 </div>
                             </div>
                             <div className="preview-detail" style={{ textAlign: 'right' }}>
-                                <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: '#101828' }}>Invoice No:</div>
+                                <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: 'var(--text-main)' }}>Invoice No:</div>
                                 <div className="preview-detail-value">
                                     <strong>Date:</strong> {formatDate(issueDate)}<br />
                                     <strong>Due:</strong> {formatDate(dueDate)}<br />
@@ -482,18 +499,14 @@ function App() {
                         <div className="preview-footer-geometric"></div>
                     </div>
                 </div>
+            );
+        }
 
-            </>
-        );
-    }
-
-    const reportSummary = getReportSummary();
-    const clientReport = getClientReport();
-    const recentInvoices = [...savedInvoices].sort((a, b) => b.savedAt.localeCompare(a.savedAt)).slice(0, 5);
-
-    if (showReport) {
-        return (
-            <>
+        if (showReport) {
+            const reportSummary = getReportSummary();
+            const clientReport = getClientReport();
+            const recentInvoices = [...savedInvoices].sort((a, b) => b.savedAt.localeCompare(a.savedAt)).slice(0, 5);
+            return (
                 <InvoiceReport
                     reportSummary={reportSummary}
                     monthlyReport={monthlyReport}
@@ -504,14 +517,11 @@ function App() {
                     setShowReport={setShowReport}
                     setShowHistory={setShowHistory}
                 />
+            );
+        }
 
-            </>
-        );
-    }
-
-    if (showHistory) {
-        return (
-            <>
+        if (showHistory) {
+            return (
                 <ReceiptHistory
                     savedInvoices={savedInvoices}
                     searchQuery={searchQuery}
@@ -523,13 +533,10 @@ function App() {
                     setShowHistory={setShowHistory}
                     setShowReport={setShowReport}
                 />
+            );
+        }
 
-            </>
-        );
-    }
-
-    return (
-        <>
+        return (
             <form className="invoice-wrapper edit-view" onSubmit={handleGenerate}>
                 <div className="invoice-card">
                     <div className="card-header-geometric">
@@ -1007,17 +1014,58 @@ function App() {
                             <button className="btn-generate" type="submit">
                                 <Download size={20} /> Generate & Save Invoice
                             </button>
-                            <button className="btn-history" type="button" onClick={() => setShowHistory(true)}>
-                                <Search size={18} /> Invoice History
-                            </button>
-                            <button className="btn-outline" type="button" onClick={() => setShowReport(true)}>
-                                Profit & Loss Report
-                            </button>
                         </div>
                     </div>
                     <div className="card-footer-geometric"></div>
                 </div>
             </form>
+        );
+    };
+
+    const getPageTitle = () => {
+        if (showPreview) return { title: 'Invoice Preview', icon: <FileText size={22} /> };
+        if (showHistory) return { title: 'Invoice History', icon: <History size={22} /> };
+        if (showReport) return { title: 'P&L Report', icon: <PieChart size={22} /> };
+        return { title: 'Create Invoice', icon: <PlusCircle size={22} /> };
+    };
+
+    const { title, icon } = getPageTitle();
+
+    const [darkMode, setDarkMode] = useState(() => {
+        try {
+            return window.localStorage.getItem('darkMode') === 'true';
+        } catch {
+            return false;
+        }
+    });
+
+    const toggleDarkMode = () => {
+        const next = !darkMode;
+        setDarkMode(next);
+        window.localStorage.setItem('darkMode', String(next));
+    };
+
+    return (
+        <div className={`app-container ${darkMode ? 'dark-mode' : ''} ${showPreview ? 'preview-mode' : ''} ${isSidebarOpen ? 'sidebar-open' : ''}`}>
+            <Sidebar 
+                isOpen={isSidebarOpen} 
+                setIsOpen={setIsSidebarOpen} 
+                activeView={activeView}
+                onNavigate={handleNavigate}
+                showPreview={showPreview}
+                darkMode={darkMode}
+                onToggleDarkMode={toggleDarkMode}
+            />
+
+            <main className="main-content">
+                <header className="desktop-page-header">
+                    <div className="header-title-group">
+                        <span className="header-icon">{icon}</span>
+                        <h1 className="header-page-title">{title}</h1>
+                    </div>
+                </header>
+                {getContent()}
+            </main>
 
             {itemDeleteConfirmId !== null && (
                 <div className="confirm-overlay" onClick={() => setItemDeleteConfirmId(null)}>
@@ -1068,8 +1116,9 @@ function App() {
                     </div>
                 </div>
             )}
-        </>
+        </div>
     );
 }
+
 
 export default App;

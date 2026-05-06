@@ -62,17 +62,6 @@ export default function ReceiptHistory({
                 </div>
             )}
 
-            <div className="history-toolbar">
-                <button className="btn-outline" type="button" onClick={() => setShowHistory(false)}>
-                    <ArrowLeft size={18} /> Back to Edit
-                </button>
-                <div className="history-toolbar-content">
-                    <h2 className="history-title">Saved Receipt Archive</h2>
-                    <button className="btn-outline" type="button" onClick={() => { setShowReport(true); setShowHistory(false); }}>
-                        Business Intelligence
-                    </button>
-                </div>
-            </div>
 
             <div className="history-search">
                 <div className="search-wrapper">
