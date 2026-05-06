@@ -98,9 +98,6 @@ const Sidebar = ({
           <Menu size={24} />
         </button>
         <div className="mobile-logo">
-          <span className="logo-icon" style={{ display: 'flex', color: 'var(--primary)' }}>
-            {icon}
-          </span>
           <span className="logo-text" style={{ fontSize: '18px', fontWeight: '700' }}>
             {title}
           </span>
