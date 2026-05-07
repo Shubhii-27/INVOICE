@@ -573,15 +573,16 @@ button:hover {
 }
 
 #root .logo-title {
-  font-size: 13px;
+  display: block;
+  font-size: 16px;
   font-weight: 700;
-  color: var(--text-main);
+  color: #ffffff;
   text-transform: uppercase;
 }
 
 #root .logo-subtitle {
   font-size: 12px;
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 #root .invoice-title {
@@ -971,7 +972,7 @@ button:hover {
   display: block;
   font-size: 16px;
   font-weight: 700;
-  color: var(--text-main);
+  color: #ffffff;
 }
 
 #root .mobile-label {
@@ -4218,3 +4219,27 @@ button:hover {
 .settings-chevron { margin-left: auto; display: flex; align-items: center; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 .settings-chevron.open { transform: rotate(180deg); }
 
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 24px;
+  border-top: 1px solid var(--border-light);
+}
+
+.powered-by {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.brand-name {
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
