@@ -212,7 +212,7 @@ body {
   width: 48px;
   height: 48px;
   border-radius: 14px;
-  background-color: #ffffff;
+  background-color: var(--white);
   border: 1px solid var(--border-light);
   display: flex;
   align-items: center;
@@ -414,7 +414,7 @@ button:hover {
 }
 
 #root .card-body-editor {
-  padding: 48px;
+  padding: 48px 16px;
   display: flex;
   flex-direction: column;
   gap: 40px;
@@ -642,7 +642,7 @@ button:hover {
   color: var(--white);
   border: none;
   padding: 10px 22px;
-  font-size: 14px;
+  font-size: 15px; font-weight: 600;
   font-weight: 800;
   text-transform: uppercase;
   border-radius: 10px;
@@ -835,10 +835,11 @@ button:hover {
   padding: 14px 18px;
   border: 1px solid var(--border-light);
   border-radius: 12px;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 600;
   line-height: 1.4;
   color: var(--text-main);
-  background-color: #ffffff;
+  background-color: var(--white);
   width: 100%;
   outline: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -847,7 +848,7 @@ button:hover {
 #root .input-field:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 1px var(--primary);
-  background-color: #ffffff;
+  background-color: var(--white);
 }
 
 #root .input-field:invalid:not(:placeholder-shown) {
@@ -873,7 +874,7 @@ button:hover {
 }
 
 #root select.input-field option {
-  background-color: #ffffff;
+  background-color: var(--white);
   color: #0f172a;
   padding: 12px;
 }
@@ -912,7 +913,7 @@ button:hover {
 
 #root .items-header-row {
   display: grid;
-  grid-template-columns: 26px 3fr 2.6fr 2fr 2.8fr 2.8fr 2.2fr 1.6fr 40px;
+  grid-template-columns: 32px 5fr 1.5fr 2.5fr 2fr 2.5fr 1.5fr 2.5fr 40px;
   gap: 12px;
   padding: 14px 16px;
   background-color: var(--primary);
@@ -931,11 +932,17 @@ button:hover {
 
 #root .item-row {
   display: grid;
-  grid-template-columns: 26px 3fr 2.6fr 2fr 2.8fr 2.8fr 2.2fr 1.6fr 40px;
+  grid-template-columns: 32px 5fr 1.5fr 2.5fr 2fr 2.5fr 1.5fr 2.5fr 40px;
   gap: 12px;
   align-items: flex-start;
   margin-bottom: 12px;
-  padding: 0 16px;
+  padding: 0 8px;
+}
+
+#root .item-row .input-field {
+  padding-left: 8px;
+  padding-right: 8px;
+  font-size: 14px;
 }
 
 #root .item-row>input,
@@ -1028,7 +1035,7 @@ button:hover {
 }
 
 #root .description-input:focus {
-  background-color: #ffffff;
+  background-color: var(--white);
   border-color: var(--primary);
   box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.08), inset 0 1px 2px rgba(0, 0, 0, 0.01);
 }
@@ -1068,7 +1075,7 @@ button:hover {
 }
 
 #root .description-input:focus {
-  background-color: #ffffff;
+  background-color: var(--white);
   border-color: var(--primary);
   box-shadow: 0 0 0 1px var(--primary);
 }
@@ -1128,7 +1135,7 @@ button:hover {
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 16px;
-  font-size: 14px;
+  font-size: 15px; font-weight: 600;
   font-family: inherit;
   resize: none;
   height: 160px;
@@ -1140,7 +1147,7 @@ button:hover {
   line-height: 1.6;
   text-align: left;
   outline: none;
-  background-color: #ffffff;
+  background-color: var(--white);
   color: var(--text-main);
   transition: all 0.3s;
 }
@@ -1207,7 +1214,7 @@ button:hover {
   background-color: var(--primary);
   color: var(--white);
   padding: 10px 14px;
-  font-size: 14px;
+  font-size: 15px; font-weight: 600;
   font-weight: 700;
 }
 
@@ -1219,7 +1226,7 @@ button:hover {
 }
 
 #root .totals-label {
-  font-size: 14px;
+  font-size: 15px; font-weight: 600;
   font-weight: 800;
   text-transform: uppercase;
   color: var(--primary);
@@ -1340,7 +1347,7 @@ button:hover {
 }
 
 #root .template-label {
-  font-size: 14px;
+  font-size: 15px; font-weight: 600;
   font-weight: 700;
   color: var(--text-main);
   white-space: nowrap;
@@ -1350,8 +1357,8 @@ button:hover {
   padding: 8px 32px 8px 12px;
   border-radius: 8px;
   border: 1px solid var(--border-light);
-  font-size: 14px;
-  background-color: #ffffff;
+  font-size: 15px; font-weight: 600;
+  background-color: var(--white);
   cursor: pointer;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ef4444' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
@@ -1507,7 +1514,7 @@ button:hover {
 }
 
 #root .preview-detail-value {
-  font-size: 14px;
+  font-size: 15px; font-weight: 600;
   line-height: 1.6;
   text-align: left;
   color: inherit;
@@ -1523,7 +1530,7 @@ button:hover {
 #root .preview-items-table td strong {
   padding: 16px 12px;
   border-bottom: 1px solid #cbd5e1;
-  font-size: 14px;
+  font-size: 15px; font-weight: 600;
   line-height: 1.5;
   text-align: left;
   color: #000000;
@@ -1888,7 +1895,7 @@ button:hover {
   #root .input-field,
   #root .description-input {
     padding: 12px;
-    font-size: 14px;
+    font-size: 15px; font-weight: 600;
   }
 
   #root .bottom-section {
@@ -2944,7 +2951,7 @@ button:hover {
   border-top: 10px solid #3b82f6;
   border-radius: 12px;
   overflow: hidden;
-  background-color: #ffffff;
+  background-color: var(--white);
 }
 
 #root .preview-card.modern .preview-header {
@@ -3251,7 +3258,7 @@ button:hover {
 #root .preview-card.elegant .preview-notes {
   border: 1px solid #e2e8f0;
   border-left: 4px solid #d97706;
-  background-color: #ffffff;
+  background-color: var(--white);
   border-radius: 0;
 }
 
@@ -3275,7 +3282,7 @@ button:hover {
     margin-bottom: 10px;
     width: 100%;
     justify-content: space-between;
-    background-color: #ffffff;
+    background-color: var(--white);
     padding: 14px 18px;
     border-radius: 12px;
     border: 1px solid var(--border-light);
@@ -3331,7 +3338,7 @@ button:hover {
   left: 0;
   bottom: 0;
   width: 294px;
-  background-color: #ffffff;
+  background-color: var(--white);
   border-right: 3px solid #e2e8f0;
   border-radius: 0;
   display: flex;
@@ -3426,7 +3433,7 @@ button:hover {
   border: none;
   background: none;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 15px; font-weight: 600;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -3905,8 +3912,8 @@ button:hover {
 
 @media (min-width: 1025px) {
   .main-content {
-    padding-left: 297px !important;
-    /* 294px sidebar + 3px margin */
+    padding-left: 294px !important;
+    padding-right: 0 !important;
   }
 
   .desktop-page-header {
