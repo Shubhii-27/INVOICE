@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -10,8 +11,12 @@ import {
   Receipt,
   LogOut,
   Moon,
-  Sun
+  Sun,
+  Globe,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
+import { translations } from './translations';
 
 const Sidebar = ({ 
   isOpen, 
@@ -21,19 +26,24 @@ const Sidebar = ({
   showPreview,
   darkMode,
   onToggleDarkMode,
-  savedInvoices
+  savedInvoices,
+  language,
+  setLanguage
 }) => {
+  const [showSettingsSub, setShowSettingsSub] = useState(false);
+  const t = translations[language];
+  
   const menuItems = [
-    { id: 'edit', label: 'Create Invoice', icon: <PlusCircle size={20} /> },
-    { id: 'history', label: 'Invoice History', icon: <History size={20} /> },
-    { id: 'report', label: 'P&L Report', icon: <PieChart size={20} /> },
+    { id: 'edit', label: t.createInvoice, icon: <PlusCircle size={20} /> },
+    { id: 'history', label: t.invoiceHistory, icon: <History size={20} /> },
+    { id: 'report', label: t.plReport, icon: <PieChart size={20} /> },
   ];
 
   const getPageTitle = () => {
-    if (showPreview) return { title: 'Invoice Preview', icon: <FileText size={20} /> };
-    if (activeView === 'edit') return { title: 'Create Invoice', icon: <PlusCircle size={20} /> };
-    if (activeView === 'history') return { title: 'Invoice History', icon: <History size={20} /> };
-    if (activeView === 'report') return { title: 'P&L Report', icon: <PieChart size={20} /> };
+    if (showPreview) return { title: t.preview, icon: <FileText size={20} /> };
+    if (activeView === 'edit') return { title: t.createInvoice, icon: <PlusCircle size={20} /> };
+    if (activeView === 'history') return { title: t.history, icon: <History size={20} /> };
+    if (activeView === 'report') return { title: t.plReport, icon: <PieChart size={20} /> };
     return { title: 'Invoicify', icon: <Receipt size={20} /> };
   };
 
@@ -63,7 +73,7 @@ const Sidebar = ({
 
         <nav className="sidebar-nav">
           <div className="nav-section">
-            <span className="nav-section-title">Main Menu</span>
+            <span className="nav-section-title">{t.mainMenu}</span>
             {menuItems.map((item) => (
               <button
                 key={item.id}
@@ -81,13 +91,95 @@ const Sidebar = ({
           </div>
 
           <div className="nav-section" style={{ marginTop: '24px' }}>
-            <span className="nav-section-title">Preferences</span>
-            <button className="nav-item" onClick={onToggleDarkMode}>
-              <span className="nav-icon">
-                {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+            <span className="nav-section-title">{t.settings}</span>
+            
+            <button 
+              className={`nav-item ${showSettingsSub ? 'active' : ''}`} 
+              onClick={() => setShowSettingsSub(!showSettingsSub)}
+            >
+              <span className="nav-icon"><Settings size={20} /></span>
+              <span className="nav-label">{t.settings}</span>
+              <span style={{ marginLeft: 'auto' }}>
+                {showSettingsSub ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
               </span>
-              <span className="nav-label">{darkMode ? 'Light Mode' : 'Dark Mode'}</span>
             </button>
+
+            {showSettingsSub && (
+              <div className="sub-menu" style={{ paddingLeft: '16px', display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
+                {/* Language Section */}
+                <div style={{ padding: '8px 12px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Globe size={14} /> {t.languages}
+                </div>
+                <button 
+                  className={`nav-sub-item ${language === 'en' ? 'active' : ''}`}
+                  onClick={() => setLanguage('en')}
+                  style={{
+                    background: language === 'en' ? 'rgba(239,68,68,0.1)' : 'none',
+                    border: 'none',
+                    color: language === 'en' ? 'var(--primary)' : 'var(--text-main)',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    width: '100%'
+                  }}
+                >
+                  <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: language === 'en' ? 'var(--primary)' : 'transparent' }} />
+                  {t.english}
+                </button>
+                <button 
+                  className={`nav-sub-item ${language === 'hi' ? 'active' : ''}`}
+                  onClick={() => setLanguage('hi')}
+                  style={{
+                    background: language === 'hi' ? 'rgba(239,68,68,0.1)' : 'none',
+                    border: 'none',
+                    color: language === 'hi' ? 'var(--primary)' : 'var(--text-main)',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    width: '100%'
+                  }}
+                >
+                  <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: language === 'hi' ? 'var(--primary)' : 'transparent' }} />
+                  {t.hindi}
+                </button>
+
+                {/* Theme Section */}
+                <div style={{ padding: '8px 12px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+                  {darkMode ? <Moon size={14} /> : <Sun size={14} />} {t.appearance}
+                </div>
+                <button 
+                  className="nav-sub-item"
+                  onClick={onToggleDarkMode}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--text-main)',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    width: '100%'
+                  }}
+                >
+                  <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'transparent' }} />
+                  {darkMode ? t.lightMode : t.darkMode}
+                </button>
+              </div>
+            )}
           </div>
         </nav>
       </aside>

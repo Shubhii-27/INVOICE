@@ -4,6 +4,7 @@ import InvoiceReport from './InvoiceReport.jsx';
 import ReceiptHistory from './ReceiptHistory.jsx';
 import './index.css';
 import Sidebar from './Sidebar.jsx';
+import { translations } from './translations';
 
 function App() {
     const [items, setItems] = useState([
@@ -36,7 +37,10 @@ function App() {
     const [itemDeleteConfirmId, setItemDeleteConfirmId] = useState(null);
     const [selectedTemplate, setSelectedTemplate] = useState('classic');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [language, setLanguage] = useState('en');
     const fileInputRef = useRef(null);
+
+    const t = translations[language];
 
     const [savedInvoices, setSavedInvoices] = useState(() => {
         try {
@@ -375,21 +379,21 @@ function App() {
                             <ArrowLeft size={18} /> {previewBackLabel}
                         </button>
                         <div className="template-selector-wrapper">
-                            <span className="template-label">Template:</span>
+                            <span className="template-label">{t.template}:</span>
                             <select 
                                 className="template-select" 
                                 value={selectedTemplate} 
                                 onChange={(e) => setSelectedTemplate(e.target.value)}
                             >
-                                <option value="classic">Classic Red</option>
-                                <option value="modern">Modern Blue</option>
-                                <option value="minimalist">Minimalist Clean</option>
-                                <option value="professional">Professional Corporate</option>
-                                <option value="elegant">Elegant Dark</option>
+                                <option value="classic">{t.classic}</option>
+                                <option value="modern">{t.modern}</option>
+                                <option value="minimalist">{t.minimalist}</option>
+                                <option value="professional">{t.professional}</option>
+                                <option value="elegant">{t.elegant}</option>
                             </select>
                         </div>
                         <button className="btn-generate" type="button" onClick={handlePrint}>
-                            <Download size={20} /> Download / Print
+                            <Download size={20} /> {t.downloadPrint}
                         </button>
                     </div>
 
@@ -400,7 +404,7 @@ function App() {
                                     {logoUrl ? <img src={logoUrl} alt="Logo" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <span style={{ fontWeight: 800, color: 'var(--primary)' }}>LOGO</span>}
                                 </div>
                                 <div className="preview-header-content">
-                                    <h2 className="preview-title">Invoice</h2>
+                                    <h2 className="preview-title">{t.preview}</h2>
                                     <p className="preview-number">INV-{invoiceNumber}</p>
                                 </div>
                             </div>
@@ -408,7 +412,7 @@ function App() {
 
                         <div className="preview-body-top">
                             <div style={{ textAlign: 'right', marginLeft: 'auto' }}>
-                                <div className="preview-detail-title" style={{ border: 'none', marginBottom: '4px' }}>Billed From</div>
+                                <div className="preview-detail-title" style={{ border: 'none', marginBottom: '4px' }}>{t.billedFrom}</div>
                                 <div className="preview-detail-value" style={{ fontWeight: 700 }}>
                                     {billedFrom.name || 'Your Company Name'}<br />
                                     <span style={{ fontWeight: 400, opacity: 0.8 }}>{billedFrom.address || 'Address goes here'}</span>
@@ -418,7 +422,7 @@ function App() {
 
                         <div className="preview-details-grid">
                             <div className="preview-detail">
-                                <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: 'var(--text-main)' }}>Invoice To:</div>
+                                <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: 'var(--text-main)' }}>{t.invoiceTo}:</div>
                                 <div className="preview-detail-value">
                                     <strong>{billedTo.name || 'Client Name'}</strong><br />
                                     {billedTo.address || 'Client Address'}<br />
@@ -426,7 +430,7 @@ function App() {
                                 </div>
                             </div>
                             <div className="preview-detail" style={{ textAlign: 'right' }}>
-                                <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: 'var(--text-main)' }}>Invoice No:</div>
+                                <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: 'var(--text-main)' }}>{t.invoiceNo}:</div>
                                 <div className="preview-detail-value">
                                     <strong>Date:</strong> {formatDate(issueDate)}<br />
                                     <strong>Due:</strong> {formatDate(dueDate)}<br />
@@ -438,11 +442,11 @@ function App() {
                         <div className="preview-table" >  <table className="preview-items-table">
                             <thead>
                                 <tr>
-                                    <th style={{ width: '35px' }}>#</th>
-                                    <th>Description</th>
-                                    <th>Price</th>
-                                    <th>Qty</th>
-                                    <th>Total</th>
+                                    <th style={{ width: '35px' }}>{t.slNo}</th>
+                                    <th>{t.description}</th>
+                                    <th>{t.price}</th>
+                                    <th>{t.quantity}</th>
+                                    <th>{t.total}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -516,6 +520,10 @@ function App() {
                     calculateInvoiceTotal={calculateInvoiceTotal}
                     setShowReport={setShowReport}
                     setShowHistory={setShowHistory}
+                    viewInvoice={viewInvoice}
+                    loadInvoice={loadInvoice}
+                    deleteInvoice={deleteInvoice}
+                    language={language}
                 />
             );
         }
@@ -532,6 +540,7 @@ function App() {
                     calculateInvoiceTotal={calculateInvoiceTotal}
                     setShowHistory={setShowHistory}
                     setShowReport={setShowReport}
+                    language={language}
                 />
             );
         }
@@ -654,7 +663,7 @@ function App() {
 
                         <div className="info-grid">
                             <div className="input-wrapper">
-                                <span className="input-label">*Invoice Number</span>
+                                <span className="input-label">*{t.invoiceNumber}</span>
                                 <input
                                     type="text"
                                     className="input-field"
@@ -664,7 +673,7 @@ function App() {
                                 />
                             </div>
                             <div className="input-wrapper">
-                                <span className="input-label">*Issue Date</span>
+                                <span className="input-label">*{t.issueDate}</span>
                                 <input
                                     type="date"
                                     className="input-field"
@@ -677,7 +686,7 @@ function App() {
                                 />
                             </div>
                             <div className="input-wrapper">
-                                <span className="input-label">Due Date</span>
+                                <span className="input-label">{t.dueDate}</span>
                                 <input
                                     type="date"
                                     className="input-field"
@@ -686,7 +695,7 @@ function App() {
                                 />
                             </div>
                             <div className="input-wrapper">
-                                <span className="input-label">Delivery Date</span>
+                                <span className="input-label">{t.deliveryDate}</span>
                                 <input
                                     type="date"
                                     className="input-field"
@@ -829,28 +838,28 @@ function App() {
                                     {index === 0 && (
                                         <>
                                             <div className="more-options-bar" onClick={() => setShowMoreOptions(!showMoreOptions)}>
-                                                More Options {showMoreOptions ? '▲' : '▼'}
+                                                {showMoreOptions ? t.fewerOptions : t.moreOptions} {showMoreOptions ? '▲' : '▼'}
                                             </div>
                                             {showMoreOptions && (
                                                 <div className="info-grid">
                                                     <div className="input-wrapper">
-                                                        <span className="input-label">Payment Status</span>
+                                                        <span className="input-label">{t.paymentStatus}</span>
                                                         <select
                                                             className="input-field"
                                                             value={paymentStatus}
                                                             onChange={updateField(setPaymentStatus)}
                                                         >
-                                                            <option value="Pending">Pending</option>
-                                                            <option value="Paid">Paid</option>
-                                                            <option value="Overdue">Overdue</option>
-                                                            <option value="Cancelled">Cancelled</option>
-                                                            <option value="Partially Paid">Partially Paid</option>
-                                                            <option value="Refunded">Refunded</option>
-                                                            <option value="Draft">Draft</option>
+                                                            <option value="Pending">{t.pending}</option>
+                                                            <option value="Paid">{t.paid}</option>
+                                                            <option value="Overdue">{t.overdue}</option>
+                                                            <option value="Cancelled">{t.cancelled}</option>
+                                                            <option value="Partially Paid">{t.partiallyPaid}</option>
+                                                            <option value="Refunded">{t.refunded}</option>
+                                                            <option value="Draft">{t.draft}</option>
                                                         </select>
                                                     </div>
                                                     <div className="input-wrapper">
-                                                        <span className="input-label">Currency</span>
+                                                        <span className="input-label">{t.currency}</span>
                                                         <select
                                                             className="input-field"
                                                             value={currency}
@@ -889,7 +898,7 @@ function App() {
                                                         </select>
                                                     </div>
                                                     <div className="input-wrapper">
-                                                        <span className="input-label">Currency Symbol</span>
+                                                        <span className="input-label">{t.currencySymbol}</span>
                                                         <select
                                                             className="input-field"
                                                             value={currencySymbol}
@@ -945,13 +954,13 @@ function App() {
                             ))}
 
                             <button className="add-item-btn" type="button" onClick={handleAddItem}>
-                                <Plus size={16} /> Add Item
+                                <Plus size={16} /> {t.addItem}
                             </button>
                         </div>
 
                         <div className="bottom-section">
                             <div className="notes-section">
-                                <span className="detail-label">Notes / Terms & Conditions</span>
+                                <span className="detail-label">{t.notes} / {t.termsConditions}</span>
                                 <textarea
                                     className="notes-textarea"
                                     placeholder="Enter additional notes, payment terms, or terms & conditions here..."
@@ -963,7 +972,7 @@ function App() {
                             <div className="summary-section">
                                 <div className="totals-box">
                                     <div className="subtotal-row">
-                                        <span className="totals-label">Sub Total</span>
+                                        <span className="totals-label">{t.subtotal}</span>
                                         <span>{currencySymbol}{calculateSubtotal().toFixed(2)}</span>
                                     </div>
 
@@ -977,7 +986,7 @@ function App() {
                                                 />
                                                 <span className="slider"></span>
                                             </label>
-                                            <span className="discount-label">Add Discount</span>
+                                            <span className="discount-label">{t.discount}</span>
                                         </div>
                                         {discountEnabled && (
                                             <div className="discount-input-wrapper">
@@ -997,13 +1006,13 @@ function App() {
 
                                     {discountEnabled && parseNumber(discount) > 0 && (
                                         <div className="subtotal-row">
-                                            <span className="totals-label">Discount Amount</span>
+                                            <span className="totals-label">{t.discount}</span>
                                             <span style={{ color: 'var(--primary)' }}>-{currencySymbol}{getDiscountAmount().toFixed(2)}</span>
                                         </div>
                                     )}
 
                                     <div className="total-row">
-                                        <span className="total-label">Total Amount</span>
+                                        <span className="total-label">{t.total}</span>
                                         <span className="total-value">{currencySymbol}{calculateTotal().toFixed(2)}</span>
                                     </div>
                                 </div>
@@ -1012,7 +1021,7 @@ function App() {
 
                         <div className="generate-wrapper">
                             <button className="btn-generate" type="submit">
-                                <Download size={20} /> Generate & Save Invoice
+                                <Download size={20} /> {t.generateInvoice}
                             </button>
                         </div>
                     </div>
@@ -1023,10 +1032,10 @@ function App() {
     };
 
     const getPageTitle = () => {
-        if (showPreview) return { title: 'Invoice Preview', icon: <FileText size={22} /> };
-        if (showHistory) return { title: 'Invoice History', icon: <History size={22} /> };
-        if (showReport) return { title: 'P&L Report', icon: <PieChart size={22} /> };
-        return { title: 'Create Invoice', icon: <PlusCircle size={22} /> };
+        if (showPreview) return { title: t.preview, icon: <FileText size={22} /> };
+        if (showHistory) return { title: t.history, icon: <History size={22} /> };
+        if (showReport) return { title: t.plReport, icon: <PieChart size={22} /> };
+        return { title: t.createInvoice, icon: <PlusCircle size={22} /> };
     };
 
     const { title, icon } = getPageTitle();
@@ -1056,6 +1065,8 @@ function App() {
                 darkMode={darkMode}
                 onToggleDarkMode={toggleDarkMode}
                 savedInvoices={savedInvoices}
+                language={language}
+                setLanguage={setLanguage}
             />
 
             <main className="main-content">
@@ -1107,11 +1118,11 @@ function App() {
                         <div className="confirm-icon">
                             <AlertTriangle size={32} />
                         </div>
-                        <h3 className="confirm-title">Delete Receipt</h3>
-                        <p className="confirm-message">Are you sure you want to delete this receipt? This action cannot be undone.</p>
+                        <h3 className="confirm-title">{t.deleteReceiptTitle}</h3>
+                        <p className="confirm-message">{t.deleteReceiptMsg}</p>
                         <div className="confirm-actions">
-                            <button className="confirm-btn-cancel" onClick={cancelDelete}>No</button>
-                            <button className="confirm-btn-delete" onClick={() => confirmDelete(deleteConfirmation)}>Yes, Delete</button>
+                            <button className="confirm-btn-cancel" onClick={cancelDelete}>{t.no}</button>
+                            <button className="confirm-btn-delete" onClick={() => confirmDelete(deleteConfirmation)}>{t.yes}</button>
                         </div>
                     </div>
                 </div>

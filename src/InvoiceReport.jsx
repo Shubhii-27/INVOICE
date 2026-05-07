@@ -1,4 +1,5 @@
 import { ArrowLeft } from 'lucide-react';
+import { translations } from './translations';
 import './InvoiceReport.css';
 
 export default function InvoiceReport({
@@ -9,56 +10,63 @@ export default function InvoiceReport({
     currencySymbol,
     calculateInvoiceTotal,
     setShowReport,
-    setShowHistory
+    setShowHistory,
+    language
 }) {
+    const t = translations[language];
     const statusEntries = Object.entries(reportSummary.statusCounts);
     const maxProfit = Math.max(...monthlyReport.map((row) => Math.abs(row.profit)), 1);
+
+    const translateStatus = (status) => {
+        const s = status?.toLowerCase();
+        return t[s] || status;
+    };
 
     return (
         <div className="invoice-wrapper history-view">
 
             <div className="report-grid">
                 <div className="report-card">
-                    <h3>Invoice Summary</h3>
+                    <h3>{t.invoiceSummary}</h3>
                     <div className="report-card-row">
-                        <span>Total invoices</span>
+                        <span>{t.totalInvoices}</span>
                         <strong>{reportSummary.totalInvoices}</strong>
                     </div>
                     <div className="report-card-row">
-                        <span>Total revenue</span>
+                        <span>{t.totalRevenue}</span>
                         <strong>{currencySymbol}{reportSummary.totalRevenue.toFixed(2)}</strong>
                     </div>
                     <div className="report-card-row">
-                        <span>Total cost</span>
+                        <span>{t.totalCost}</span>
                         <strong>{currencySymbol}{reportSummary.totalCost.toFixed(2)}</strong>
                     </div>
                     <div className="report-card-row">
-                        <span>Total profit / loss</span>
+                        <span>{t.totalProfitLoss}</span>
                         <strong>{currencySymbol}{reportSummary.totalProfit.toFixed(2)}</strong>
                     </div>
                     <div className="report-card-row">
-                        <span>Profit margin</span>
+                        <span>{t.profitMargin}</span>
                         <strong>{reportSummary.profitMargin.toFixed(2)}%</strong>
                     </div>
                     <div className="report-card-row">
-                        <span>Average invoice</span>
+                        <span>{t.averageInvoice}</span>
                         <strong>{currencySymbol}{reportSummary.averageInvoice.toFixed(2)}</strong>
                     </div>
                     <div className="report-card-row">
-                        <span>Unpaid / pending</span>
+                        <span>{t.unpaidPending}</span>
                         <strong>{currencySymbol}{reportSummary.unpaidRevenue.toFixed(2)}</strong>
                     </div>
                 </div>
 
                 <div className="report-card report-status-card">
-                    <h3>Status Breakdown</h3>
+                    <h3>{t.statusBreakdown}</h3>
                     <div className="status-list">
                         {statusEntries.length === 0 ? (
-                            <p>No invoices to show.</p>
+                            <p>{t.noData}</p>
                         ) : (
                             statusEntries.map(([status, count]) => (
                                 <div key={status} className="status-chip">
-                                    <span>{status}</span>
+                                    <span>{translateStatus(status)}</span>
                                     <strong>{count}</strong>
                                 </div>
                             ))
@@ -68,9 +76,9 @@ export default function InvoiceReport({
             </div>
 
             <div className="report-card report-chart-card">
-                <h3>Monthly Profit / Loss</h3>
+                <h3>{t.monthlyProfitLoss}</h3>
                 {monthlyReport.length === 0 ? (
-                    <div className="history-empty">No monthly data to show.</div>
+                    <div className="history-empty">{t.noData}</div>
                 ) : (
                     <div className="chart-list">
                         {monthlyReport.map((row) => (
@@ -78,7 +86,7 @@ export default function InvoiceReport({
                                 <div className="chart-row-labels">
                                     <div>
                                         <strong>{row.label}</strong>
-                                        <div className="chart-subtext">Revenue {currencySymbol}{row.revenue.toFixed(2)} • Cost {currencySymbol}{row.cost.toFixed(2)}</div>
+                                        <div className="chart-subtext">{t.revenue} {currencySymbol}{row.revenue.toFixed(2)} • {t.cost} {currencySymbol}{row.cost.toFixed(2)}</div>
                                     </div>
                                     <strong className={row.profit >= 0 ? 'profit-positive' : 'profit-negative'}>
                                         {currencySymbol}{row.profit.toFixed(2)}
@@ -97,20 +105,20 @@ export default function InvoiceReport({
             </div>
 
             <div className="report-card report-client-card">
-                <h3>Client Profit / Loss Summary</h3>
+                <h3>{t.clientProfitLoss}</h3>
                 {clientReport.length === 0 ? (
-                    <div className="history-empty">No client data to show.</div>
+                    <div className="history-empty">{t.noData}</div>
                 ) : (
                     <div className="table-responsive">
                         <table className="report-list-table">
                             <thead>
                                 <tr>
-                                    <th>Client</th>
-                                    <th>Invoices</th>
-                                    <th>Revenue</th>
-                                    <th>Cost</th>
-                                    <th>Profit</th>
-                                    <th>Margin</th>
+                                    <th>{t.client}</th>
+                                    <th>{t.invoices}</th>
+                                    <th>{t.revenue}</th>
+                                    <th>{t.cost}</th>
+                                    <th>{t.profit}</th>
+                                    <th>{t.margin}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -131,29 +139,29 @@ export default function InvoiceReport({
             </div>
 
             <div className="history-card report-list-card">
-                <h3>Recent invoices</h3>
+                <h3>{t.recentInvoices}</h3>
                 {recentInvoices.length === 0 ? (
-                    <div className="history-empty">No saved invoices yet. Generate a document to populate the report.</div>
+                    <div className="history-empty">{t.noInvoices}</div>
                 ) : (
                     <div className="table-responsive">
                         <table className="report-list-table">
                             <thead>
                                 <tr>
-                                    <th>Date Saved</th>
-                                    <th>Invoice #</th>
-                                    <th>Client</th>
-                                    <th>Status</th>
-                                    <th>Total</th>
+                                    <th>{t.dateSaved}</th>
+                                    <th>{t.invoiceNo}</th>
+                                    <th>{t.client}</th>
+                                    <th>{t.status}</th>
+                                    <th>{t.total}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {recentInvoices.map((inv) => (
                                     <tr key={inv.id}>
-                                        <td data-label="Date Saved">{new Date(inv.savedAt).toLocaleString()}</td>
-                                        <td data-label="Invoice #">#{inv.invoiceNumber}</td>
-                                        <td data-label="Client">{inv.billedTo?.name || '—'}</td>
-                                        <td data-label="Status">{inv.paymentStatus || 'Pending'}</td>
-                                        <td data-label="Total">{inv.currencySymbol || '$'}{calculateInvoiceTotal(inv).toFixed(2)}</td>
+                                        <td data-label={t.dateSaved}>{new Date(inv.savedAt).toLocaleString()}</td>
+                                        <td data-label={t.invoiceNo}>#{inv.invoiceNumber}</td>
+                                        <td data-label={t.client}>{inv.billedTo?.name || '—'}</td>
+                                        <td data-label={t.status}>{translateStatus(inv.paymentStatus) || t.pending}</td>
+                                        <td data-label={t.total}>{inv.currencySymbol || '$'}{calculateInvoiceTotal(inv).toFixed(2)}</td>
                                     </tr>
                                 ))}
                             </tbody>

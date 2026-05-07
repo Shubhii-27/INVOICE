@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ArrowLeft, Search, Trash2, AlertTriangle, X } from 'lucide-react';
+import { translations } from './translations';
 import './ReceiptHistory.css';
 
 export default function ReceiptHistory({
@@ -11,8 +12,15 @@ export default function ReceiptHistory({
     deleteInvoice,
     calculateInvoiceTotal,
     setShowHistory,
-    setShowReport
+    setShowReport,
+    language
 }) {
+    const t = translations[language];
+
+    const translateStatus = (status) => {
+        const s = status?.toLowerCase().replace(/\s+/g, '');
+        return t[s] || status;
+    };
     const [confirmId, setConfirmId] = useState(null);
 
     const filteredInvoices = savedInvoices.filter((inv) => {
@@ -46,16 +54,16 @@ export default function ReceiptHistory({
                         <div className="confirm-icon">
                             <AlertTriangle size={32} />
                         </div>
-                        <h3 className="confirm-title">Delete Receipt?</h3>
+                        <h3 className="confirm-title">{t.deleteReceiptTitle}</h3>
                         <p className="confirm-message">
-                            This action cannot be undone. Are you sure you want to permanently delete this receipt?
+                            {t.deleteReceiptMsg}
                         </p>
                         <div className="confirm-actions">
                             <button className="confirm-btn-cancel" onClick={handleCancelDelete}>
-                                No
+                                {t.no}
                             </button>
                             <button className="confirm-btn-delete" onClick={handleConfirmDelete}>
-                                Yes
+                                {t.yes}
                             </button>
                         </div>
                     </div>
@@ -68,7 +76,7 @@ export default function ReceiptHistory({
                     <input
                         type="text"
                         className="input-field"
-                        placeholder="Search by client name or invoice #"
+                        placeholder={t.searchPlaceholder}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
@@ -80,41 +88,41 @@ export default function ReceiptHistory({
 
             <div className="history-card">
                 {filteredInvoices.length === 0 ? (
-                    <div className="history-empty">No saved receipts found. Generate an invoice to save it.</div>
+                    <div className="history-empty">{t.noInvoices}</div>
                 ) : (
                     <div className="table-responsive">
                         <table className="history-table">
                             <thead>
                                 <tr>
-                                    <th>Date Saved</th>
-                                    <th>Invoice #</th>
-                                    <th>Billed To</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>{t.dateSaved}</th>
+                                    <th>{t.invoiceNo}</th>
+                                    <th>{t.billedTo}</th>
+                                    <th>{t.amount}</th>
+                                    <th>{t.status}</th>
+                                    <th>{t.actions}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filteredInvoices.map((inv) => (
                                     <tr key={inv.id}>
-                                        <td data-label="Date Saved">{new Date(inv.savedAt).toLocaleString()}</td>
-                                        <td data-label="Invoice #"><span className="badge">#{inv.invoiceNumber}</span></td>
-                                        <td data-label="Billed To">{inv.billedTo?.name || '—'}</td>
-                                        <td data-label="Amount">
+                                        <td data-label={t.dateSaved}>{new Date(inv.savedAt).toLocaleString()}</td>
+                                        <td data-label={t.invoiceNo}><span className="badge">#{inv.invoiceNumber}</span></td>
+                                        <td data-label={t.billedTo}>{inv.billedTo?.name || '—'}</td>
+                                        <td data-label={t.amount}>
                                             <span className="amount-cell">
                                                 {inv.currencySymbol || '₹'}{calculateInvoiceTotal(inv).toFixed(2)}
                                             </span>
                                         </td>
-                                        <td data-label="Status">
+                                        <td data-label={t.status}>
                                             <span className="status-badge">
-                                                {inv.paymentStatus || 'Pending'}
+                                                {translateStatus(inv.paymentStatus) || t.pending}
                                             </span>
                                         </td>
                                         <td data-label="Actions">
                                             <div className="action-buttons">
-                                                <button className="btn-load" onClick={() => viewInvoice(inv)}>View</button>
-                                                <button className="btn-load" onClick={() => loadInvoice(inv)}>Edit</button>
-                                                <button className="btn-del" onClick={() => handleDeleteClick(inv.id)} title="Delete">
+                                                <button className="btn-load" onClick={() => viewInvoice(inv)}>{t.view}</button>
+                                                <button className="btn-load" onClick={() => loadInvoice(inv)}>{t.edit}</button>
+                                                <button className="btn-del" onClick={() => handleDeleteClick(inv.id)} title={t.delete}>
                                                     <Trash2 size={16} />
                                                 </button>
                                             </div>
