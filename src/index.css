@@ -156,8 +156,14 @@ body {
 
 /* Preview Mode Adjustments */
 .preview-mode .main-content {
-  padding-left: 20px !important;
-  padding-top: 20px !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+.preview-mode .preview-view {
+  padding: 20px !important;
+  background-color: var(--bg-color);
+  min-height: 100vh;
 }
 
 .preview-mode .sidebar {
@@ -1318,16 +1324,17 @@ body {
 /* ============================= */
 
 #root .preview-card {
-  background-color: var(--white);
+  background-color: #ffffff !important; /* Always white for invoice */
+  color: #0f172a !important; /* Always dark text for invoice */
   border-radius: 0;
   padding: 0;
   box-shadow: 0 10px 50px rgba(0, 0, 0, 0.15);
   position: relative;
   overflow: hidden;
-  max-width: min(210mm, 100vw - 40px);
+  max-width: 210mm;
   width: 100%;
-  color: #0f172a;
   margin: 0 auto;
+  min-height: 297mm;
 }
 
 #root .preview-header {
@@ -2218,220 +2225,6 @@ body {
   #root .history-toolbar-content .btn-history {
     width: 100%;
     justify-content: center;
-  }
-}
-
-/* ============================= */
-/* PRINT */
-/* ============================= */
-
-@page {
-  size: A4;
-  margin: 0;
-}
-
-@media print {
-  @page {
-    size: A4;
-    margin: 0;
-  }
-
-  html,
-  body {
-    margin: 0 !important;
-    padding: 0 !important;
-    background: #ffffff !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    height: 100% !important;
-    width: 100% !important;
-    overflow: hidden !important;
-  }
-
-  #root {
-    padding: 0 !important;
-    margin: 0 !important;
-    background: #ffffff !important;
-    min-height: 100% !important;
-    display: block !important;
-    width: 100% !important;
-    height: 100% !important;
-    overflow: hidden !important;
-  }
-
-  /* Hide UI elements during print */
-  .preview-toolbar,
-  .history-toolbar,
-  .btn-outline,
-  .btn-generate,
-  .btn-history,
-  .remove-logo-btn,
-  .delete-confirmation-modal,
-  .add-item-btn,
-  .item-row-grip,
-  .delete-btn,
-  .logo-info,
-  .more-options-bar {
-    display: none !important;
-  }
-
-  /* Ensure inputs look like text in print if they are on screen */
-  .input-field {
-    border: none !important;
-    padding: 0 !important;
-    background: transparent !important;
-  }
-
-  #root .invoice-wrapper {
-    max-width: 100% !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    display: block !important;
-    height: 100% !important;
-  }
-
-  #root .preview-card {
-    box-shadow: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 210mm !important;
-    height: 297mm !important;
-    background: #ffffff !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-    border: none !important;
-    border-radius: 0 !important;
-    position: relative !important;
-  }
-
-  /* Force background colors and images to print */
-  .preview-header,
-  .preview-card,
-  .preview-header::before,
-  .preview-header::after,
-  .preview-footer-geometric,
-  .preview-footer-geometric::before,
-  .preview-items-table th,
-  .preview-totals-row.total,
-  .preview-notes,
-  .preview-logo-box,
-  .preview-items-table tbody tr:nth-child(even) {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
-  /* Force all text to be black in print except for header/totals */
-  #root .preview-items-table td,
-  #root .preview-notes-text,
-  #root .preview-totals-row:not(.total) span,
-  #root .preview-description {
-    color: #000000 !important;
-    -webkit-text-fill-color: #000000 !important;
-  }
-
-  /* Maintain layout proportions */
-  #root .preview-header {
-    height: auto !important;
-    min-height: 50mm !important;
-    padding-bottom: 10mm !important;
-    display: block !important;
-    visibility: visible !important;
-    flex-shrink: 0;
-    position: relative !important;
-    clip-path: none !important; /* Disable clip-path in print to avoid layout issues */
-    background-image: none !important;
-  }
-
-  #root .preview-header-top-row {
-    padding: 10mm 15mm !important;
-    display: flex !important;
-    justify-content: space-between !important;
-  }
-
-  #root .preview-body-top {
-    padding: 10mm 15mm 5mm !important;
-    display: flex !important;
-    justify-content: flex-end !important;
-    margin-top: 0 !important;
-    clear: both !important;
-  }
-
-  #root .preview-details-grid {
-    padding: 5mm 15mm !important;
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 10mm !important;
-    flex-shrink: 0;
-  }
-
-  #root .preview-items-table {
-    width: calc(100% - 30mm) !important;
-    margin: 5mm 15mm !important;
-    border-collapse: collapse !important;
-    flex: 1 !important;
-  }
-
-  #root .preview-items-table th,
-  #root .preview-items-table td {
-    padding: 4mm 3mm !important;
-    font-size: 11px !important;
-    border-bottom: 1px solid #cbd5e1 !important;
-  }
-
-  #root .preview-summary {
-    padding: 0 15mm !important;
-    margin-top: auto !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    padding-bottom: 5mm !important;
-  }
-
-  #root .preview-summary-notes {
-    flex: 1 !important;
-    padding-right: 10mm !important;
-  }
-
-  #root .preview-totals {
-    width: 80mm !important;
-  }
-
-  #root .preview-totals-row {
-    padding: 3mm 4mm !important;
-    font-size: 12px !important;
-  }
-
-  #root .preview-notes {
-    margin: 5mm 15mm !important;
-    padding: 5mm !important;
-    font-size: 11px !important;
-    border-left: 4px solid #ef4444 !important;
-  }
-
-  #root .preview-signature-area {
-    margin: 5mm 15mm 10mm !important;
-    display: flex !important;
-    justify-content: flex-end !important;
-  }
-
-  #root .preview-footer-geometric {
-    height: 40mm !important;
-    margin-top: auto !important;
-    display: block !important;
-    visibility: visible !important;
-    width: 100% !important;
-  }
-
-  /* Hide footer for other templates in print */
-  #root .preview-card.modern .preview-footer-geometric,
-  #root .preview-card.minimalist .preview-footer-geometric,
-  #root .preview-card.professional .preview-footer-geometric,
-  #root .preview-card.elegant .preview-footer-geometric {
-    display: none !important;
-    visibility: hidden !important;
   }
 }
 
@@ -4097,3 +3890,165 @@ body {
     }
 }
 
+/* ============================= */
+/* PRINT STYLES */
+/* ============================= */
+
+@media print {
+  @page {
+    margin: 0;
+    size: auto;
+  }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  #root {
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .app-container {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide UI elements */
+  .sidebar, 
+  .desktop-page-header, 
+  .preview-toolbar, 
+  .mobile-top-bar,
+  .template-selector-wrapper,
+  .btn-outline,
+  .btn-generate,
+  .remove-logo-btn,
+  .logo-upload-box button,
+  .invoice-wrapper:not(.preview-view) {
+    display: none !important;
+  }
+
+  .main-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    display: block !important;
+    left: 0 !important;
+  }
+
+  .invoice-wrapper.preview-view {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .preview-card {
+    max-width: 100% !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    page-break-after: always;
+  }
+
+  /* Ensure colors and backgrounds print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .preview-header {
+    clip-path: none !important;
+    background-color: #0c0a09 !important;
+    padding-bottom: 20px !important;
+    min-height: auto !important;
+  }
+
+  .preview-header::before,
+  .preview-header::after {
+    clip-path: none !important;
+    display: block !important;
+  }
+
+  .preview-header::before {
+    background: #ef4444 !important;
+    height: 120px !important;
+  }
+
+  .preview-header::after {
+    background: #0c0a09 !important;
+    height: 100px !important;
+  }
+
+  .preview-footer-geometric {
+    clip-path: none !important;
+    background-color: #0c0a09 !important;
+    height: 60px !important;
+    margin-top: auto !important; /* Push to bottom */
+  }
+
+  .preview-footer-geometric::before {
+    clip-path: none !important;
+    background-color: #ef4444 !important;
+    height: 20px !important;
+  }
+
+  /* Adjust spacing for print */
+  .preview-header-top-row {
+    padding: 15mm 15mm 5mm !important;
+  }
+
+  .preview-body-top {
+    padding: 5mm 15mm !important;
+  }
+
+  .preview-details-grid {
+    padding: 0 15mm !important;
+    margin-bottom: 5mm !important;
+    gap: 10mm !important;
+  }
+
+  .preview-items-table {
+    width: calc(100% - 30mm) !important;
+    margin: 2mm 15mm !important;
+    flex: 1 !important; /* Take available space */
+  }
+
+  .preview-summary {
+    padding: 0 15mm !important;
+    margin-top: 5mm !important;
+    page-break-inside: avoid;
+  }
+
+  .preview-signature-area {
+    margin: 10mm 15mm 5mm !important;
+    page-break-inside: avoid;
+  }
+
+  .preview-notes {
+    margin: 5mm 15mm !important;
+    padding: 3mm !important;
+    page-break-inside: avoid;
+  }
+
+  /* Fix for table borders in print */
+  .preview-items-table th, 
+  .preview-items-table td {
+    border-bottom: 1px solid #ddd !important;
+  }
+}
