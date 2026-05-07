@@ -76,31 +76,42 @@ function App() {
 
     const clampNonNegative = (value) => Math.max(parseNumber(value), 0);
 
-    const calculateItemTotal = (item) => {
-        const quantity = clampNonNegative(item.quantity);
-        const price = clampNonNegative(item.price);
-        // Use nullish coalescing to allow 0 as a valid GST value
+    const calculateLineAmount = (item) => {
+        return roundCurrency(parseNumber(item.quantity) * parseNumber(item.price));
+    };
+
+    const calculateLineTax = (item) => {
+        const amount = parseNumber(item.quantity) * parseNumber(item.price);
         const gst = clampPercent(item.gst ?? item.vat ?? 0);
-        const subtotal = quantity * price;
-        const gstAmount = subtotal * (gst / 100);
-        return roundCurrency(subtotal + gstAmount);
+        return roundCurrency(amount * (gst / 100));
     };
 
-    const calculateSubtotal = () => {
-        const total = items.reduce((sum, item) => sum + calculateItemTotal(item), 0);
-        return roundCurrency(total);
+    const calculateItemTotal = (item) => {
+        return roundCurrency(calculateLineAmount(item) + calculateLineTax(item));
     };
 
-    const getDiscountAmount = () => {
-        if (!discountEnabled) return 0;
-        const subtotal = calculateSubtotal();
-        const discountValue = clampPercent(discount);
+    const calculateBaseSubtotal = (invoiceItems = items) => {
+        return invoiceItems.reduce((sum, item) => sum + calculateLineAmount(item), 0);
+    };
+
+    const calculateTotalTax = (invoiceItems = items) => {
+        return invoiceItems.reduce((sum, item) => sum + calculateLineTax(item), 0);
+    };
+
+    const calculateSubtotal = (invoiceItems = items) => {
+        return roundCurrency(calculateBaseSubtotal(invoiceItems) + calculateTotalTax(invoiceItems));
+    };
+
+    const getDiscountAmount = (invoice = { items, discount, discountEnabled }) => {
+        if (!invoice.discountEnabled) return 0;
+        const subtotal = calculateSubtotal(invoice.items);
+        const discountValue = clampPercent(invoice.discount);
         return roundCurrency((subtotal * discountValue) / 100);
     };
 
-    const calculateTotal = () => {
-        const subtotal = calculateSubtotal();
-        const discountAmt = getDiscountAmount();
+    const calculateTotal = (invoice = { items, discount, discountEnabled }) => {
+        const subtotal = calculateSubtotal(invoice.items);
+        const discountAmt = getDiscountAmount(invoice);
         return roundCurrency(Math.max(subtotal - discountAmt, 0));
     };
 
@@ -118,26 +129,22 @@ function App() {
 
     const calculateInvoiceTotal = (invoice) => {
         if (!invoice) return 0;
-        const invItems = Array.isArray(invoice.items) ? invoice.items : [];
-        const subtotal = invItems.reduce((sum, item) => sum + calculateItemTotal(item), 0);
-        const discountValue = clampPercent(invoice.discount);
-        if (invoice.discountEnabled && discountValue > 0) {
-            const discountAmt = (subtotal * discountValue) / 100;
-            return roundCurrency(Math.max(subtotal - discountAmt, 0));
-        }
-        return roundCurrency(subtotal);
+        return calculateTotal(invoice);
     };
 
     const getReportSummary = () => {
         const totalInvoices = savedInvoices.length;
         const totalRevenue = savedInvoices.reduce((sum, inv) => sum + calculateInvoiceTotal(inv), 0);
+        const totalTax = savedInvoices.reduce((sum, inv) => sum + calculateTotalTax(inv.items), 0);
         const totalCost = savedInvoices.reduce((sum, inv) => sum + calculateInvoiceCostTotal(inv), 0);
         const totalProfit = totalRevenue - totalCost;
+        
         const unpaidRevenue = savedInvoices.reduce((sum, inv) => {
             const status = inv.paymentStatus || 'Pending';
             if (status === 'Paid') return sum;
             return sum + calculateInvoiceTotal(inv);
         }, 0);
+        
         const averageInvoice = totalInvoices ? totalRevenue / totalInvoices : 0;
         const statusCounts = savedInvoices.reduce((acc, inv) => {
             const status = inv.paymentStatus || 'Pending';
@@ -149,6 +156,7 @@ function App() {
         return {
             totalInvoices,
             totalRevenue,
+            totalTax,
             totalCost,
             totalProfit,
             unpaidRevenue,
@@ -477,17 +485,25 @@ function App() {
                             </div>
                             <div className="preview-totals">
                                 <div className="preview-totals-row" style={{ border: 'none', padding: '5px 20px' }}>
-                                    <span>Sub Total</span>
+                                    <span>{t.subtotalExclTax}</span>
+                                    <span>{currencySymbol}{calculateBaseSubtotal().toFixed(2)}</span>
+                                </div>
+                                <div className="preview-totals-row" style={{ border: 'none', padding: '5px 20px' }}>
+                                    <span>{t.taxTotal}</span>
+                                    <span>{currencySymbol}{calculateTotalTax().toFixed(2)}</span>
+                                </div>
+                                <div className="preview-totals-row" style={{ borderTop: '1px solid #eee', padding: '5px 20px' }}>
+                                    <span>{t.subtotal}</span>
                                     <span>{currencySymbol}{calculateSubtotal().toFixed(2)}</span>
                                 </div>
                                 {discountEnabled && parseNumber(discount) > 0 ? (
                                     <div className="preview-totals-row" style={{ border: 'none', padding: '5px 20px' }}>
-                                        <span>Discount</span>
+                                        <span>{t.discount}</span>
                                         <span>-{currencySymbol}{getDiscountAmount().toFixed(2)}</span>
                                     </div>
                                 ) : null}
                                 <div className="preview-totals-row total">
-                                    <span>Total</span>
+                                    <span>{t.total}</span>
                                     <span>{currencySymbol}{calculateTotal().toFixed(2)}</span>
                                 </div>
                             </div>
@@ -797,7 +813,7 @@ function App() {
                                             <input
                                                 type="text"
                                                 className="input-field"
-                                                value={(parseNumber(item.quantity) * parseNumber(item.price)).toFixed(2)}
+                                                value={calculateLineAmount(item).toFixed(2)}
                                                 disabled
                                                 style={{ backgroundColor: 'transparent' }}
                                                 title="Amount before GST"
@@ -972,8 +988,18 @@ function App() {
                             <div className="summary-section">
                                 <div className="totals-box">
                                     <div className="subtotal-row">
+                                        <span className="totals-label">{t.subtotalExclTax}</span>
+                                        <span>{currencySymbol}{calculateBaseSubtotal().toFixed(2)}</span>
+                                    </div>
+
+                                    <div className="subtotal-row">
+                                        <span className="totals-label">{t.taxTotal}</span>
+                                        <span>{currencySymbol}{calculateTotalTax().toFixed(2)}</span>
+                                    </div>
+
+                                    <div className="subtotal-row total-before-discount" style={{ borderTop: '1px dashed var(--border-light)', paddingTop: '8px', marginTop: '4px' }}>
                                         <span className="totals-label">{t.subtotal}</span>
-                                        <span>{currencySymbol}{calculateSubtotal().toFixed(2)}</span>
+                                        <span style={{ fontWeight: '700' }}>{currencySymbol}{calculateSubtotal().toFixed(2)}</span>
                                     </div>
 
                                     <div className="discount-row">
