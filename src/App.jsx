@@ -356,6 +356,23 @@ function App() {
 
     const updateField = (setter) => (event) => setter(event.target.value);
 
+    // Strict validation helpers
+    const handleNumberInput = (setter) => (e) => {
+        const val = e.target.value;
+        // Allow empty string, numbers, and a single decimal point
+        if (val === '' || /^\d*\.?\d*$/.test(val)) {
+            setter(val);
+        }
+    };
+
+    const handleAlphaInput = (setter) => (e) => {
+        const val = e.target.value;
+        // Allow letters, spaces, and basic punctuation commonly used in names/descriptions
+        if (val === '' || /^[a-zA-Z\s\&\.\-]*$/.test(val)) {
+            setter(val);
+        }
+    };
+
     const previewBackLabel = showHistory ? 'Back to saved receipts' : showReport ? 'Back to report' : 'Back to edit';
 
     const monthlyReport = getMonthlyReport();
@@ -623,7 +640,7 @@ function App() {
                                         className="input-field"
                                         placeholder="Company name"
                                         value={billedFrom.name}
-                                        onChange={(e) => setBilledFrom({ ...billedFrom, name: e.target.value })}
+                                        onChange={handleAlphaInput((val) => setBilledFrom({ ...billedFrom, name: val }))}
                                         required
                                     />
                                     <input
@@ -653,7 +670,7 @@ function App() {
                                         className="input-field"
                                         placeholder="Client name"
                                         value={billedTo.name}
-                                        onChange={(e) => setBilledTo({ ...billedTo, name: e.target.value })}
+                                        onChange={handleAlphaInput((val) => setBilledTo({ ...billedTo, name: val }))}
                                         required
                                     />
                                     <input
@@ -684,7 +701,7 @@ function App() {
                                     type="text"
                                     className="input-field"
                                     value={invoiceNumber}
-                                    onChange={updateField(setInvoiceNumber)}
+                                    onChange={handleNumberInput(setInvoiceNumber)}
                                     required
                                 />
                             </div>
@@ -746,7 +763,12 @@ function App() {
                                                 className="input-field"
                                                 placeholder='Item description'
                                                 value={item.name}
-                                                onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
+                                                onChange={(e) => {
+                                                    const val = e.target.value;
+                                                    if (val === '' || /^[a-zA-Z0-9\s\&\.\-\/]*$/.test(val)) {
+                                                        handleItemChange(item.id, 'name', val);
+                                                    }
+                                                }}
                                                 required
                                             />
                                         </div>
@@ -758,7 +780,12 @@ function App() {
                                                 className="input-field"
                                                 placeholder='Qty'
                                                 value={item.quantity}
-                                                onChange={(e) => handleItemChange(item.id, 'quantity', e.target.value)}
+                                                onChange={(e) => {
+                                                    const val = e.target.value;
+                                                    if (val === '' || /^\d*\.?\d*$/.test(val)) {
+                                                        handleItemChange(item.id, 'quantity', val);
+                                                    }
+                                                }}
                                                 min="0"
                                                 step="1"
                                             />
@@ -801,7 +828,12 @@ function App() {
                                                 className="input-field"
                                                 placeholder="Price"
                                                 value={item.price}
-                                                onChange={(e) => handleItemChange(item.id, 'price', e.target.value)}
+                                                onChange={(e) => {
+                                                    const val = e.target.value;
+                                                    if (val === '' || /^\d*\.?\d*$/.test(val)) {
+                                                        handleItemChange(item.id, 'price', val);
+                                                    }
+                                                }}
                                                 required
                                                 min="0"
                                                 step="1"
@@ -1021,7 +1053,7 @@ function App() {
                                                     className="discount-input"
                                                     placeholder="0"
                                                     value={discount}
-                                                    onChange={updateField(setDiscount)}
+                                                    onChange={handleNumberInput(setDiscount)}
                                                     min="0"
                                                     max="100"
                                                 />
