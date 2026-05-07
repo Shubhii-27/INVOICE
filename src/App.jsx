@@ -572,8 +572,8 @@ function App() {
                                     </div>
                                 )}
                                 <div className="logo-info">
-                                    <span className="logo-title" style={{ color: 'white' }}>{logoUrl ? 'Business Logo' : 'Add your logo'}</span>
-                                    <span className="logo-subtitle" style={{ color: 'rgba(255,255,255,0.6)' }}>{logoUrl ? 'Click to replace' : 'JPG, PNG supported'}</span>
+                                    <span className="logo-title">{logoUrl ? 'Business Logo' : 'Add your logo'}</span>
+                                    <span className="logo-subtitle">{logoUrl ? 'Click to replace' : 'JPG, PNG supported'}</span>
                                 </div>
                                 {!logoUrl && (
                                     <button
@@ -1069,7 +1069,7 @@ function App() {
                 setLanguage={setLanguage}
             />
 
-            <main className="main-content">
+            <main className="main-content animate-fade">
                 <header className="desktop-page-header">
                     <div className="header-title-group">
                         <h1 className="header-page-title">{title}</h1>

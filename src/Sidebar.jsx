@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { 
-  LayoutDashboard, 
-  FileText, 
-  History, 
-  PieChart, 
-  Settings, 
-  Menu, 
+import {
+  LayoutDashboard,
+  FileText,
+  History,
+  PieChart,
+  Settings,
+  Menu,
   X,
   PlusCircle,
   Receipt,
@@ -18,10 +18,10 @@ import {
 } from 'lucide-react';
 import { translations } from './translations';
 
-const Sidebar = ({ 
-  isOpen, 
-  setIsOpen, 
-  activeView, 
+const Sidebar = ({
+  isOpen,
+  setIsOpen,
+  activeView,
   onNavigate,
   showPreview,
   darkMode,
@@ -32,7 +32,7 @@ const Sidebar = ({
 }) => {
   const [showSettingsSub, setShowSettingsSub] = useState(false);
   const t = translations[language];
-  
+
   const menuItems = [
     { id: 'edit', label: t.createInvoice, icon: <PlusCircle size={20} /> },
     { id: 'history', label: t.invoiceHistory, icon: <History size={20} /> },
@@ -53,8 +53,8 @@ const Sidebar = ({
     <>
       {/* Mobile Overlay */}
       {isOpen && (
-        <div 
-          className="sidebar-overlay" 
+        <div
+          className="sidebar-overlay"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -92,94 +92,53 @@ const Sidebar = ({
 
           <div className="nav-section" style={{ marginTop: '24px' }}>
             <span className="nav-section-title">{t.settings}</span>
-            
-            <button 
-              className={`nav-item ${showSettingsSub ? 'active' : ''}`} 
+
+            <button
+              className={`nav-item ${showSettingsSub ? 'active' : ''}`}
               onClick={() => setShowSettingsSub(!showSettingsSub)}
             >
               <span className="nav-icon"><Settings size={20} /></span>
               <span className="nav-label">{t.settings}</span>
-              <span style={{ marginLeft: 'auto' }}>
-                {showSettingsSub ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              <span className={`settings-chevron ${showSettingsSub ? 'open' : ''}`}>
+                <ChevronDown size={16} />
               </span>
             </button>
 
-            {showSettingsSub && (
-              <div className="sub-menu" style={{ paddingLeft: '16px', display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
+            {/* Settings Sub-menu with Animation */}
+            <div className={`sub-menu-wrapper ${showSettingsSub ? 'open' : ''}`}>
+              <div className="sub-menu-content">
                 {/* Language Section */}
-                <div style={{ padding: '8px 12px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div className="sub-menu-section-title">
                   <Globe size={14} /> {t.languages}
                 </div>
-                <button 
+                <button
                   className={`nav-sub-item ${language === 'en' ? 'active' : ''}`}
                   onClick={() => setLanguage('en')}
-                  style={{
-                    background: language === 'en' ? 'rgba(239,68,68,0.1)' : 'none',
-                    border: 'none',
-                    color: language === 'en' ? 'var(--primary)' : 'var(--text-main)',
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    width: '100%'
-                  }}
                 >
-                  <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: language === 'en' ? 'var(--primary)' : 'transparent' }} />
+                  <div className="sub-item-dot" style={{ background: language === 'en' ? 'var(--primary)' : 'transparent' }} />
                   {t.english}
                 </button>
-                <button 
+                <button
                   className={`nav-sub-item ${language === 'hi' ? 'active' : ''}`}
                   onClick={() => setLanguage('hi')}
-                  style={{
-                    background: language === 'hi' ? 'rgba(239,68,68,0.1)' : 'none',
-                    border: 'none',
-                    color: language === 'hi' ? 'var(--primary)' : 'var(--text-main)',
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    width: '100%'
-                  }}
                 >
-                  <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: language === 'hi' ? 'var(--primary)' : 'transparent' }} />
+                  <div className="sub-item-dot" style={{ background: language === 'hi' ? 'var(--primary)' : 'transparent' }} />
                   {t.hindi}
                 </button>
 
                 {/* Theme Section */}
-                <div style={{ padding: '8px 12px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+                <div className="sub-menu-section-title">
                   {darkMode ? <Moon size={14} /> : <Sun size={14} />} {t.appearance}
                 </div>
-                <button 
+                <button
                   className="nav-sub-item"
                   onClick={onToggleDarkMode}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'var(--text-main)',
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    width: '100%'
-                  }}
                 >
-                  <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'transparent' }} />
+                  <div className="sub-item-dot" style={{ background: 'transparent' }} />
                   {darkMode ? t.lightMode : t.darkMode}
                 </button>
               </div>
-            )}
+            </div>
           </div>
         </nav>
       </aside>
