@@ -44,7 +44,7 @@ const Sidebar = ({
     if (activeView === 'edit') return { title: t.createInvoice, icon: <PlusCircle size={20} /> };
     if (activeView === 'history') return { title: t.history, icon: <History size={20} /> };
     if (activeView === 'report') return { title: t.plReport, icon: <PieChart size={20} /> };
-    return { title: 'Invoicify', icon: <Receipt size={20} /> };
+    return { title: t.invoicify, icon: <Receipt size={20} /> };
   };
 
   const { title, icon } = getPageTitle();
@@ -64,7 +64,7 @@ const Sidebar = ({
         <div className="sidebar-header">
           <div className="sidebar-logo">
             <Receipt className="logo-icon" size={32} />
-            <span className="logo-text">Invoicify</span>
+            <span className="logo-text">{t.invoicify}</span>
           </div>
           <button className="sidebar-close" onClick={() => setIsOpen(false)}>
             <X size={24} />

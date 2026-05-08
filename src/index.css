@@ -197,10 +197,7 @@ body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
-.sidebar-open .desktop-page-header {
-  left: 294px;
-}
-
+/* Removed redundant shift to ensure full-width header */
 .preview-mode .desktop-page-header {
   left: 0;
   display: none !important;

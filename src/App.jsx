@@ -7,6 +7,9 @@ import Sidebar from './Sidebar.jsx';
 import { translations } from './translations';
 
 function App() {
+    const [language, setLanguage] = useState('en');
+    const t = translations[language];
+
     const [items, setItems] = useState([
         { id: 1, name: '', quantity: '', unit: '', price: '', cost: '', gst: '', description: '' }
     ]);
@@ -22,8 +25,8 @@ function App() {
         return due.toISOString().slice(0, 10);
     });
     const [deliveryDate, setDeliveryDate] = useState(() => new Date().toISOString().slice(0, 10));
-    const [notes, setNotes] = useState('Thank you for your business. Please pay by the due date.');
-    const [paymentStatus, setPaymentStatus] = useState('Pending');
+    const [notes, setNotes] = useState(t.defaultNotes);
+    const [paymentStatus, setPaymentStatus] = useState(t.pending);
     const [currency, setCurrency] = useState('INR');
     const [currencySymbol, setCurrencySymbol] = useState('₹');
     const [showMoreOptions, setShowMoreOptions] = useState(false);
@@ -37,10 +40,7 @@ function App() {
     const [itemDeleteConfirmId, setItemDeleteConfirmId] = useState(null);
     const [selectedTemplate, setSelectedTemplate] = useState('classic');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [language, setLanguage] = useState('en');
     const fileInputRef = useRef(null);
-
-    const t = translations[language];
 
     const [savedInvoices, setSavedInvoices] = useState(() => {
         try {
@@ -147,7 +147,7 @@ function App() {
         
         const averageInvoice = totalInvoices ? totalRevenue / totalInvoices : 0;
         const statusCounts = savedInvoices.reduce((acc, inv) => {
-            const status = inv.paymentStatus || 'Pending';
+            const status = inv.paymentStatus || t.pending;
             acc[status] = (acc[status] || 0) + 1;
             return acc;
         }, {});
@@ -190,7 +190,7 @@ function App() {
 
     const getClientReport = () => {
         const grouped = savedInvoices.reduce((acc, inv) => {
-            const clientName = inv.billedTo?.name?.trim() || 'Unknown client';
+            const clientName = inv.billedTo?.name?.trim() || t.unknownClient;
             const revenue = parseFloat(calculateInvoiceTotal(inv) || 0);
             const cost = parseFloat(calculateInvoiceCostTotal(inv) || 0);
             const profit = revenue - cost;
@@ -261,6 +261,12 @@ function App() {
         });
     };
 
+    const translateStatus = (status) => {
+        if (!status) return t.pending;
+        const s = status.toLowerCase().replace(/\s+/g, '');
+        return t[s] || status;
+    };
+
     const handleGenerate = (e) => {
         if (e) e.preventDefault();
         const invoiceId = currentInvoiceId || Date.now();
@@ -309,7 +315,7 @@ function App() {
         setDueDate(invoice.dueDate);
         setDeliveryDate(invoice.deliveryDate);
         setNotes(invoice.notes);
-        setPaymentStatus(invoice.paymentStatus || 'Pending');
+        setPaymentStatus(invoice.paymentStatus || t.pending);
         setCurrency(invoice.currency || 'INR');
         setCurrencySymbol(invoice.currencySymbol || '₹');
         setLogoUrl(invoice.logoUrl);
@@ -328,7 +334,7 @@ function App() {
         setDueDate(invoice.dueDate);
         setDeliveryDate(invoice.deliveryDate);
         setNotes(invoice.notes);
-        setPaymentStatus(invoice.paymentStatus || 'Pending');
+        setPaymentStatus(invoice.paymentStatus || t.pending);
         setCurrency(invoice.currency || 'INR');
         setCurrencySymbol(invoice.currencySymbol || '₹');
         setLogoUrl(invoice.logoUrl);
@@ -373,7 +379,7 @@ function App() {
         }
     };
 
-    const previewBackLabel = showHistory ? 'Back to saved receipts' : showReport ? 'Back to report' : 'Back to edit';
+    const previewBackLabel = showHistory ? t.backToReceipts : showReport ? t.backToReport : t.backToEdit;
 
     const monthlyReport = getMonthlyReport();
 
@@ -426,7 +432,7 @@ function App() {
                         <div className="preview-header">
                             <div className="preview-header-top-row">
                                 <div className="preview-logo-box">
-                                    {logoUrl ? <img src={logoUrl} alt="Logo" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <span style={{ fontWeight: 800, color: 'var(--primary)' }}>LOGO</span>}
+                                    {logoUrl ? <img src={logoUrl} alt="Logo" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <span style={{ fontWeight: 800, color: 'var(--primary)' }}>{t.logo}</span>}
                                 </div>
                                 <div className="preview-header-content">
                                     <h2 className="preview-title">{t.preview}</h2>
@@ -439,8 +445,8 @@ function App() {
                             <div style={{ textAlign: 'right', marginLeft: 'auto' }}>
                                 <div className="preview-detail-title" style={{ border: 'none', marginBottom: '4px' }}>{t.billedFrom}</div>
                                 <div className="preview-detail-value" style={{ fontWeight: 700 }}>
-                                    {billedFrom.name || 'Your Company Name'}<br />
-                                    <span style={{ fontWeight: 400, opacity: 0.8 }}>{billedFrom.address || 'Address goes here'}</span>
+                                    {billedFrom.name || t.yourCompanyName}<br />
+                                    <span style={{ fontWeight: 400, opacity: 0.8 }}>{billedFrom.address || t.addressGoesHere}</span>
                                 </div>
                             </div>
                         </div>
@@ -449,17 +455,17 @@ function App() {
                             <div className="preview-detail">
                                 <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: 'var(--text-main)' }}>{t.invoiceTo}:</div>
                                 <div className="preview-detail-value">
-                                    <strong>{billedTo.name || 'Client Name'}</strong><br />
-                                    {billedTo.address || 'Client Address'}<br />
+                                    <strong>{billedTo.name || t.clientNamePlaceholder}</strong><br />
+                                    {billedTo.address || t.clientAddressPlaceholder}<br />
                                     {billedTo.email}
                                 </div>
                             </div>
                             <div className="preview-detail" style={{ textAlign: 'right' }}>
                                 <div className="preview-detail-title" style={{ fontSize: '18px', border: 'none', color: 'var(--text-main)' }}>{t.invoiceNo}:</div>
                                 <div className="preview-detail-value">
-                                    <strong>Date:</strong> {formatDate(issueDate)}<br />
-                                    <strong>Due:</strong> {formatDate(dueDate)}<br />
-                                    <strong>Status:</strong> {paymentStatus}
+                                    <strong>{t.date}:</strong> {formatDate(issueDate)}<br />
+                                    <strong>{t.dueDate}:</strong> {formatDate(dueDate)}<br />
+                                    <strong>{t.status}:</strong> {translateStatus(paymentStatus)}
                                 </div>
                             </div>
                         </div>
@@ -479,7 +485,7 @@ function App() {
                                     <tr key={item.id}>
                                         <td data-label="S.L. No">{index + 1}</td>
                                         <td data-label="Description">
-                                            <strong>{item.name || 'Product / Service'}</strong>
+                                            <strong>{item.name || t.productService}</strong>
                                             {item.description ? <div className="preview-description">{item.description}</div> : null}
                                         </td>
                                         <td data-label="Price">{currencySymbol}{parseFloat(item.price || 0).toFixed(2)}</td>
@@ -495,7 +501,7 @@ function App() {
                             <div className="preview-summary-notes">
                                 {notes && (
                                     <div className="preview-notes" style={{ margin: 0, padding: 0, backgroundColor: 'transparent', border: 'none', boxShadow: 'none' }}>
-                                        <div className="preview-notes-title" style={{ borderBottom: '2px solid var(--primary)', display: 'inline-block', paddingBottom: '4px' }}>Terms & Conditions:</div>
+                                        <div className="preview-notes-title" style={{ borderBottom: '2px solid var(--primary)', display: 'inline-block', paddingBottom: '4px' }}>{t.termsConditions}:</div>
                                         <div className="preview-notes-text" style={{ marginTop: '10px' }}>{notes}</div>
                                     </div>
                                 )}
@@ -529,7 +535,7 @@ function App() {
                         <div className="preview-signature-area">
                             <div className="signature-box">
                                 <div className="signature-line"></div>
-                                <div className="signature-label">Signature</div>
+                                <div className="signature-label">{t.signature}</div>
                             </div>
                         </div>
 
@@ -585,7 +591,7 @@ function App() {
                         <div className="header-row">
                             <div className="logo-upload-box">
                                 {logoUrl ? (
-                                    <div className="logo-preview-wrapper" onClick={() => fileInputRef.current?.click()} title="Click to change logo">
+                                    <div className="logo-preview-wrapper" onClick={() => fileInputRef.current?.click()} title={t.clickReplace}>
                                         <img src={logoUrl} alt="Logo Preview" className="logo-preview-img" />
                                         <button
                                             className="remove-logo-btn"
@@ -594,7 +600,7 @@ function App() {
                                                 e.stopPropagation();
                                                 setLogoUrl(null);
                                             }}
-                                            title="Remove logo"
+                                            title={t.removeLogo}
                                         >
                                             <Trash2 size={16} />
                                         </button>
@@ -605,8 +611,8 @@ function App() {
                                     </div>
                                 )}
                                 <div className="logo-info">
-                                    <span className="logo-title">{logoUrl ? 'Business Logo' : 'Add your logo'}</span>
-                                    <span className="logo-subtitle">{logoUrl ? 'Click to replace' : 'JPG, PNG supported'}</span>
+                                    <span className="logo-title">{logoUrl ? t.logoTitle : t.addLogo}</span>
+                                    <span className="logo-subtitle">{logoUrl ? t.clickReplace : t.logoSubtitle}</span>
                                 </div>
                                 {!logoUrl && (
                                     <button
@@ -615,7 +621,7 @@ function App() {
                                         onClick={() => fileInputRef.current?.click()}
                                         style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.2)' }}
                                     >
-                                        Select File
+                                        {t.selectFile}
                                     </button>
                                 )}
                                 <input
@@ -626,19 +632,19 @@ function App() {
                                     onChange={handleLogoChange}
                                 />
                             </div>
-                            <h1 className="invoice-title" style={{ color: 'white', background: 'none', WebkitTextFillColor: 'initial' }}>Invoice</h1>
+                            <h1 className="invoice-title" style={{ color: 'white', background: 'none', WebkitTextFillColor: 'initial' }}>{t.invoice}</h1>
                         </div>
                     </div>
 
                     <div className="card-body-editor">
                         <div className="details-row">
                             <div className="detail-box">
-                                <span className="detail-label">*Billed From</span>
+                                <span className="detail-label">*{t.billedFrom}</span>
                                 <div className="detail-fields">
                                     <input
                                         type="text"
                                         className="input-field"
-                                        placeholder="Company name"
+                                        placeholder={t.businessName}
                                         value={billedFrom.name}
                                         onChange={handleAlphaInput((val) => setBilledFrom({ ...billedFrom, name: val }))}
                                         required
@@ -646,7 +652,7 @@ function App() {
                                     <input
                                         type="text"
                                         className="input-field"
-                                        placeholder="Address"
+                                        placeholder={t.address}
                                         value={billedFrom.address}
                                         onChange={(e) => setBilledFrom({ ...billedFrom, address: e.target.value })}
                                         required
@@ -654,7 +660,7 @@ function App() {
                                     <input
                                         type="email"
                                         className="input-field"
-                                        placeholder="Company email (e.g., owner@gmail.com)"
+                                        placeholder={t.email}
                                         value={billedFrom.email}
                                         onChange={(e) => setBilledFrom({ ...billedFrom, email: e.target.value })}
                                         required
@@ -663,12 +669,12 @@ function App() {
                                 </div>
                             </div>
                             <div className="detail-box">
-                                <span className="detail-label">*Billed To</span>
+                                <span className="detail-label">*{t.billedTo}</span>
                                 <div className="detail-fields">
                                     <input
                                         type="text"
                                         className="input-field"
-                                        placeholder="Client name"
+                                        placeholder={t.billedToPlaceholder}
                                         value={billedTo.name}
                                         onChange={handleAlphaInput((val) => setBilledTo({ ...billedTo, name: val }))}
                                         required
@@ -676,7 +682,7 @@ function App() {
                                     <input
                                         type="text"
                                         className="input-field"
-                                        placeholder="Client address"
+                                        placeholder={t.addressPlaceholder}
                                         value={billedTo.address}
                                         onChange={(e) => setBilledTo({ ...billedTo, address: e.target.value })}
                                         required
@@ -684,7 +690,7 @@ function App() {
                                     <input
                                         type="email"
                                         className="input-field"
-                                        placeholder="Client email (e.g., client@gmail.com)"
+                                        placeholder={t.emailPlaceholder}
                                         value={billedTo.email}
                                         onChange={(e) => setBilledTo({ ...billedTo, email: e.target.value })}
                                         required
@@ -741,13 +747,13 @@ function App() {
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <div className="items-header-row">
                                 <div className="header-cell"></div> {/* Spacer for drag handle */}
-                                <div className="header-cell" style={{ textAlign: 'left' }}>*Item</div>
-                                <div className="header-cell" style={{ textAlign: 'left' }}>Quantity</div>
-                                <div className="header-cell" style={{ textAlign: 'left' }}>Unit</div>
-                                <div className="header-cell" style={{ textAlign: 'left' }}>*Price</div>
-                                <div className="header-cell" style={{ textAlign: 'left' }}>Amount</div>
-                                <div className="header-cell" style={{ textAlign: 'left' }}>Gst (%)</div>
-                                <div className="header-cell" style={{ textAlign: 'left', paddingLeft: '8px' }}>Total ({currencySymbol})</div>
+                                <div className="header-cell" style={{ textAlign: 'left' }}>*{t.item}</div>
+                                <div className="header-cell" style={{ textAlign: 'left' }}>{t.quantity}</div>
+                                <div className="header-cell" style={{ textAlign: 'left' }}>{t.unit}</div>
+                                <div className="header-cell" style={{ textAlign: 'left' }}>*{t.price}</div>
+                                <div className="header-cell" style={{ textAlign: 'left' }}>{t.amount}</div>
+                                <div className="header-cell" style={{ textAlign: 'left' }}>{t.tax}</div>
+                                <div className="header-cell" style={{ textAlign: 'left', paddingLeft: '8px' }}>{t.totalWithCurrency.replace('{currency}', currencySymbol)}</div>
                                 <div className="header-cell"></div>
                             </div>
 
@@ -757,11 +763,11 @@ function App() {
                                         <div className="item-row-grip"><GripVertical size={18} /></div>
                                         
                                         <div className="item-input-group name-field">
-                                            <span className="mobile-label">Item Description</span>
+                                            <span className="mobile-label">{t.itemDescription}</span>
                                             <input
                                                 type="text"
                                                 className="input-field"
-                                                placeholder='Item description'
+                                                placeholder={t.itemPlaceholder}
                                                 value={item.name}
                                                 onChange={(e) => {
                                                     const val = e.target.value;
@@ -774,11 +780,11 @@ function App() {
                                         </div>
 
                                         <div className="item-input-group">
-                                            <span className="mobile-label">Quantity</span>
+                                            <span className="mobile-label">{t.quantity}</span>
                                             <input
                                                 type="number"
                                                 className="input-field"
-                                                placeholder='Qty'
+                                                placeholder={t.qtyPlaceholder}
                                                 value={item.quantity}
                                                 onChange={(e) => {
                                                     const val = e.target.value;
@@ -798,26 +804,26 @@ function App() {
                                                 value={item.unit}
                                                 onChange={(e) => handleItemChange(item.id, 'unit', e.target.value)}
                                             >
-                                                <option value="" disabled>Select unit</option>
-                                                <option value="pcs">pcs</option>
-                                                <option value="hrs">hrs</option>
-                                                <option value="days">days</option>
-                                                <option value="kg">kg</option>
-                                                <option value="g">g</option>
-                                                <option value="lbs">lbs</option>
-                                                <option value="m">m</option>
-                                                <option value="cm">cm</option>
-                                                <option value="ft">ft</option>
-                                                <option value="inch">inch</option>
-                                                <option value="L">L</option>
-                                                <option value="ml">ml</option>
-                                                <option value="box">box</option>
-                                                <option value="set">set</option>
-                                                <option value="pair">pair</option>
-                                                <option value="sqft">sqft</option>
-                                                <option value="sqm">sqm</option>
-                                                <option value="month">month</option>
-                                                <option value="year">year</option>
+                                                <option value="" disabled>{t.unit}</option>
+                                                <option value="pcs">{t.pcs}</option>
+                                                <option value="hrs">{t.hrs}</option>
+                                                <option value="days">{t.days}</option>
+                                                <option value="kg">{t.kg}</option>
+                                                <option value="g">{t.g}</option>
+                                                <option value="lbs">{t.lbs}</option>
+                                                <option value="m">{t.m}</option>
+                                                <option value="cm">{t.cm}</option>
+                                                <option value="ft">{t.ft}</option>
+                                                <option value="inch">{t.inch}</option>
+                                                <option value="L">{t.L}</option>
+                                                <option value="ml">{t.ml}</option>
+                                                <option value="box">{t.box}</option>
+                                                <option value="set">{t.set}</option>
+                                                <option value="pair">{t.pair}</option>
+                                                <option value="sqft">{t.sqft}</option>
+                                                <option value="sqm">{t.sqm}</option>
+                                                <option value="month">{t.month}</option>
+                                                <option value="year">{t.year}</option>
                                             </select>
                                         </div>
 
@@ -848,12 +854,12 @@ function App() {
                                                 value={calculateLineAmount(item).toFixed(2)}
                                                 disabled
                                                 style={{ backgroundColor: 'transparent' }}
-                                                title="Amount before GST"
+                                                title={t.description}
                                             />
                                         </div>
 
                                         <div className="item-input-group">
-                                            <span className="mobile-label">GST (%)</span>
+                                            <span className="mobile-label">{t.tax} (%)</span>
                                             <select
                                                 className="input-field"
                                                 value={item.gst || item.vat}
@@ -869,7 +875,7 @@ function App() {
                                         </div>
 
                                         <div className="item-input-group">
-                                            <span className="mobile-label">Total ({currencySymbol})</span>
+                                            <span className="mobile-label">{t.total} ({currencySymbol})</span>
                                             <input
                                                 type="text"
                                                 className="input-field"
@@ -879,7 +885,7 @@ function App() {
                                             />
                                         </div>
 
-                                        <button className="delete-btn" type="button" onClick={() => setItemDeleteConfirmId(item.id)} title="Delete item">
+                                        <button className="delete-btn" type="button" onClick={() => setItemDeleteConfirmId(item.id)} title={t.delete}>
                                             <Trash2 size={20} />
                                         </button>
                                     </div>
@@ -980,12 +986,12 @@ function App() {
                                         <input
                                             type="text"
                                             className="description-input"
-                                            placeholder="Add Description..."
+                                            placeholder={t.itemName}
                                             value={item.description}
                                             onChange={(e) => handleItemChange(item.id, 'description', e.target.value)}
                                         />
                                         <div className="cost-input-wrapper">
-                                            <span className="cost-label">Unit Purchase Cost:</span>
+                                            <span className="cost-label">{t.purchaseCost}</span>
                                             <input
                                                 type="number"
                                                 className="input-field cost-input"
@@ -1011,7 +1017,7 @@ function App() {
                                 <span className="detail-label">{t.notes} / {t.termsConditions}</span>
                                 <textarea
                                     className="notes-textarea"
-                                    placeholder="Enter additional notes, payment terms, or terms & conditions here..."
+                                    placeholder={t.defaultNotes}
                                     value={notes}
                                     onChange={updateField(setNotes)}
                                 ></textarea>
@@ -1148,21 +1154,21 @@ function App() {
                         <div className="confirm-icon" style={items.length === 1 ? { background: 'rgba(251,191,36,0.1)', border: '2px solid rgba(251,191,36,0.3)', color: '#f59e0b' } : {}}>
                             <AlertTriangle size={32} />
                         </div>
-                        <h3 className="confirm-title">
-                            {items.length === 1 ? 'Cannot Delete' : 'Delete Item?'}
+                         <h3 className="confirm-title">
+                            {items.length === 1 ? t.cannotDeleteTitle : t.deleteConfirmTitle}
                         </h3>
                         <p className="confirm-message">
                             {items.length === 1
-                                ? 'At least one item is required. Add another item before deleting this one.'
-                                : 'Are you sure you want to remove this item from the invoice?'}
+                                ? t.cannotDeleteMsg
+                                : t.deleteConfirmMsg}
                         </p>
                         <div className="confirm-actions">
                             <button className="confirm-btn-cancel" onClick={() => setItemDeleteConfirmId(null)}>
-                                {items.length === 1 ? 'OK' : 'No'}
+                                {items.length === 1 ? t.ok : t.no}
                             </button>
                             {items.length > 1 && (
                                 <button className="confirm-btn-delete" onClick={() => { handleRemoveItem(itemDeleteConfirmId); setItemDeleteConfirmId(null); }}>
-                                    Yes
+                                    {t.yes}
                                 </button>
                             )}
                         </div>

@@ -124,12 +124,12 @@ export default function InvoiceReport({
                             <tbody>
                                 {clientReport.map((client) => (
                                     <tr key={client.clientName}>
-                                        <td data-label="Client">{client.clientName}</td>
-                                        <td data-label="Invoices">{client.invoices}</td>
-                                        <td data-label="Revenue">{currencySymbol}{client.revenue.toFixed(2)}</td>
-                                        <td data-label="Cost">{currencySymbol}{client.cost.toFixed(2)}</td>
-                                        <td data-label="Profit" className={client.profit >= 0 ? 'profit-positive' : 'profit-negative'}>{currencySymbol}{client.profit.toFixed(2)}</td>
-                                        <td data-label="Margin">{client.profitMargin.toFixed(2)}%</td>
+                                        <td data-label={t.client}>{client.clientName}</td>
+                                        <td data-label={t.invoices}>{client.invoices}</td>
+                                        <td data-label={t.revenue}>{currencySymbol}{client.revenue.toFixed(2)}</td>
+                                        <td data-label={t.cost}>{currencySymbol}{client.cost.toFixed(2)}</td>
+                                        <td data-label={t.profit} className={client.profit >= 0 ? 'profit-positive' : 'profit-negative'}>{currencySymbol}{client.profit.toFixed(2)}</td>
+                                        <td data-label={t.margin}>{client.profitMargin.toFixed(2)}%</td>
                                     </tr>
                                 ))}
                             </tbody>
