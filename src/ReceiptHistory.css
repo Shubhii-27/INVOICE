@@ -301,12 +301,26 @@
 
 .history-table th,
 .history-table td {
-    padding: 20px 24px;
+    padding: 20px 32px;
     text-align: left;
     border-bottom: 1px solid var(--border-light);
     font-size: 14px;
     line-height: 1.5;
 }
+
+/* Specific Column Alignment */
+.history-table th:nth-child(3),
+.history-table td:nth-child(3) {
+    padding-left: 60px; /* Extra gap between Invoice No and Client */
+}
+
+.history-table th:nth-child(4),
+.history-table td:nth-child(4),
+.history-table th:nth-child(6),
+.history-table td:nth-child(6) {
+    text-align: right;
+}
+
 
 @media (max-width: 768px) {
 
@@ -367,6 +381,7 @@
     display: flex;
     gap: 16px;
     align-items: center;
+    justify-content: flex-end;
 }
 
 @media (max-width: 768px) {

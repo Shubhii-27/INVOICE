@@ -110,7 +110,7 @@ export default function InvoiceReport({
                     <div className="history-empty">{t.noData}</div>
                 ) : (
                     <div className="table-responsive">
-                        <table className="report-list-table">
+                        <table className="report-list-table client-report-table">
                             <thead>
                                 <tr>
                                     <th>{t.client}</th>
@@ -144,7 +144,7 @@ export default function InvoiceReport({
                     <div className="history-empty">{t.noInvoices}</div>
                 ) : (
                     <div className="table-responsive">
-                        <table className="report-list-table">
+                        <table className="report-list-table recent-invoices-table">
                             <thead>
                                 <tr>
                                     <th>{t.dateSaved}</th>

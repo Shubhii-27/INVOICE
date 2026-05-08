@@ -288,18 +288,33 @@
 
 .report-list-table th,
 .report-list-table td {
-    padding: 16px 12px;
+    padding: 16px 24px;
     border-bottom: 1px solid var(--border-light);
     text-align: left;
     font-size: 14px;
     line-height: 1.5;
 }
 
-.report-list-table td:nth-child(2),
-.report-list-table td:nth-child(3),
-.report-list-table td:nth-child(4),
-.report-list-table td:nth-child(5),
-.report-list-table td:nth-child(6) {
+/* Column Alignment for Client Profit/Loss Table */
+.report-list-table.client-report-table th:nth-child(n+2),
+.report-list-table.client-report-table td:nth-child(n+2) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Column Alignment for Recent Invoices Table */
+.report-list-table.recent-invoices-table th:nth-child(2),
+.report-list-table.recent-invoices-table td:nth-child(2) {
+    text-align: left; /* Changed to left for better spacing with Client column */
+}
+
+.report-list-table.recent-invoices-table th:nth-child(3),
+.report-list-table.recent-invoices-table td:nth-child(3) {
+    padding-left: 60px; /* Significant gap between Invoice No and Client */
+}
+
+.report-list-table.recent-invoices-table th:nth-child(5),
+.report-list-table.recent-invoices-table td:nth-child(5) {
     text-align: right;
     font-variant-numeric: tabular-nums;
 }
