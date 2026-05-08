@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { UploadCloud, GripVertical, Trash2, Plus, ArrowLeft, Download, Search, AlertTriangle, X, FileText, History, PieChart, PlusCircle } from 'lucide-react';
+import { UploadCloud, GripVertical, Trash2, Plus, ArrowLeft, Download, Search, AlertTriangle, X, FileText, History, PieChart, PlusCircle, Menu } from 'lucide-react';
 import InvoiceReport from './InvoiceReport.jsx';
 import ReceiptHistory from './ReceiptHistory.jsx';
 import './index.css';
@@ -1130,6 +1130,9 @@ function App() {
             <main className="main-content animate-fade">
                 <header className="desktop-page-header">
                     <div className="header-title-group">
+                        <button className="desktop-menu-toggle" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+                            <Menu size={24} />
+                        </button>
                         <h1 className="header-page-title">{title}</h1>
                     </div>
                 </header>

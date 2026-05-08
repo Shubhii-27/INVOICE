@@ -137,9 +137,12 @@ body {
 
 @media (min-width: 1025px) {
   .main-content {
+    padding-left: 0;
+    transition: padding-left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .sidebar-open .main-content {
     padding-left: 294px;
-    /* Exactly sidebar width */
-    padding-right: 0;
   }
 }
 
@@ -179,9 +182,7 @@ body {
 .desktop-page-header {
   position: fixed;
   top: 0;
-  left: 294px;
-  /* Offset for sidebar */
-  right: 0;
+  left: 0;
   height: 90px;
   display: flex;
   align-items: center;
@@ -192,8 +193,12 @@ body {
   border-bottom: 3px solid #e2e8f0;
   border-radius: 0;
   z-index: 999;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-open .desktop-page-header {
+  left: 294px;
 }
 
 .preview-mode .desktop-page-header {
@@ -3528,7 +3533,7 @@ button:hover {
     left: 0;
     bottom: 0;
     border-radius: 0;
-    width: 280px;
+    width: 294px; /* Desktop width */
     transform: translateX(-100%);
     z-index: 1001;
     /* Above top bar */
@@ -3540,6 +3545,52 @@ button:hover {
 
   .sidebar-close {
     display: flex;
+  }
+}
+
+/* Desktop Sidebar Toggle Logic */
+@media (min-width: 1025px) {
+  .sidebar {
+    transform: translateX(-100%);
+    top: 90px !important; /* Below full-width header */
+    height: calc(100vh - 90px) !important;
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .desktop-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background-color: var(--white);
+    border: 1px solid var(--border-light);
+    color: var(--primary);
+    cursor: pointer;
+    margin-right: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  }
+  
+  .desktop-menu-toggle:hover {
+    background-color: var(--primary-light);
+    transform: scale(1.05);
+  }
+  
+  .sidebar-open .desktop-menu-toggle {
+    background-color: var(--primary);
+    color: white;
+  }
+}
+
+/* Hide desktop toggle on mobile if needed, though it's in a different header */
+@media (max-width: 1024px) {
+  .desktop-menu-toggle {
+    display: none;
   }
 }
 
@@ -3836,131 +3887,6 @@ button:hover {
 }
 
 
-@media (min-width: 1025px) {
-  .main-content {
-    padding-left: 334px !important;
-    padding-right: 40px !important;
-  }
-
-  .desktop-page-header {
-    padding: 0 40px !important;
-  }
-}
-
-
-@media (min-width: 1025px) {
-  .main-content {
-    padding-left: 299px !important;
-    padding-right: 5px !important;
-  }
-
-  .desktop-page-header {
-    padding: 0 5px !important;
-  }
-}
-
-
-/* Specific P&L Page Margin */
-.history-view {
-  padding-right: 5px !important;
-}
-
-
-@media (min-width: 1025px) {
-  .main-content {
-    padding-left: 304px !important;
-    padding-right: 10px !important;
-  }
-
-  .desktop-page-header {
-    padding: 0 10px !important;
-  }
-}
-
-.history-view {
-  padding-right: 10px !important;
-}
-
-
-/* Create Invoice Specific Margins */
-@media (min-width: 1025px) {
-  .edit-view {
-    margin-left: 5px !important;
-    margin-right: 10px !important;
-    width: calc(100% - 15px) !important;
-  }
-}
-
-.edit-view {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
-
-
-@media (min-width: 1025px) {
-  .main-content {
-    padding-left: 299px !important;
-    /* 294px sidebar + 5px margin */
-    padding-right: 10px !important;
-  }
-
-  .desktop-page-header {
-    padding-left: 5px !important;
-    padding-right: 10px !important;
-  }
-}
-
-
-@media (min-width: 1025px) {
-  .main-content {
-    padding-left: 294px !important;
-    padding-right: 0 !important;
-  }
-
-  .desktop-page-header {
-    padding-left: 3px !important;
-  }
-}
-
-
-
-
-/* Unified Red Border Styles */
-.sidebar {
-  border-right: 3px solid #ef4444 !important;
-}
-
-.desktop-page-header {
-  border-bottom: 3px solid #ef4444 !important;
-}
-
-.dark-mode .sidebar {
-  border-right: 3px solid #ef4444 !important;
-}
-
-.dark-mode .desktop-page-header {
-  border-bottom: 3px solid #ef4444 !important;
-}
-
-
-/* Restore Neutral Border Styles */
-.sidebar {
-  border-right: 3px solid #e2e8f0 !important;
-}
-
-.desktop-page-header {
-  border-bottom: 3px solid #e2e8f0 !important;
-}
-
-.dark-mode .sidebar {
-  border-right: 3px solid #292524 !important;
-}
-
-.dark-mode .desktop-page-header {
-  border-bottom: 3px solid #292524 !important;
-}
-
-
 
 
 /* Mobile Invoice Margin Synchronization */
@@ -4250,4 +4176,34 @@ button:hover {
   font-weight: 800;
   font-size: 13px;
   letter-spacing: 1px;
+}
+
+@media (min-width: 1025px) {
+  .main-content {
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+  
+  .sidebar-open .main-content {
+    padding-left: 334px !important; /* 294px sidebar + 40px padding */
+  }
+
+  .desktop-page-header {
+    left: 0 !important;
+    right: 0 !important;
+    padding: 0 40px !important;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    z-index: 1100 !important; /* On top of sidebar */
+  }
+
+  .sidebar-open .desktop-page-header {
+    left: 0 !important;
+  }
+  
+  .edit-view {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
 }
