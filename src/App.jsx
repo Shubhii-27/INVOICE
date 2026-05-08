@@ -39,7 +39,16 @@ function App() {
     const [deleteConfirmation, setDeleteConfirmation] = useState(null);
     const [itemDeleteConfirmId, setItemDeleteConfirmId] = useState(null);
     const [selectedTemplate, setSelectedTemplate] = useState('classic');
+    const [watermarkText, setWatermarkText] = useState('');
+    const [watermarkColor, setWatermarkColor] = useState('#000000');
+    const [watermarkSize, setWatermarkSize] = useState(100);
+    const [watermarkFont, setWatermarkFont] = useState('Inter');
+    const [showWatermarkSettings, setShowWatermarkSettings] = useState(false);
+    const [signatureUrl, setSignatureUrl] = useState(null);
+    const [showSignatureSettings, setShowSignatureSettings] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const signatureCanvasRef = useRef(null);
+    const signatureInputRef = useRef(null);
     const fileInputRef = useRef(null);
 
     const [savedInvoices, setSavedInvoices] = useState(() => {
@@ -52,9 +61,22 @@ function App() {
         }
     });
 
+    // Load draft watermark and signature on initial load
+    useState(() => {
+        const savedDraft = window.localStorage.getItem('watermarkDraft');
+        if (savedDraft) setWatermarkText(savedDraft);
+        const savedSig = window.localStorage.getItem('signatureDraft');
+        if (savedSig) setSignatureUrl(savedSig);
+    });
+
     const saveToLocalStorage = (invoices) => {
         setSavedInvoices(invoices);
         window.localStorage.setItem('savedInvoices', JSON.stringify(invoices));
+    };
+
+    const handleWatermarkChange = (val) => {
+        setWatermarkText(val);
+        window.localStorage.setItem('watermarkDraft', val);
     };
 
     const roundCurrency = (value) => {
@@ -286,7 +308,12 @@ function App() {
             paymentStatus,
             currency,
             currencySymbol,
-            logoUrl
+            logoUrl,
+            watermarkText,
+            watermarkColor,
+            watermarkSize,
+            watermarkFont,
+            signatureUrl
         };
 
         let updatedInvoices;
@@ -319,6 +346,10 @@ function App() {
         setCurrency(invoice.currency || 'INR');
         setCurrencySymbol(invoice.currencySymbol || '₹');
         setLogoUrl(invoice.logoUrl);
+        setWatermarkText(invoice.watermarkText || '');
+        setWatermarkColor(invoice.watermarkColor || '#000000');
+        setWatermarkSize(invoice.watermarkSize || 100);
+        setWatermarkFont(invoice.watermarkFont || 'Inter');
         setCurrentInvoiceId(invoice.id);
         setShowHistory(false);
     };
@@ -338,6 +369,10 @@ function App() {
         setCurrency(invoice.currency || 'INR');
         setCurrencySymbol(invoice.currencySymbol || '₹');
         setLogoUrl(invoice.logoUrl);
+        setWatermarkText(invoice.watermarkText || '');
+        setWatermarkColor(invoice.watermarkColor || '#000000');
+        setWatermarkSize(invoice.watermarkSize || 100);
+        setWatermarkFont(invoice.watermarkFont || 'Inter');
         setCurrentInvoiceId(invoice.id);
         setShowPreview(true);
     };
@@ -400,35 +435,290 @@ function App() {
             setShowPreview(false);
         }
     };
+    const handleSignatureUpload = (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const url = reader.result;
+            setSignatureUrl(url);
+            window.localStorage.setItem('signatureDraft', url);
+            setShowSignatureSettings(false);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const clearSignature = () => {
+        setSignatureUrl(null);
+        if (signatureCanvasRef.current) {
+            const ctx = signatureCanvasRef.current.getContext('2d');
+            ctx.clearRect(0, 0, signatureCanvasRef.current.width, signatureCanvasRef.current.height);
+        }
+    };
+
+    const saveDrawnSignature = () => {
+        if (signatureCanvasRef.current) {
+            const canvas = signatureCanvasRef.current;
+            // Check if canvas is empty (simplified check)
+            const ctx = canvas.getContext('2d');
+            const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+            const isCanvasEmpty = !Array.from(data).some(channel => channel !== 0);
+            
+            if (!isCanvasEmpty) {
+                setSignatureUrl(canvas.toDataURL());
+                setShowSignatureSettings(false);
+            }
+        }
+    };
+
+    const startDrawing = (e) => {
+        const canvas = signatureCanvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX || e.touches[0].clientX) - rect.left;
+        const y = (e.clientY || e.touches[0].clientY) - rect.top;
+        
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        canvas.isDrawing = true;
+    };
+
+    const draw = (e) => {
+        const canvas = signatureCanvasRef.current;
+        if (!canvas || !canvas.isDrawing) return;
+        const ctx = canvas.getContext('2d');
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX || e.touches[0].clientX) - rect.left;
+        const y = (e.clientY || e.touches[0].clientY) - rect.top;
+        
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        e.preventDefault();
+    };
+
+    const stopDrawing = () => {
+        const canvas = signatureCanvasRef.current;
+        if (canvas) canvas.isDrawing = false;
+    };
 
     const getContent = () => {
         if (showPreview) {
             return (
                 <div className="invoice-wrapper preview-view">
                     <div className="preview-toolbar">
-                        <button className="btn-outline" type="button" onClick={() => setShowPreview(false)}>
+                        <button className="btn-outline btn-back" type="button" onClick={() => setShowPreview(false)}>
                             <ArrowLeft size={18} /> {previewBackLabel}
                         </button>
-                        <div className="template-selector-wrapper">
-                            <span className="template-label">{t.template}:</span>
-                            <select 
-                                className="template-select" 
-                                value={selectedTemplate} 
-                                onChange={(e) => setSelectedTemplate(e.target.value)}
-                            >
-                                <option value="classic">{t.classic}</option>
-                                <option value="modern">{t.modern}</option>
-                                <option value="minimalist">{t.minimalist}</option>
-                                <option value="professional">{t.professional}</option>
-                                <option value="elegant">{t.elegant}</option>
-                            </select>
+                        <div className="preview-controls-group">
+                            <div className="control-item">
+                                <span className="template-label">{t.template}:</span>
+                                <select 
+                                    className="template-select" 
+                                    value={selectedTemplate} 
+                                    onChange={(e) => setSelectedTemplate(e.target.value)}
+                                >
+                                    <option value="classic">{t.classic}</option>
+                                    <option value="modern">{t.modern}</option>
+                                    <option value="minimalist">{t.minimalist}</option>
+                                    <option value="professional">{t.professional}</option>
+                                    <option value="elegant">{t.elegant}</option>
+                                </select>
+                            </div>
+
+                            <div className="control-item" style={{ position: 'relative' }}>
+                                <button 
+                                    className="btn-outline btn-watermark" 
+                                    type="button" 
+                                    onClick={() => {
+                                        setShowWatermarkSettings(!showWatermarkSettings);
+                                        setShowSignatureSettings(false);
+                                    }}
+                                    style={{ gap: '10px', minWidth: 'max-content', whiteSpace: 'nowrap' }}
+                                >
+                                    <PlusCircle size={18} /> {t.addWatermark}
+                                </button>
+                                
+                                {showWatermarkSettings && (
+                                    <div className="watermark-settings-popover">
+                                        <div className="popover-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                                            <span style={{ fontWeight: 800, fontSize: '12px', color: 'var(--primary)', textTransform: 'uppercase' }}>{t.watermark}</span>
+                                            <button 
+                                                type="button" 
+                                                onClick={() => setShowWatermarkSettings(false)}
+                                                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-light)', padding: '4px' }}
+                                            >
+                                                <X size={16} />
+                                            </button>
+                                        </div>
+                                        <div className="popover-row">
+                                            <label>{t.watermarkText}:</label>
+                                            <input 
+                                                type="text" 
+                                                className="input-field" 
+                                                value={watermarkText} 
+                                                onChange={(e) => handleWatermarkChange(e.target.value)}
+                                                placeholder={t.watermarkPlaceholder}
+                                            />
+                                        </div>
+                                        <div className="popover-row">
+                                            <label>{t.font}:</label>
+                                            <select 
+                                                className="input-field" 
+                                                value={watermarkFont} 
+                                                onChange={(e) => setWatermarkFont(e.target.value)}
+                                            >
+                                                <option value="Inter, sans-serif">Modern Clean</option>
+                                                <option value="Georgia, serif">Classic Serif</option>
+                                                <option value="'Courier New', Courier, monospace">Vintage Typewriter</option>
+                                                <option value="'Brush Script MT', cursive">Elegant Handwriting</option>
+                                                <option value="Impact, sans-serif">Bold Heavy Stamp</option>
+                                                <option value="'Trebuchet MS', sans-serif">Corporate Pro</option>
+                                                <option value="'Times New Roman', Times, serif">Legal Formal</option>
+                                                <option value="Verdana, Geneva, sans-serif">Wide & Clear</option>
+                                                <option value="'Lucida Console', Monaco, monospace">System Tech</option>
+                                                <option value="Comic Sans MS, cursive">Casual Fun</option>
+                                                <option value="'Palatino Linotype', 'Book Antiqua', Palatino, serif">Bookish Antique</option>
+                                                <option value="Garamond, Baskerville, 'Baskerville Old Face', 'Hoefler Text', 'Times New Roman', serif">Old Style Elite</option>
+                                                <option value="'Arial Black', Gadget, sans-serif">Super Bold</option>
+                                                <option value="'Copperplate', 'Copperplate Gothic Light', sans-serif">Engraved Header</option>
+                                                <option value="'Century Gothic', AppleGothic, sans-serif">Geometric Modern</option>
+                                                <option value="'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">News Style</option>
+                                            </select>
+                                        </div>
+                                        <div className="popover-row-grid">
+                                            <div className="popover-row">
+                                                <label>{t.color}:</label>
+                                                <input 
+                                                    type="color" 
+                                                    value={watermarkColor.startsWith('rgba') ? '#000000' : watermarkColor} 
+                                                    onChange={(e) => setWatermarkColor(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="popover-row">
+                                                <label>{t.size}:</label>
+                                                <input 
+                                                    type="number" 
+                                                    className="input-field" 
+                                                    value={watermarkSize} 
+                                                    onChange={(e) => setWatermarkSize(e.target.value)}
+                                                />
+                                            </div>
+                                        </div>
+                                        <button
+                                            className="btn-done"
+                                            onClick={() => setShowWatermarkSettings(false)}
+                                            style={{
+                                                marginTop: '16px',
+                                                padding: '12px',
+                                                background: 'var(--primary)',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '12px',
+                                                fontWeight: '800',
+                                                fontSize: '12px',
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '1px',
+                                                cursor: 'pointer',
+                                                width: '100%',
+                                                transition: 'all 0.3s ease'
+                                            }}
+                                        >
+                                            {t.done}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn-clear-watermark"
+                                            onClick={() => handleWatermarkChange('')}
+                                            style={{
+                                                marginTop: '8px',
+                                                padding: '8px',
+                                                background: 'transparent',
+                                                color: 'var(--text-muted)',
+                                                border: 'none',
+                                                fontSize: '11px',
+                                                fontWeight: '600',
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.5px',
+                                                cursor: 'pointer',
+                                                width: '100%',
+                                                textAlign: 'center'
+                                            }}
+                                        >
+                                            {t.clear} {t.watermark}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="control-item" style={{ position: 'relative' }}>
+                                <button 
+                                    className="btn-outline btn-signature-tool" 
+                                    type="button" 
+                                    onClick={() => {
+                                        setShowSignatureSettings(!showSignatureSettings);
+                                        setShowWatermarkSettings(false);
+                                    }}
+                                    style={{ gap: '10px', minWidth: 'max-content', whiteSpace: 'nowrap' }}
+                                >
+                                    <FileText size={18} /> {t.signatureMaker}
+                                </button>
+                                
+                                {showSignatureSettings && (
+                                    <div className="watermark-settings-popover signature-popover">
+                                        <div className="popover-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                                            <span style={{ fontWeight: 800, fontSize: '12px', color: 'var(--primary)', textTransform: 'uppercase' }}>{t.signatureMaker}</span>
+                                            <button 
+                                                type="button" 
+                                                onClick={() => setShowSignatureSettings(false)}
+                                                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-light)', padding: '4px' }}
+                                            >
+                                                <X size={16} />
+                                            </button>
+                                        </div>
+                                        
+                                        <div className="signature-tabs" style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                                            <button className="btn-tab active" type="button">{t.draw}</button>
+                                            <button className="btn-tab" type="button" onClick={() => signatureInputRef.current?.click()}>{t.upload}</button>
+                                            <input ref={signatureInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleSignatureUpload} />
+                                        </div>
+
+                                        <div className="signature-canvas-container" style={{ border: '1px solid var(--border-light)', borderRadius: '8px', background: '#f9fafb', height: '150px', cursor: 'crosshair', position: 'relative' }}>
+                                            <canvas 
+                                                ref={signatureCanvasRef}
+                                                width={240}
+                                                height={150}
+                                                onMouseDown={startDrawing}
+                                                onMouseMove={draw}
+                                                onMouseUp={stopDrawing}
+                                                onMouseOut={stopDrawing}
+                                                onTouchStart={startDrawing}
+                                                onTouchMove={draw}
+                                                onTouchEnd={stopDrawing}
+                                                style={{ width: '100%', height: '100%' }}
+                                            />
+                                        </div>
+
+                                        <div className="popover-actions" style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                                            <button className="btn-outline btn-clear" type="button" onClick={clearSignature} style={{ flex: 1, padding: '8px' }}>{t.clear}</button>
+                                            <button className="btn-generate" type="button" onClick={saveDrawnSignature} style={{ flex: 1, padding: '8px' }}>{t.save}</button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <button className="btn-generate" type="button" onClick={handlePrint}>
+
+                        <button className="btn-generate btn-print" type="button" onClick={handlePrint}>
                             <Download size={20} /> {t.downloadPrint}
                         </button>
                     </div>
 
                     <div className={`preview-card ${selectedTemplate}`}>
+                        {watermarkText && (
+                            <div className="preview-watermark" style={{ color: watermarkColor, fontSize: `${watermarkSize}px`, fontFamily: watermarkFont }}>
+                                {watermarkText}
+                            </div>
+                        )}
                         <div className="preview-header">
                             <div className="preview-header-top-row">
                                 <div className="preview-logo-box">
@@ -533,8 +823,12 @@ function App() {
                         </div>
 
                         <div className="preview-signature-area">
-                            <div className="signature-box">
-                                <div className="signature-line"></div>
+                            <div className="signature-box" style={{ cursor: 'pointer' }} onClick={() => setShowSignatureSettings(true)}>
+                                {signatureUrl ? (
+                                    <img src={signatureUrl} alt="Signature" style={{ maxHeight: '60px', maxWidth: '200px', marginBottom: '5px' }} />
+                                ) : (
+                                    <div className="signature-line"></div>
+                                )}
                                 <div className="signature-label">{t.signature}</div>
                             </div>
                         </div>
@@ -616,7 +910,7 @@ function App() {
                                 </div>
                                 {!logoUrl && (
                                     <button
-                                        className="btn-outline"
+                                        className="btn-outline btn-logo-select"
                                         type="button"
                                         onClick={() => fileInputRef.current?.click()}
                                         style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.2)' }}
@@ -740,6 +1034,16 @@ function App() {
                                     className="input-field"
                                     value={deliveryDate}
                                     onChange={updateField(setDeliveryDate)}
+                                />
+                            </div>
+                            <div className="input-wrapper">
+                                <span className="input-label">{t.watermark}</span>
+                                <input
+                                    type="text"
+                                    className="input-field"
+                                    placeholder={t.watermarkPlaceholder}
+                                    value={watermarkText}
+                                    onChange={(e) => setWatermarkText(e.target.value)}
                                 />
                             </div>
                         </div>

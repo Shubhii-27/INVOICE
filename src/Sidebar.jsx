@@ -77,7 +77,7 @@ const Sidebar = ({
             {menuItems.map((item) => (
               <button
                 key={item.id}
-                className={`nav-item ${activeView === item.id ? 'active' : ''}`}
+                className={`nav-item nav-${item.id} ${activeView === item.id ? 'active' : ''}`}
                 onClick={() => {
                   onNavigate(item.id);
                   setIsOpen(false);
@@ -94,7 +94,7 @@ const Sidebar = ({
             <span className="nav-section-title">{t.settings}</span>
 
             <button
-              className={`nav-item ${showSettingsSub ? 'active' : ''}`}
+              className={`nav-item nav-settings ${showSettingsSub ? 'active' : ''}`}
               onClick={() => setShowSettingsSub(!showSettingsSub)}
             >
               <span className="nav-icon"><Settings size={20} /></span>

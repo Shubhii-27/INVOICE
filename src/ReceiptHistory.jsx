@@ -120,8 +120,8 @@ export default function ReceiptHistory({
                                         </td>
                                         <td data-label={t.actions}>
                                             <div className="action-buttons">
-                                                <button className="btn-load" onClick={() => viewInvoice(inv)}>{t.view}</button>
-                                                <button className="btn-load" onClick={() => loadInvoice(inv)}>{t.edit}</button>
+                                                <button className="btn-load btn-view" onClick={() => viewInvoice(inv)}>{t.view}</button>
+                                                <button className="btn-load btn-edit-hist" onClick={() => loadInvoice(inv)}>{t.edit}</button>
                                                 <button className="btn-del" onClick={() => handleDeleteClick(inv.id)} title={t.delete}>
                                                     <Trash2 size={16} />
                                                 </button>

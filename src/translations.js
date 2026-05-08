@@ -161,6 +161,18 @@ export const translations = {
     template: "Template",
     downloadPrint: "Download / Print",
     signature: "Authorized Signature",
+    watermark: "Watermark",
+    addWatermark: "Add Watermark",
+    watermarkText: "Watermark Text",
+    font: "Font",
+    color: "Color",
+    size: "Size",
+    signatureMaker: "Signature Maker",
+    draw: "Draw",
+    upload: "Upload",
+    clear: "Clear",
+    save: "Save",
+    watermarkPlaceholder: "Enter watermark (e.g. PAID, DRAFT)",
 
     // History
     history: "History",
@@ -191,6 +203,7 @@ export const translations = {
     profit: "Profit",
     noData: "No data to show.",
     recentInvoices: "Recent Invoices",
+    done: "Done",
   },
   hi: {
     // Sidebar & Navigation
@@ -354,6 +367,18 @@ export const translations = {
     template: "टेम्पलेट",
     downloadPrint: "डाउनलोड / प्रिंट",
     signature: "अधिकृत हस्ताक्षर",
+    watermark: "वॉटरमार्क",
+    addWatermark: "वॉटरमार्क जोड़ें",
+    watermarkText: "वॉटरमार्क टेक्स्ट",
+    font: "फ़ॉन्ट",
+    color: "रंग",
+    size: "आकार",
+    signatureMaker: "हस्ताक्षर निर्माता",
+    draw: "बनाएँ (Draw)",
+    upload: "अपलोड करें",
+    clear: "साफ़ करें",
+    save: "सहेजें",
+    watermarkPlaceholder: "वॉटरमार्क दर्ज करें (जैसे भुगतान, ड्राफ्ट)",
 
     // History
     history: "इतिहास",
@@ -384,5 +409,6 @@ export const translations = {
     profit: "लाभ",
     noData: "दिखाने के लिए कोई डेटा नहीं है।",
     recentInvoices: "हाल के इनवॉइस",
+    done: "हो गया",
   }
 };
