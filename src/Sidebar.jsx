@@ -113,14 +113,14 @@ const Sidebar = ({
                 </div>
                 <button
                   className={`nav-sub-item ${language === 'en' ? 'active' : ''}`}
-                  onClick={() => setLanguage('en')}
+                  onClick={() => { setLanguage('en'); setIsOpen(false); }}
                 >
                   <div className="sub-item-dot" style={{ background: language === 'en' ? 'var(--primary)' : 'transparent' }} />
                   {t.english}
                 </button>
                 <button
                   className={`nav-sub-item ${language === 'hi' ? 'active' : ''}`}
-                  onClick={() => setLanguage('hi')}
+                  onClick={() => { setLanguage('hi'); setIsOpen(false); }}
                 >
                   <div className="sub-item-dot" style={{ background: language === 'hi' ? 'var(--primary)' : 'transparent' }} />
                   {t.hindi}
@@ -132,7 +132,7 @@ const Sidebar = ({
                 </div>
                 <button
                   className="nav-sub-item"
-                  onClick={onToggleDarkMode}
+                  onClick={() => { onToggleDarkMode(); setIsOpen(false); }}
                 >
                   <div className="sub-item-dot" style={{ background: 'transparent' }} />
                   {darkMode ? t.lightMode : t.darkMode}
