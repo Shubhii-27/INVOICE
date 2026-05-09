@@ -1,9 +1,41 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
+}
+
+/* Custom Scrollbar for a Premium Look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+  border: 2px solid var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
 }
 
 /* ============================= */
@@ -2489,11 +2521,11 @@ button:hover {
 /* Very large screens - Enhanced for Full Width */
 @media (min-width: 1440px) {
   #root .invoice-wrapper {
-    max-width: 1400px;
+    max-width: 100% !important;
   }
 
   #root .preview-card {
-    max-width: 240mm;
+    max-width: 100% !important;
   }
 }
 
@@ -3049,11 +3081,11 @@ button:hover {
 /* Very large screens - Enhanced for Full Width */
 @media (min-width: 1440px) {
   #root .invoice-wrapper {
-    max-width: 1400px;
+    max-width: 100% !important;
   }
 
   #root .preview-card {
-    max-width: 240mm;
+    max-width: 100% !important;
   }
 }
 
@@ -3424,12 +3456,193 @@ button:hover {
   text-transform: capitalize;
 }
 
-#root .preview-card.elegant .preview-footer-geometric {
-  display: none;
+/* ============================= */
+/* TEMPLATE: CORPORATE */
+/* ============================= */
+#root .preview-card.corporate {
+  border: 1px solid #d4d4d8;
+  border-top: 15px solid #1e293b;
+  background-color: #f8fafc !important;
+  color: #1e293b !important;
+}
+#root .preview-card.corporate .preview-header {
+  background: #f8fafc;
+  height: auto;
+  clip-path: none;
+  padding: 40px 60px;
+  border-bottom: 2px solid #fbbf24; /* Gold */
+}
+#root .preview-card.corporate .preview-header::before,
+#root .preview-card.corporate .preview-header::after { display: none; }
+#root .preview-card.corporate .preview-title {
+  color: #1e293b !important;
+  font-family: 'Times New Roman', serif;
+  font-size: 52px;
+  text-transform: uppercase;
+}
+#root .preview-card.corporate .preview-items-table th {
+  background-color: #1e293b;
+  color: #fbbf24 !important;
+}
+#root .preview-card.corporate .preview-items-table td {
+  color: #1e293b !important;
+  border-bottom: 1px solid #e2e8f0;
+}
+#root .preview-card.corporate .preview-totals-row.total {
+  background-color: #fbbf24;
+  color: #1e293b !important;
 }
 
-/* Template Selector Responsive Updates */
-@media (max-width: 768px) {
+/* ============================= */
+/* TEMPLATE: CREATIVE */
+/* ============================= */
+#root .preview-card.creative {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border-radius: 30px;
+}
+#root .preview-card.creative .preview-header {
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  height: auto;
+  clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+  padding: 60px;
+}
+#root .preview-card.creative .preview-header::before,
+#root .preview-card.creative .preview-header::after { display: none; }
+#root .preview-card.creative .preview-title {
+  color: #ffffff !important;
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  font-size: 56px;
+  transform: rotate(-2deg);
+}
+#root .preview-card.creative .preview-items-table th {
+  background-color: #8b5cf6;
+  color: #ffffff !important;
+  border-radius: 10px;
+}
+#root .preview-card.creative .preview-items-table td {
+  color: #1e293b !important;
+}
+#root .preview-card.creative .preview-totals-row.total {
+  background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+  color: #ffffff !important;
+  border-radius: 20px;
+}
+
+/* ============================= */
+/* TEMPLATE: FUTURISTIC */
+/* ============================= */
+#root .preview-card.futuristic {
+  background-color: #020617 !important;
+  color: #22d3ee !important;
+  border: 2px solid #22d3ee;
+}
+#root .preview-card.futuristic .preview-header {
+  background: transparent;
+  border-bottom: 2px solid #22d3ee;
+  clip-path: none;
+  height: auto;
+  padding: 40px;
+}
+#root .preview-card.futuristic .preview-header::before,
+#root .preview-card.futuristic .preview-header::after { display: none; }
+#root .preview-card.futuristic .preview-title {
+  color: #22d3ee !important;
+  font-family: 'Courier New', monospace;
+  text-shadow: 0 0 10px #22d3ee;
+}
+#root .preview-card.futuristic .preview-items-table th {
+  background-color: #22d3ee;
+  color: #020617 !important;
+}
+#root .preview-card.futuristic .preview-items-table td {
+  color: #22d3ee !important;
+  border-bottom: 1px solid rgba(34, 211, 238, 0.2);
+}
+#root .preview-card.futuristic .preview-totals-row.total {
+  border: 2px solid #22d3ee;
+  background: transparent;
+  color: #22d3ee !important;
+  box-shadow: 0 0 15px #22d3ee;
+}
+
+/* ============================= */
+/* TEMPLATE: VINTAGE */
+/* ============================= */
+#root .preview-card.vintage {
+  background-color: #f5f5dc !important;
+  color: #5d4037 !important;
+  font-family: 'Georgia', serif;
+}
+#root .preview-card.vintage .preview-header {
+  background: none;
+  border-bottom: 3px double #5d4037;
+  clip-path: none;
+  height: auto;
+  padding: 40px;
+}
+#root .preview-card.vintage .preview-header::before,
+#root .preview-card.vintage .preview-header::after { display: none; }
+#root .preview-card.vintage .preview-title {
+  color: #5d4037 !important;
+  text-transform: uppercase;
+  letter-spacing: 5px;
+}
+#root .preview-card.vintage .preview-items-table th {
+  background-color: #5d4037;
+  color: #f5f5dc !important;
+}
+#root .preview-card.vintage .preview-items-table td {
+  color: #5d4037 !important;
+}
+#root .preview-card.vintage .preview-totals-row.total {
+  background-color: transparent;
+  border-top: 3px double #5d4037;
+  border-bottom: 3px double #5d4037;
+  color: #5d4037 !important;
+}
+
+/* ============================= */
+/* TEMPLATE: LUXURY */
+/* ============================= */
+#root .preview-card.luxury {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid #333333;
+}
+#root .preview-card.luxury .preview-header {
+  background: linear-gradient(to bottom, #1a1a1a, #000000);
+  border-bottom: 1px solid #ffffff;
+  clip-path: none;
+  height: auto;
+  padding: 80px 60px;
+}
+#root .preview-card.luxury .preview-header::before,
+#root .preview-card.luxury .preview-header::after { display: none; }
+#root .preview-card.luxury .preview-title {
+  color: #ffffff !important;
+  font-weight: 100;
+  letter-spacing: 15px;
+  font-size: 40px;
+}
+#root .preview-card.luxury .preview-items-table th {
+  background-color: #ffffff;
+  color: #000000 !important;
+  font-weight: 900;
+}
+#root .preview-card.luxury .preview-items-table td {
+  color: #ffffff !important;
+}
+#root .preview-card.luxury .preview-totals-row.total {
+  background-color: #ffffff;
+  color: #000000 !important;
+  border-radius: 0;
+}
+
+/* ============================= */
+/* TEMPLATESelector Responsive Updates */
+ @media (max-width: 768px) {
   #root .template-selector-wrapper {
     margin-left: 0 !important;
     margin-right: 0 !important;
@@ -3452,14 +3665,24 @@ button:hover {
   #root .preview-card.modern .preview-header-top-row,
   #root .preview-card.minimalist .preview-header-top-row,
   #root .preview-card.professional .preview-header-top-row,
-  #root .preview-card.elegant .preview-header-top-row {
+  #root .preview-card.elegant .preview-header-top-row,
+  #root .preview-card.corporate .preview-header-top-row,
+  #root .preview-card.creative .preview-header-top-row,
+  #root .preview-card.futuristic .preview-header-top-row,
+  #root .preview-card.vintage .preview-header-top-row,
+  #root .preview-card.luxury .preview-header-top-row {
     padding: 24px 20px;
   }
 
   #root .preview-card.modern .preview-items-table,
   #root .preview-card.minimalist .preview-items-table,
   #root .preview-card.professional .preview-items-table,
-  #root .preview-card.elegant .preview-items-table {
+  #root .preview-card.elegant .preview-items-table,
+  #root .preview-card.corporate .preview-items-table,
+  #root .preview-card.creative .preview-items-table,
+  #root .preview-card.futuristic .preview-items-table,
+  #root .preview-card.vintage .preview-items-table,
+  #root .preview-card.luxury .preview-items-table {
     margin: 10px 20px;
     width: calc(100% - 40px);
   }
@@ -3470,14 +3693,24 @@ button:hover {
   #root .preview-card.modern .preview-header-top-row,
   #root .preview-card.minimalist .preview-header-top-row,
   #root .preview-card.professional .preview-header-top-row,
-  #root .preview-card.elegant .preview-header-top-row {
+  #root .preview-card.elegant .preview-header-top-row,
+  #root .preview-card.corporate .preview-header-top-row,
+  #root .preview-card.creative .preview-header-top-row,
+  #root .preview-card.futuristic .preview-header-top-row,
+  #root .preview-card.vintage .preview-header-top-row,
+  #root .preview-card.luxury .preview-header-top-row {
     padding: 16px 12px;
   }
 
   #root .preview-card.modern .preview-items-table,
   #root .preview-card.minimalist .preview-items-table,
   #root .preview-card.professional .preview-items-table,
-  #root .preview-card.elegant .preview-items-table {
+  #root .preview-card.elegant .preview-items-table,
+  #root .preview-card.corporate .preview-items-table,
+  #root .preview-card.creative .preview-items-table,
+  #root .preview-card.futuristic .preview-items-table,
+  #root .preview-card.vintage .preview-items-table,
+  #root .preview-card.luxury .preview-items-table {
     margin: 10px 12px;
     width: calc(100% - 24px);
   }
@@ -3575,7 +3808,7 @@ button:hover {
   color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  padding: 12px 12px 12px 12px;
+  padding: 12px 12px 12px 24px; /* Increased left padding */
   margin-top: 20px;
 }
 
@@ -3583,7 +3816,7 @@ button:hover {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
+  padding: 12px 24px;
   border-radius: 12px;
   border: none;
   background: none;
@@ -4170,6 +4403,27 @@ button:hover {
     size: A4;
   }
 
+  /* Force Light Mode variables for printing */
+  :root {
+    --bg-color: #f8fafc !important;
+    --white: #ffffff !important;
+    --text-main: #0f172a !important;
+    --text-muted: #64748b !important;
+    --card-bg: #ffffff !important;
+    --border-light: #e2e8f0 !important;
+    --primary: #ef4444 !important;
+  }
+
+  .dark-mode {
+    --bg-color: #f8fafc !important;
+    --white: #ffffff !important;
+    --text-main: #0f172a !important;
+    --text-muted: #64748b !important;
+    --card-bg: #ffffff !important;
+    --border-light: #e2e8f0 !important;
+    --primary: #ef4444 !important;
+  }
+
   html, body {
     margin: 0 !important;
     padding: 0 !important;
@@ -4232,53 +4486,47 @@ button:hover {
     display: flex !important;
     flex-direction: column !important;
     overflow: hidden !important;
-    background: #fff !important;
+    /* Removed background: #fff to allow template backgrounds to show */
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     position: relative !important;
+    color: inherit !important; 
+    font-weight: 500 !important; /* Slightly bolder for better print quality */
   }
 
-  /* Preserve Geometric Header Designs in Print */
+  .preview-card * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Preserve Template Header Designs in Print */
   .preview-header {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Default Template (if no specific template class) */
+  .classic .preview-header {
     min-height: 200px !important;
-    height: 200px !important;
     background-color: #0c0a09 !important;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 L60 40 L100 50 L60 60 L50 100 L40 60 L0 50 L40 40 Z' fill='rgba(239, 68, 68, 0.05)'/%3E%3C/svg%3E") !important;
-    background-size: 80px 80px !important;
     clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%) !important;
-    -webkit-clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%) !important;
-    margin-bottom: 0 !important;
-    position: relative !important;
-  }
-
-  .preview-header::before {
-    content: "" !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    background: #ef4444 !important;
-    z-index: 0 !important;
-    clip-path: polygon(0 0, 100% 0, 100% 70%, 0 90%) !important;
-    -webkit-clip-path: polygon(0 0, 100% 0, 100% 70%, 0 90%) !important;
-    display: block !important;
-  }
-
-  .preview-header::after {
-    content: "" !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    background-color: #0c0a09 !important;
     background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 L60 40 L100 50 L60 60 L50 100 L40 60 L0 50 L40 40 Z' fill='rgba(239, 68, 68, 0.05)'/%3E%3C/svg%3E") !important;
-    background-size: 80px 80px !important;
-    z-index: 1 !important;
+  }
+  .classic .preview-header::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #ef4444 !important;
+    clip-path: polygon(0 0, 100% 0, 100% 70%, 0 90%) !important;
+    z-index: 0 !important;
+  }
+  .classic .preview-header::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #0c0a09 !important;
     clip-path: polygon(0 0, 100% 0, 100% 60%, 0 80%) !important;
-    -webkit-clip-path: polygon(0 0, 100% 0, 100% 60%, 0 80%) !important;
-    display: block !important;
+    z-index: 1 !important;
   }
 
   .preview-header-top-row {
@@ -4379,28 +4627,34 @@ button:hover {
 
 @media (min-width: 1025px) {
   .main-content {
-    padding-left: 40px !important;
-    padding-right: 40px !important;
+    padding-top: 110px !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
   
   .sidebar-open .main-content {
-    padding-left: 294px !important; /* Sidebar width */
-    padding-right: 0 !important;   /* Full width to the right edge */
+    padding-left: 318px !important; /* 294px sidebar + 24px margin */
+    padding-right: 24px !important;
   }
 
   .desktop-page-header {
     left: 0 !important;
     right: 0 !important;
-    padding: 0 40px !important; /* Standard padding */
+    padding: 0 24px !important; 
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
     z-index: 1300 !important; /* Above everything */
   }
 
   .sidebar-open .desktop-page-header {
-    left: 0 !important; /* Always full width */
+    left: 0 !important;
     width: 100% !important;
-    padding-right: 40px !important;
+    padding-left: 24px !important; 
+    padding-right: 24px !important;
+  }
+
+  .sidebar-open .header-page-title {
+    margin-left: 294px !important; 
   }
   
   .edit-view {

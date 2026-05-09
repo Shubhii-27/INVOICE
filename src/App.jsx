@@ -523,6 +523,11 @@ function App() {
                                     <option value="minimalist">{t.minimalist}</option>
                                     <option value="professional">{t.professional}</option>
                                     <option value="elegant">{t.elegant}</option>
+                                    <option value="corporate">{t.corporate}</option>
+                                    <option value="creative">{t.creative}</option>
+                                    <option value="futuristic">{t.futuristic}</option>
+                                    <option value="vintage">{t.vintage}</option>
+                                    <option value="luxury">{t.luxury}</option>
                                 </select>
                             </div>
 

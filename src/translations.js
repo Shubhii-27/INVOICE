@@ -120,6 +120,11 @@ export const translations = {
     minimalist: "Minimalist Clean",
     professional: "Professional Corporate",
     elegant: "Elegant Dark",
+    corporate: "Corporate Gold",
+    creative: "Creative Purple",
+    futuristic: "Futuristic Neon",
+    vintage: "Vintage Retro",
+    luxury: "Luxury Silver",
 
     // Confirmations
     deleteConfirmTitle: "Delete Item?",
@@ -326,6 +331,11 @@ export const translations = {
     minimalist: "मिनिमलिस्ट क्लीन",
     professional: "प्रोफेशनल कॉर्पोरेट",
     elegant: "एलिगेंट डार्क",
+    corporate: "कॉर्पोरेट गोल्ड",
+    creative: "क्रिएटिव पर्पल",
+    futuristic: "फ्यूचरिस्टिक नियॉन",
+    vintage: "विंटेज रेट्रो",
+    luxury: "लक्जरी सिल्वर",
 
     // Confirmations
     deleteConfirmTitle: "वस्तु हटाएँ?",
